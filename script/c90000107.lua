@@ -33,9 +33,12 @@ end
 
 --banish for ZPD
 function c90000107.descon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4b0)
+	local c=e:GetHandler()
+	local rc=eg:GetFirst()
+	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
+		and rc:IsFaceup() and rc:IsSetCard(0x4b0) and rc:IsControler(tp)
 end
+
 function c90000107.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsRemovable() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
