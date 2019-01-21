@@ -27,17 +27,35 @@ function c90000628.initial_effect(c)
 	e2:SetOperation(c90000628.damop)
 	c:RegisterEffect(e2)
 	--destroy
-	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_DESTROY)
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e3:SetProperty(EFFECT_FLAG_DELAY)
-	e3:SetCode(EVENT_TO_DECK)
-	e3:SetCondition(c90000628.descon)
-	e3:SetTarget(c90000628.destg)
-	e3:SetOperation(c90000628.desop)
-	c:RegisterEffect(e3)
+	local e4=Effect.CreateEffect(c)
+	e4:SetCategory(CATEGORY_DESTROY)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e4:SetCode(EVENT_DESTROYED)
+	e4:SetProperty(EFFECT_FLAG_DELAY)
+	e4:SetCondition(c90000628.pencon)
+	e4:SetTarget(c90000628.pentg)
+	e4:SetOperation(c90000628.penop)
+	c:RegisterEffect(e4)
 end
 
+--ToPendulum
+function c90000628.pencon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return bit.band(r,REASON_EFFECT+REASON_BATTLE)~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
+end
+function c90000628.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_PZONE,0)>0 end
+	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
+end
+function c90000628.penop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
+	if Duel.Destroy(g,REASON_EFFECT)~=0 and e:GetHandler():IsRelateToEffect(e) then
+		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_PZONE,POS_FACEUP,true)
+	end
+end
+
+--limiters
 function c90000628.splimcon(e)
 	return not e:GetHandler():IsForbidden()
 end
@@ -62,24 +80,4 @@ end
 function c90000628.damop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
-end
---ToPendulum
-function c90000628.descon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousPosition(POS_FACEUP) and e:GetHandler():IsPreviousLocation(LOCATION_MZONE) and e:GetHandler():IsReason(REASON_DESTROY)
-end
-function c90000628.desfilter(c)
-	return c:IsType(TYPE_PENDULUM) and c:IsDestructable()
-end
-function c90000628.destg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000628.desfilter,tp,LOCATION_SZONE,0,1,c) end
-	local sg=Duel.GetMatchingGroup(c90000628.desfilter,tp,LOCATION_SZONE,0,c)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,sg:GetCount(),0,0)
-end
-function c90000628.desop(e,tp,eg,ep,ev,re,r,rp)
-	local sg=Duel.GetMatchingGroup(c90000628.desfilter,tp,LOCATION_SZONE,0,e:GetHandler())
-	if Duel.Destroy(sg,REASON_EFFECT)>0 then
-		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_SZONE,7,POS_FACEUP,true)
-		Duel.ChangePosition(e:GetHandler(),POS_FACEUP)
-	end
 end

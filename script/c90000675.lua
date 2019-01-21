@@ -29,10 +29,7 @@ end
 
 --check if you are using a hazmanimal monster
 function c90000675.lcheck(g,lc)
-	return g:IsExists(c90000675.mzfilter,1,nil)
-end
-function c90000675.mzfilter(c)
-	return c:IsSetCard(0x43a)
+	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
 end
 
 --moving

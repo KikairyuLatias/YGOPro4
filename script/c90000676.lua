@@ -1,7 +1,7 @@
 --Hazmanimal White Horse Flame
 function c90000676.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x43a),3)
+	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),3)
 	c:EnableReviveLimit()
 	--protection
 	local e1=Effect.CreateEffect(c)

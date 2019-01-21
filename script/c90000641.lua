@@ -11,36 +11,46 @@ function c90000641.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(0,LOCATION_MZONE)
 	e1:SetTarget(c90000641.disable)
+	e1:SetCondition(c90000641.discon)
 	e1:SetCode(EFFECT_DISABLE)
 	c:RegisterEffect(e1)
 	--become a scale
-	local e5=Effect.CreateEffect(c)
-	e5:SetCategory(CATEGORY_DESTROY)
-	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e5:SetCode(EVENT_DESTROYED)
-	e5:SetProperty(EFFECT_FLAG_DELAY)
-	e5:SetCondition(c90000641.pencon)
-	e5:SetTarget(c90000641.pentg)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetOperation(c90000641.penop)
-	c:RegisterEffect(e5)
-end
-
-function c90000641.disable(e,c)
-	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000641,0))
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DELAY)
+	e2:SetCode(EVENT_DESTROYED)
+	e2:SetCondition(c90000641.pencon)
+	e2:SetTarget(c90000641.pentg)
+	e2:SetOperation(c90000641.penop)
+	c:RegisterEffect(e2)
 end
 
 --to pendulumZ
 function c90000641.pencon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousLocation(LOCATION_MZONE)
+	local c=e:GetHandler()
+	return r&REASON_EFFECT+REASON_BATTLE~=0 and c:IsFaceup()
 end
 function c90000641.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if chk==0 then return b1 end
+	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
 end
 function c90000641.penop(e,tp,eg,ep,ev,re,r,rp)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if b1 and e:GetHandler():IsRelateToEffect(e) then
-		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
 	end
+end
+
+--neg stuff
+function c90000641.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x439)
+end
+function c90000641.spcon(e,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
+		Duel.IsExistingMatchingCard(c90000641.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+end
+function c90000641.disable(e,c)
+	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
 end

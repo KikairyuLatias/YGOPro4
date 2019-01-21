@@ -34,7 +34,6 @@ function c90000612.initial_effect(c)
 	c:RegisterEffect(e3)
 	--pendulum
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000612,2))
 	e4:SetCategory(CATEGORY_DESTROY)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_DESTROYED)
@@ -107,7 +106,7 @@ function c90000612.desop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
---Plase a Pendulum Card
+--Become a Scale
 function c90000612.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return bit.band(r,REASON_EFFECT+REASON_BATTLE)~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()

@@ -1,7 +1,7 @@
 --Blizzard Flyer - Haukea'uli
 function c90001240.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,99,c90001240.lcheck)
+	aux.AddLinkProcedure(c,nil,2,3,c90001240.lcheck)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)

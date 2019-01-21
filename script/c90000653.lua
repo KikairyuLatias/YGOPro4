@@ -14,7 +14,7 @@ function c90000653.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCondition(c90000653.spcon)
-	e1:SetCountLimit(1, 90000653)
+	e1:SetCountLimit(1,90000653)
 	c:RegisterEffect(e1)
 end
 
