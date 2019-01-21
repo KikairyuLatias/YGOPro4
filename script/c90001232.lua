@@ -24,6 +24,7 @@ function c90001232.initial_effect(c)
 		c:RegisterEffect(e2)
 	--special summon
 	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90001232,0))
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1)
@@ -32,6 +33,7 @@ function c90001232.initial_effect(c)
 	c:RegisterEffect(e3)
 	--the power of ZPD banish authority, so lock on and shoot
 	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90001232,1))
 	e4:SetCategory(CATEGORY_REMOVE)
 	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e4:SetType(EFFECT_TYPE_IGNITION)
@@ -135,16 +137,17 @@ end
 
 --pendulum scale
 function c90001232.pencon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousLocation(LOCATION_MZONE)
+	local c=e:GetHandler()
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
 end
 function c90001232.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if chk==0 then return b1 end
+	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
 end
 function c90001232.penop(e,tp,eg,ep,ev,re,r,rp)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if b1 and e:GetHandler():IsRelateToEffect(e) then
-		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
 	end
 end
 

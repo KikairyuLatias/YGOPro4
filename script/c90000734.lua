@@ -1,7 +1,8 @@
 -- Karate Bunny Rika
 function c90000734.initial_effect(c)
 	--fusion summon
-	aux.EnablePendulumAttribute(c)aux.AddFusionProcFunRep(c,aux.FilterBoolFunction(Card.IsSetCard,0x7d0),2,true)
+	c:EnableReviveLimit()
+	aux.AddFusionProcMixN(c,true,true,aux.FilterBoolFunction(Card.IsFusionSetCard,0x7d0),2)
 	--double battle damage
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)

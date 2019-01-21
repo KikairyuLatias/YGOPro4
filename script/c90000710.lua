@@ -44,33 +44,46 @@ function c90000710.initial_effect(c)
 	e5:SetRange(LOCATION_MZONE)
 	e5:SetValue(c90000710.indval)
 	c:RegisterEffect(e5)
-	--become a scale
+	--pendulum
 	local e6=Effect.CreateEffect(c)
-	e6:SetCategory(CATEGORY_DESTROY)
 	e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e6:SetCode(EVENT_DESTROYED)
 	e6:SetProperty(EFFECT_FLAG_DELAY)
-	e6:SetRange(LOCATION_MZONE)
 	e6:SetCondition(c90000710.pencon)
 	e6:SetTarget(c90000710.pentg)
 	e6:SetOperation(c90000710.penop)
 	c:RegisterEffect(e6)
+	--negation in P-zone
+	local e7=Effect.CreateEffect(c)
+	e7:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
+	e7:SetType(EFFECT_TYPE_QUICK_O)
+	e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e7:SetCode(EVENT_CHAINING)
+	e7:SetRange(LOCATION_PZONE)
+	e7:SetCountLimit(1)
+	e7:SetCondition(c90000710.negcon)
+	e7:SetTarget(c90000710.negtg)
+	e7:SetOperation(c90000710.negop)
+	c:RegisterEffect(e7)
 end
 
 --to pendulumZ
 function c90000710.pencon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousLocation(LOCATION_MZONE)
+	local c=e:GetHandler()
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
 end
 function c90000710.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if chk==0 then return b1 end
+	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
 end
 function c90000710.penop(e,tp,eg,ep,ev,re,r,rp)
-	local b1=Duel.CheckLocation(tp,LOCATION_SZONE,6) or Duel.CheckLocation(tp,LOCATION_SZONE,7)
-	if b1 and e:GetHandler():IsRelateToEffect(e) then
-		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
 	end
 end
+
+--boost
 function c90000710.atkfilter(c)
 	return c:IsFaceup() and c:IsSetCard((0x7D0))
 end
@@ -82,4 +95,19 @@ function c90000710.indval(e,re,tp)
 end
 function c90000710.con(e)
 	return e:GetHandler():IsFaceup()
+end
+
+--negation
+function c90000710.negcon(e,tp,eg,ep,ev,re,r,rp)
+	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
+		and ep~=tp and re:IsActiveType(TYPE_SPELL+TYPE_TRAP) and Duel.IsChainNegatable(ev)
+end
+function c90000710.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
+end
+function c90000710.negop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.NegateActivation(ev) and re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:GetHandler():IsRelateToEffect(re) then
+		Duel.SendtoGrave(eg,REASON_EFFECT)
+	end
 end
