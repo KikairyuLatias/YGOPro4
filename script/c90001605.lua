@@ -1,7 +1,7 @@
 --Grand Night Unicorn
 function c90001605.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,nil,aux.NonTuner(Card.IsRace,RACE_BEAST),1)
+	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsRace,RACE_BEAST),1,99)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)

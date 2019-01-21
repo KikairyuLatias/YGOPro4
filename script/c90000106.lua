@@ -34,23 +34,18 @@ end
 
 --special summon
 function c90000106.spcfilter(c)
-	return c:IsSetCard(0x4b0) and not c:IsPublic()
+	return c:IsSetCard(0x4b0) and c:IsType(TYPE_MONSTER) and not c:IsPublic()
 end
 function c90000106.spcon(e,c)
 	if c==nil then return true end
 	local tp=c:GetControler()
-	local hg=Duel.GetMatchingGroup(c90000106.spcfilter,tp,LOCATION_HAND,0,c)
-	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and hg:GetClassCount(Card.GetCode)>=1
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000106.spcfilter,tp,LOCATION_HAND,0,1,nil)
 end
 function c90000106.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	local hg=Duel.GetMatchingGroup(c90000106.spcfilter,tp,LOCATION_HAND,0,c)
-	for i=1,1 do
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
-		local g=hg:Select(tp,1,1,nil)
-		local tc=g:GetFirst()
-		hg:Remove(Card.IsCode,nil,tc:GetCode())
-	end
-	Duel.ConfirmCards(1-tp,rg)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONFIRM)
+	local g=Duel.SelectMatchingCard(tp,c90000106.spcfilter,tp,LOCATION_HAND,0,1,1,nil)
+	Duel.ConfirmCards(1-tp,g)
 	Duel.ShuffleHand(tp)
 end
 

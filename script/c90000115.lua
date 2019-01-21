@@ -25,6 +25,7 @@ function c90000115.initial_effect(c)
 	c:RegisterEffect(e2)
 	 --lock on and shoot
 	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90000115,1))
 	e3:SetCategory(CATEGORY_REMOVE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetType(EFFECT_TYPE_IGNITION)
@@ -60,9 +61,9 @@ function c90000115.cfilter(c)
 	return c:IsSetCard(0x4b0) and c:IsAbleToDeckAsCost()
 end
 function c90000115.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000115.cfilter,tp,LOCATION_HAND,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(c90000115.cfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectMatchingCard(tp,c90000115.cfilter,tp,LOCATION_HAND,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,c90000115.cfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil)
 	Duel.SendtoDeck(g,nil,2,REASON_COST)
 end
 function c90000115.target(e,tp,eg,ep,ev,re,r,rp,chk)

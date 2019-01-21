@@ -29,7 +29,7 @@ function c90000118.activate(e,tp,eg,ep,ev,re,r,rp)
 	local gc=g:GetCount()
 	if gc>0 and g:FilterCount(Card.IsAbleToRemove,nil)==gc then
 		local oc=Duel.Remove(g,POS_FACEDOWN,REASON_EFFECT)
-		if oc<0 then
+		if oc>0 then
 			Duel.Draw(1-tp,oc,REASON_EFFECT)
 		end
 	end
