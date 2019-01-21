@@ -3,6 +3,14 @@ function c90000600.initial_effect(c)
 	--summon conditions
 	c:EnableReviveLimit()
 	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),3,5,c90000600.lcheck)
+	--protection
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_FIELD)
+	e0:SetRange(LOCATION_MZONE)
+	e0:SetTargetRange(0,LOCATION_MZONE)
+	e0:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
+	e0:SetValue(c90000600.atlimit)
+	c:RegisterEffect(e0) 
 	--banish stuff
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000600,1))
@@ -45,6 +53,11 @@ end
 --so advanced it is not funny
 function c90000600.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
+end
+
+--protection from attack
+function c90000600.atlimit(e,c)
+	return c~=e:GetHandler()
 end
 
 --banish forever
