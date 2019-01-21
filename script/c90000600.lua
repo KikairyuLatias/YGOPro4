@@ -15,7 +15,7 @@ function c90000600.initial_effect(c)
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000600,1))
 	e1:SetCategory(CATEGORY_REMOVE)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_QUICK_O)
+	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e1:SetTarget(c90000600.thtg)
 	e1:SetOperation(c90000600.thop)
@@ -77,8 +77,8 @@ end
 
 --stat value
 function c90000600.cfilter(c)
-	return c:IsFaceup() and c:IsRace(RACE_BEAST)
+	return c:IsRace(RACE_BEAST)
 end
 function c90000600.atkval(e,c)
-	return Duel.GetMatchingGroupCount(c90000600.cfilter,0,LOCATION_MZONE+LOCATION_MZONE,LOCATION_GRAVE+LOCATION_GRAVE,nil)*300
+	return Duel.GetMatchingGroupCount(c90000600.cfilter,0,LOCATION_MZONE+LOCATION_GRAVE,LOCATION_MZONE+LOCATION_GRAVE,nil)*300
 end
