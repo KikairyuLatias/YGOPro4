@@ -26,7 +26,7 @@ end
 
 --search
 function c90000225.filter(c)
-	return c:IsSetCard(0x5f1) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
+	return c:IsSetCard(0x5f1) and c:IsAbleToHand()
 end
 function c90000225.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000225.filter,tp,LOCATION_DECK,0,1,nil) end

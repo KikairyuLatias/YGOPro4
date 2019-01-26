@@ -17,6 +17,15 @@ function c90000208.initial_effect(c)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e3)
 	--if latias exists, i get stronger
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE)
+	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCode(EFFECT_SET_ATTACK_FINAL)
+	e4:SetValue(2400)
+	e4:SetReset(RESET_EVENT+0x1fe0000)
+	e4:SetCondition(c90000208.atkcon)
+	c:RegisterEffect(e4)
 	--protection
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_FIELD)
@@ -46,6 +55,14 @@ function c90000208.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --boost
+function c90000208.cfilter(c,code)
+	return c:IsFaceup() and c:IsCode(code)
+end
+
+function c90000208.atkcon(e)
+	local tp=e:GetHandlerPlayer()
+	return Duel.IsExistingMatchingCard(c90000208.cfilter,tp,LOCATION_ONFIELD,0,1,nil,90000251)
+end
 
 --attack target
 function c90000208.atktg(e,c)

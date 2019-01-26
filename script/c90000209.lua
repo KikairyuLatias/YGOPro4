@@ -3,7 +3,7 @@ function c90000209.initial_effect(c)
 	--draw
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(90000209,0))
-	e2:SetCategory(CATEGORY_DRAW)
+	e2:SetCategory(CATEGORY_DRAW+CATEGORY_HANDES)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e2:SetCode(EVENT_BE_MATERIAL)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -22,8 +22,13 @@ function c90000209.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(2)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
 function c90000209.drop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Draw(p,d,REASON_EFFECT)
+	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
+	if Duel.Draw(p,2,REASON_EFFECT)==2 then
+		Duel.ShuffleHand(tp)
+		Duel.BreakEffect()
+		Duel.DiscardHand(tp,nil,1,1,REASON_EFFECT+REASON_DISCARD)
+	end
 end
