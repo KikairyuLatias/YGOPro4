@@ -1,0 +1,76 @@
+--Hazmanimal C-Class - Silver Blaze Fox
+function c90000684.initial_effect(c)
+	--link summon
+	aux.AddLinkProcedure(c,nil,2,2,c90000684.lcheck)
+	c:EnableReviveLimit()
+	--recovery
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(90000684,0))
+	e1:SetCategory(CATEGORY_TOHAND)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1)
+	e1:SetCondition(c90000684.con)
+	e1:SetTarget(c90000684.tg)
+	e1:SetOperation(c90000684.op)
+	c:RegisterEffect(e1)
+	--kirin
+	local e3=Effect.CreateEffect(c)
+	e3:SetCategory(CATEGORY_TOHAND)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetHintTiming(0,0x1e0)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1,90000684)
+	e3:SetTarget(c90000684.thtg)
+	e3:SetOperation(c90000684.thop)
+	c:RegisterEffect(e3)
+end
+
+--check if you are using a hazmanimal monster
+function c90000684.lcheck(g,lc)
+	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
+end
+--return
+function c90000684.con(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()==tp
+end
+function c90000684.filter2(c)
+	return c:IsSetCard(0x43a) and c:IsAbleToHand() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup()
+end
+function c90000684.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(0x14) and chkc:IsControler(tp) and c90000684.filter2(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(c90000684.filter2,tp,LOCATION_REMOVED+LOCATION_GRAVE,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
+	local g=Duel.SelectTarget(tp,c90000684.filter,tp,LOCATION_REMOVED+LOCATION_GRAVE,0,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,0,0)
+end
+function c90000684.op(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.SendtoHand(tc,nil,REASON_EFFECT)
+	end
+end
+--kirin stuff
+function c90000684.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x43a) and c:IsAbleToHand()
+end
+function c90000684.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return false end
+	if chk==0 then return Duel.IsExistingTarget(c90000684.filter,tp,LOCATION_MZONE,0,1,nil)
+		and Duel.IsExistingTarget(Card.IsAbleToHand,tp,0,LOCATION_MZONE,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
+	local g1=Duel.SelectTarget(tp,c90000684.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
+	local g2=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,0,LOCATION_MZONE,1,1,nil)
+	g1:Merge(g2)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g1,2,0,0)
+end
+function c90000684.thop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
+	if g:GetCount()>0 then
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+	end
+end

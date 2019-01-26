@@ -19,7 +19,7 @@ function c90001124.initial_effect(c)
 	e2:SetRange(LOCATION_GRAVE)
 	e2:SetDescription(aux.Stringid(90001124,0))
 	e2:SetTarget(c90001124.target)
-	e1:SetCountLimit(1,90001199)
+	e2:SetCountLimit(1,90001199)
 	e2:SetOperation(c90001124.operation)
 	c:RegisterEffect(e2)
 end

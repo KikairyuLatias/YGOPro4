@@ -1,97 +1,91 @@
---Hazmanimal White Horse Flame (gouki)
+--Hazmanimal Blue Burn Ailurus
 function c90000678.initial_effect(c)
-	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2)
-	c:EnableReviveLimit()
-	--indes
+	--spsummon
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
-	e1:SetValue(1)
+	e1:SetDescription(aux.Stringid(90000678,0))
+	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e1:SetCode(EVENT_SUMMON_SUCCESS)
+	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e1:SetCountLimit(1)
+	e1:SetTarget(c90000678.sptg)
+	e1:SetOperation(c90000678.spop)
 	c:RegisterEffect(e1)
-	--immune
+	--effect gain
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_IMMUNE_EFFECT)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetValue(c90000678.immval)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e2:SetCode(EVENT_BE_MATERIAL)
+	e2:SetCondition(c90000678.efcon)
+	e2:SetOperation(c90000678.efop)
 	c:RegisterEffect(e2)
-	--negate
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000678,0))
-	e3:SetCategory(CATEGORY_NEGATE)
-	e3:SetType(EFFECT_TYPE_QUICK_O)
-	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
-	e3:SetCode(EVENT_CHAINING)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCondition(c90000678.negcon)
-	e3:SetTarget(c90000678.negtg)
-	e3:SetOperation(c90000678.negop)
-	c:RegisterEffect(e3)
-	--atk up
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000678,1))
-	e4:SetCategory(CATEGORY_ATKCHANGE)
-	e4:SetType(EFFECT_TYPE_QUICK_O)
-	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e4:SetCode(EVENT_FREE_CHAIN)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1)
-	e4:SetCondition(c90000678.atkcon)
-	e4:SetOperation(c90000678.atkop)
-	c:RegisterEffect(e4)
 end
-function c90000678.immval(e,te)
-	return te:GetOwner()~=e:GetHandler() and te:IsActiveType(TYPE_MONSTER) and e:GetHandlerPlayer() ~= te:GetHandlerPlayer()
-		and te:GetOwner():GetAttack()<=e:GetHandler():GetAttack() and te:IsActivated()
+--special summon
+function c90000678.filter(c,e,tp)
+	return c:IsSetCard(0x43a) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
-function c90000678.negfilter(c,g)
-	return g:IsContains(c)
+function c90000678.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000678.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90000678.negcon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsStatus(STATUS_BATTLE_DESTROYED) then return false end
-	if rp==tp or not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return false end
-	local lg=e:GetHandler():GetLinkedGroup()
-	lg:AddCard(c)
-	local tg=Duel.GetChainInfo(ev,CHAININFO_TARGET_CARDS)
-	return tg and lg:IsExists(c90000678.negfilter,1,nil,tg) and Duel.IsChainNegatable(ev)
-end
-function c90000678.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
-end
-function c90000678.negop(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if not c:IsFaceup() or c:GetAttack()<500 or not c:IsRelateToEffect(e)
-		or Duel.GetCurrentChain()~=ev+1 or c:IsStatus(STATUS_BATTLE_DESTROYED) then
-		return
-	end
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_COPY_INHERIT)
-	e1:SetReset(RESET_EVENT+0x1ff0000)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetValue(-500)
-	c:RegisterEffect(e1)
-	if not c:IsImmuneToEffect(e1) and not c:IsHasEffect(EFFECT_REVERSE_UPDATE) then
-		Duel.NegateActivation(ev)
+function c90000678.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000678.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+
+function c90000678.efcon(e,tp,eg,ep,ev,re,r,rp)
+	return r==REASON_LINK and e:GetHandler():GetReasonCard():IsSetCard(0x43a)
+end
+
+function c90000678.efop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local rc=c:GetReasonCard()
+	local e1=Effect.CreateEffect(rc)
+	e1:SetDescription(aux.Stringid(90000678,0))
+	e1:SetCategory(CATEGORY_ATKCHANGE)
+	e1:SetType(EFFECT_TYPE_QUICK_F)
+	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetCondition(c90000678.atkcon)
+	e1:SetOperation(c90000678.atkop)
+	e1:SetReset(RESET_EVENT+0x1fe0000)
+	rc:RegisterEffect(e1,true)
+	if not rc:IsType(TYPE_EFFECT) then
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_ADD_TYPE)
+		e2:SetValue(TYPE_EFFECT)
+		e2:SetReset(RESET_EVENT+0x1fe0000)
+		rc:RegisterEffect(e2,true)
+	end
+end
+function c90000678.drcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
+end
+--stat boost
 function c90000678.atkcon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	return c:GetAttack()~=c:GetBaseAttack()
+	local phase=Duel.GetCurrentPhase()
+	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
+	local c=Duel.GetAttackTarget()
+	if not c then return false end
+	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
+		return c and c:IsSetCard(0x43a) and c:IsRelateToBattle()
 end
-function c90000678.atkop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if not c:IsRelateToEffect(e) or c:IsFacedown() then return end
-	local e1=Effect.CreateEffect(c)
+function c90000678.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	if not a:IsRelateToBattle() or a:IsFacedown() or not d:IsRelateToBattle() or d:IsFacedown() then return end
+	if a:GetControler()~=tp then a,d=d,a end
+	if a:IsImmuneToEffect(e) then return end
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetOwnerPlayer(tp)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetValue(1000)
-	e1:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
-	c:RegisterEffect(e1)
+	e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_DAMAGE_CAL)
+	e1:SetValue(d:GetAttack())
+	a:RegisterEffect(e1)
 end

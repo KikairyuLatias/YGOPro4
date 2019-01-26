@@ -13,13 +13,13 @@ function c90001254.initial_effect(c)
 	e1:SetOperation(c90001254.desop)
 	c:RegisterEffect(e1)
 	--ss
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD)
-	e3:SetCode(EFFECT_SPSUMMON_PROC)
-	e3:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e3:SetRange(LOCATION_HAND)
-	e3:SetCondition(c90001254.spcon)
-	c:RegisterEffect(e3)
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_SPSUMMON_PROC)
+	e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e2:SetRange(LOCATION_HAND)
+	e2:SetCondition(c90001254.spcon)
+	c:RegisterEffect(e2)
 end
 
 --destruction for Flyers
@@ -28,11 +28,11 @@ function c90001254.descon(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x9d0)
 end
 function c90001254.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsRemovable() end
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsDestructable() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,Card.IsRemovable,tp,0,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
 end
 function c90001254.desop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
