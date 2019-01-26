@@ -55,14 +55,14 @@ function c90000612.initial_effect(c)
 		e6:SetCode(EFFECT_UPDATE_DEFENSE)
 		c:RegisterEffect(e6)
 		--spsummon
-		local e7=Effect.CreateEffect(c)
-		e7:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
-		e7:SetType(EFFECT_TYPE_IGNITION)
-		e7:SetRange(LOCATION_HAND)
-		e7:SetProperty(EFFECT_FLAG_CARD_TARGET)
-		e7:SetTarget(c90000612.sptg)
-		e7:SetOperation(c90000612.spop)
-		c:RegisterEffect(e7)
+		local e8Effect.CreateEffect(c)
+		e8:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
+		e8:SetType(EFFECT_TYPE_IGNITION)
+		e8:SetRange(LOCATION_PZONE)
+		e8:SetProperty(EFFECT_FLAG_CARD_TARGET)
+		e8:SetTarget(c90000612.sptg)
+		e8:SetOperation(c90000612.spop)
+		c:RegisterEffect(e8)
 end
 
 --2x damage
@@ -130,7 +130,7 @@ end
 
 --summon self
 function c90000612.desfilter(c)
-	return c:IsFaceup() and (c:IsSetCard(0x439) or c:IsSetCard(0x1439))
+	return c:IsFaceup() and c:IsSetCard(0x439)
 end
 function c90000612.desfilter2(c,e)
 	return c90000612.desfilter(c) and c:IsCanBeEffectTarget(e)
@@ -138,26 +138,11 @@ end
 function c90000612.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc:IsControler(tp) and c90000612.desfilter(chkc) end
 	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
-	local ct=-ft+1
-	if chk==0 then return ct<=3 and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
-		and Duel.IsExistingTarget(c90000612.desfilter,tp,LOCATION_ONFIELD,0,3,nil)
-		and (ct<=0 or Duel.IsExistingTarget(c90000612.desfilter,tp,LOCATION_MZONE,0,ct,nil)) end
-	local g=nil
-	if ct>0 then
-		local tg=Duel.GetMatchingGroup(c90000612.desfilter2,tp,LOCATION_ONFIELD,0,nil,e)
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-		g=tg:FilterSelect(tp,Card.IsLocation,ct,ct,nil,LOCATION_MZONE)
-		if ct<3 then
-			tg:Sub(g)
-			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-			local g2=tg:Select(tp,3-ct,3-ct,nil)
-			g:Merge(g2)
-		end
-		Duel.SetTargetCard(g)
-	else
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-		g=Duel.SelectTarget(tp,c90000612.desfilter,tp,LOCATION_ONFIELD,0,3,3,nil)
-	end
+	local g=Duel.GetMatchingGroup(c90000612.desfilter2,tp,LOCATION_ONFIELD,0,nil,e)
+	if chk==0 then return ft>-3 and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false)
+		and g:GetCount()>2 and aux.SelectUnselectGroup(g,e,tp,3,3,aux.ChkfMMZ(1),0) end
+	local sg=aux.SelectUnselectGroup(g,e,tp,3,3,aux.ChkfMMZ(1),1,tp,HINTMSG_DESTROY)
+	Duel.SetTargetCard(sg)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,3,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end

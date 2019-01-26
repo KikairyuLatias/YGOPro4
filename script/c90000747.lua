@@ -3,16 +3,15 @@ function c90000747.initial_effect(c)
 	--link summon
 	c:EnableReviveLimit()
 	aux.AddLinkProcedure(c,nil,2,2)
-	--special summon
+	--spsummon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000747,0))
+	e1:SetDescription(aux.Stringid(90001115,1))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DELAY)
-	e1:SetCondition(c90000747.spcon1)
-	e1:SetTarget(c90000747.sptg1)
-	e1:SetOperation(c90000747.spop1)
+	e1:SetCondition(c90001115.spcon)
+	e1:SetTarget(c90001115.sptg)
+	e1:SetOperation(c90001115.spop)
 	c:RegisterEffect(e1)
 	--direct attack thing (make later)
 	local e2=Effect.CreateEffect(c)
@@ -26,26 +25,26 @@ function c90000747.initial_effect(c)
 	e2:SetOperation(c90000747.daop)
 	c:RegisterEffect(e2,false,1)
 end
---summon thing
- function c90000747.spcon1(e,tp,eg,ep,ev,re,r,rp)
+--special summon
+function c90001115.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
-function c90000747.spfilter1(c,e,tp,zone)
-	return c:IsSetCard(0x7d0) and c:IsLevelBelow(6) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
+function c90001115.filter(c,e,tp,zone)
+	return c:IsSetCard(0x7d0) and c:IsLevelBelow(6)and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
-function c90000747.sptg1(e,tp,eg,ep,ev,re,r,rp,chk)
-	local zone=e:GetHandler():GetLinkedZone(1-tp)
-	if chk==0 then return Duel.GetLocationCount(1-tp,LOCATION_MZONE,tp,LOCATION_REASON_TOFIELD,zone)>0
-		and Duel.IsExistingMatchingCard(c90000747.spfilter1,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e,tp,zone) end
+function c90001115.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	local zone=e:GetHandler():GetLinkedZone()
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and zone~=0
+		and Duel.IsExistingMatchingCard(c90001115.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e,tp,zone) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_DECK)
 end
-function c90000747.spop1(e,tp,eg,ep,ev,re,r,rp)
-	local zone=e:GetHandler():GetLinkedZone(1-tp)
-	if Duel.GetLocationCount(1-tp,LOCATION_MZONE,tp,LOCATION_REASON_TOFIELD,zone)<=0 then return end
+function c90001115.spop(e,tp,eg,ep,ev,re,r,rp)
+	local zone=e:GetHandler():GetLinkedZone()
+	if zone==0 or Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000747.spfilter1,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil,e,tp,zone)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,1-tp,false,false,POS_FACEUP,zone)
+	local g=Duel.SelectMatchingCard(tp,c90001115.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil,e,tp,zone)
+	if #g>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP,zone)
 	end
 end
 
