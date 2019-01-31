@@ -4,22 +4,15 @@ function c90000664.initial_effect(c)
 	aux.AddLinkProcedure(c,nil,2,2,c90000664.lcheck)
 	c:EnableReviveLimit()
 	--float and stuff
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000664,1))
-	e1:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetCode(EVENT_TO_GRAVE)
-	e1:SetCondition(c90000664.sumcon)
-	e1:SetTarget(c90000664.sumtg)
-	e1:SetOperation(c90000664.sumop)
-	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EVENT_REMOVE)
+	local e2=Effect.CreateEffect(c)
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+	e2:SetCode(EVENT_LEAVE_FIELD)
+	e2:SetCondition(c90000664.spcon)
+	e2:SetTarget(c90000664.sptg)
+	e2:SetOperation(c90000664.spop)
 	c:RegisterEffect(e2)
-	local e3=e1:Clone()
-	e3:SetCode(EVENT_TO_DECK)
-	c:RegisterEffect(e3)
 	--draw when you ED spam
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(90000664,0))
@@ -38,28 +31,32 @@ function c90000664.lcheck(g,lc)
 end
 
 --float stuff
-function c90000664.sumcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousPosition(POS_FACEUP) and e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
+function c90000664.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousPosition(POS_FACEUP)
 end
-function c90000664.filter(c,e,tp)
-	return c:IsLevelBelow(4) and (c:IsRace(RACE_BEAST) or c:IsAttribute(ATTRIBUTE_LIGHT)) and c:IsCanBeSpecialSummoned(e,0,tp,false,true)
+
+function c90000664.spfilter(c,e,tp)
+	return (c:IsLevelBelow(4) and c:IsRace(RACE_BEAST)) or (c:IsLevelBelow(4) and c:IsAttribute(ATTRIBUTE_LIGHT)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
-function c90000664.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90000664.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000664.filter,tp,LOCATION_GRAVE+LOCATION_DECK,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE+LOCATION_DECK)
+		and Duel.IsExistingMatchingCard(c90000664.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90000664.sumop(e,tp,eg,ep,ev,re,r,rp)
-	local tg=Duel.GetFirstMatchingCard(c90000664.filter,tp,LOCATION_GRAVE+LOCATION_DECK,0,nil,e,tp)
-	if tg then
-		Duel.SpecialSummon(tg,0,tp,tp,false,true,POS_FACEUP)
+function c90000664.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000664.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 
 --draw power
 function c90000664.drcon(e,tp,eg,ep,ev,re,r,rp)
 	local tg=eg:GetFirst()
-	return eg:GetCount()==1 and tg~=e:GetHandler() and (tg:GetSummonType()==SUMMON_TYPE_SYNCHRO or tg:GetSummonType()==SUMMON_TYPE_FUSION or tg:GetSummonType()==SUMMON_TYPE_XYZ or tg:GetSummonType()==SUMMON_TYPE_LINK)
+	return eg:GetCount()==1 and tg~=e:GetHandler() and (tg:GetSummonType()==SUMMON_TYPE_SYNCHRO or tg:GetSummonType()==SUMMON_TYPE_FUSION or tg:GetSummonType()==SUMMON_TYPE_XYZ or tg:GetSummonType()==SUMMON_TYPE_LINK) and eg:GetFirst():IsControler(tp)
 end
 function c90000664.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) end

@@ -1,7 +1,7 @@
 --Scuba Pony Shira GX
 function c90000672.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,99,c90000672.lcheck)
+	aux.AddLinkProcedure(c,nil,2,nil,c90000672.lcheck)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)
@@ -32,7 +32,7 @@ end
 
 --mat check
 function c90000672.lcheck(g,lc)
-	return g:IsExists(Card.IsType,1,nil,RACE_BEAST)
+	return g:GetClassCount(Card.GetCode)==g:GetCount()
 end
 
 --summon

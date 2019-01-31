@@ -5,13 +5,13 @@ function c90000920.initial_effect(c)
 	aux.AddLinkProcedure(c,nil,2,2)
 	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000920,0))
+	e1:SetDescription(aux.Stringid(90000665,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCountLimit(1,90000920)
-	e1:SetTarget(c90000920.target)
-	e1:SetOperation(c90000920.operation)
+	e1:SetCountLimit(1,90000665)
+	e1:SetTarget(c90000665.target)
+	e1:SetOperation(c90000665.operation)
 	c:RegisterEffect(e1)
 	--add to hand
 	local e2=Effect.CreateEffect(c)
@@ -27,38 +27,35 @@ function c90000920.initial_effect(c)
 	c:RegisterEffect(e2) 
 end
 
---ss condition
-function c90000920.filter(c,e,tp,zone)
+--special summon
+function c90000665.filter(c,e,tp,zone)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
-function c90000920.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90000665.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
 		local zone=e:GetHandler():GetLinkedZone()
-		return zone~=0 and Duel.IsExistingMatchingCard(c90000920.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone)
+		return zone~=0 and Duel.IsExistingMatchingCard(c90000665.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone)
 	end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90000920.operation(e,tp,eg,ep,ev,re,r,rp)
+function c90000665.operation(e,tp,eg,ep,ev,re,r,rp)
 	local zone=e:GetHandler():GetLinkedZone()
 	if zone==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000920.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
+	local g=Duel.SelectMatchingCard(tp,c90000665.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP,zone)
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-		e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
-		e1:SetValue(1)
-		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		tc:RegisterEffect(e1)
+	local tc=g:GetFirst()
+		if tc then
+			Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+			e1:SetValue(1)
+			e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
+			tc:RegisterEffect(e1)
+		end
 	end
-end
-
---idk
-function c90000920.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
 end
 
 --add card

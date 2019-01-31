@@ -7,52 +7,64 @@ function c90000514.initial_effect(c)
 	e0:SetType(EFFECT_TYPE_ACTIVATE)
 	e0:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e0)
-	--destruction
+	-- destroy
 	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(90000514,0))
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetTarget(c90000514.remtg)
 	e1:SetCountLimit(1,90000514)
-	e1:SetOperation(c90000514.remop)
+	e1:SetTarget(c90000514.destg)
+	e1:SetCondition(c90000514.descon)
+	e1:SetOperation(c90000514.desop)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
-	--cannot target
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e3:SetValue(aux.tgoval)
-	c:RegisterEffect(e3)
-	--indes
+   --cannot target
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetValue(c90000514.indval)
+	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e4:SetValue(aux.tgoval)
 	c:RegisterEffect(e4)
-end
---destroy stuff
-function c90000514.remtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsAbleToDestroy() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToDestroy,tp,LOCATION_MZONE,LOCATION_SZONE,LOCATION_PZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,Card.IsAbleToDestroy,tp,LOCATION_MZONE,LOCATION_SZONE,LOCATION_PZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
-end
-function c90000514.remop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		Duel.Destroy(tc,POS_FACEUP,REASON_EFFECT)
-	end
+	--indes
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetValue(c90000514.indval)
+	c:RegisterEffect(e5)
 end
 
---standard stuff
+--because I can get into places you can't
 function c90000514.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
+end
+
+--destroy stuff
+function c90000514.cfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0xd0)
+end
+function c90000514.descon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(c90000514.cfilter,tp,LOCATION_MZONE,0,1,e:GetHandler())
+end
+function c90000514.filter(c)
+	return c:IsFaceup() and c:IsDestructable()
+end
+function c90000514.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) and c90000519.filter(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(c90000514.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectTarget(tp,c90000514.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function c90000514.desop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.Destroy(tc,REASON_EFFECT)
+	end
 end

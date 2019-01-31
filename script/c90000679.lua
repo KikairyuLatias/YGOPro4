@@ -8,7 +8,7 @@ function c90000679.initial_effect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
 	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e0:SetRange(LOCATION_MZONE)
-	e0:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e0:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e0:SetValue(aux.tgoval)
 	c:RegisterEffect(e0)
 	--damage

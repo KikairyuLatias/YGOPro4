@@ -1,4 +1,4 @@
---Magispecter Fox
+--Majespecter Fox
 function c90000511.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
@@ -20,32 +20,32 @@ function c90000511.initial_effect(c)
 	local e3=e2:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e3)
+	--cannot target
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetCondition(c90000511.con)
+	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e4:SetValue(aux.tgoval)
 	c:RegisterEffect(e4)
+	--indes
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_SINGLE)
-	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetCondition(c90000511.con)
 	e5:SetValue(c90000511.indval)
 	c:RegisterEffect(e5)
 end
-function c90000511.con(e)
-	return e:GetHandler():IsFaceup() and e:GetHandler():IsLocation(LOCATION_MZONE)
-end
+
+--because I can get into places you can't
 function c90000511.indval(e,re,tp)
-	return e:GetHandler():GetControler()~=tp
+	return tp~=e:GetHandlerPlayer()
 end
 
+--search
 function c90000511.filter(c)
-	return c:IsSetCard(0x1e7) and c:IsType(TYPE_TRAP) and c:IsAbleToHand()
+	return c:IsSetCard(0xd0) and c:IsType(TYPE_TRAP) and c:IsAbleToHand()
 end
 function c90000511.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000511.filter,tp,LOCATION_DECK,0,1,nil) end

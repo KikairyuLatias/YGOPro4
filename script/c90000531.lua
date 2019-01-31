@@ -26,7 +26,7 @@ function c90000531.initial_effect(c)
 end
 --special summon
 function c90000531.filter(c,e,tp)
-	return c:IsSetCard(0x55b) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000531) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x122) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000531) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
 function c90000531.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

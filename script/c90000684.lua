@@ -16,17 +16,18 @@ function c90000684.initial_effect(c)
 	e1:SetOperation(c90000684.op)
 	c:RegisterEffect(e1)
 	--kirin
-	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_TOHAND)
-	e3:SetType(EFFECT_TYPE_QUICK_O)
-	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e3:SetCode(EVENT_FREE_CHAIN)
-	e3:SetHintTiming(0,0x1e0)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCountLimit(1,90000684)
-	e3:SetTarget(c90000684.thtg)
-	e3:SetOperation(c90000684.thop)
-	c:RegisterEffect(e3)
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000684,1))
+	e2:SetCategory(CATEGORY_TOHAND)
+	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetCode(EVENT_FREE_CHAIN)
+	e2:SetHintTiming(0,0x1e0)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1,90000684)
+	e2:SetTarget(c90000684.thtg)
+	e2:SetOperation(c90000684.thop)
+	c:RegisterEffect(e2)
 end
 
 --check if you are using a hazmanimal monster
@@ -38,7 +39,7 @@ function c90000684.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp
 end
 function c90000684.filter2(c)
-	return c:IsSetCard(0x43a) and c:IsAbleToHand() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup()
+	return c:IsSetCard(0x43a) and c:IsAbleToHand() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
 end
 function c90000684.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(0x14) and chkc:IsControler(tp) and c90000684.filter2(chkc) end

@@ -55,7 +55,7 @@ function c90000612.initial_effect(c)
 		e6:SetCode(EFFECT_UPDATE_DEFENSE)
 		c:RegisterEffect(e6)
 		--spsummon
-		local e8Effect.CreateEffect(c)
+		local e8=Effect.CreateEffect(c)
 		e8:SetCategory(CATEGORY_DESTROY+CATEGORY_SPECIAL_SUMMON)
 		e8:SetType(EFFECT_TYPE_IGNITION)
 		e8:SetRange(LOCATION_PZONE)

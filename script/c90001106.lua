@@ -22,7 +22,7 @@ end
 
 --ss
 function c90001106.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and not c:IsCode(90001106)
+	return c:IsFaceup() and c:IsSetCard(0x4af)
 end
 function c90001106.spcon(e,c)
 	if c==nil then return true end

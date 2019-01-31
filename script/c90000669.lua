@@ -23,24 +23,16 @@ function c90000669.initial_effect(c)
 	e2:SetTarget(c90000669.indtg)
 	e2:SetValue(1)
 	c:RegisterEffect(e2)
-	--float again with negated effects
+	--float and stuff
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000669,1))
-	e3:SetType(EFFECT_TYPE_TRIGGER_F+EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e3:SetCode(EVENT_TO_GRAVE)
-	e3:SetCountLimit(1)
-	e3:SetCondition(c90000669.sumcon)
-	e3:SetTarget(c90000669.sumtg)
-	e3:SetOperation(c90000669.sumop)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+	e3:SetCode(EVENT_LEAVE_FIELD)
+	e3:SetCondition(c90000669.spcon)
+	e3:SetTarget(c90000669.sptg)
+	e3:SetOperation(c90000669.spop)
 	c:RegisterEffect(e3)
-	local e4=e1:Clone()
-	e4:SetCode(EVENT_REMOVE)
-	c:RegisterEffect(e4)
-	local e5=e1:Clone()
-	e5:SetCode(EVENT_TO_DECK)
-	c:RegisterEffect(e5)
 end
 --summon cond
 function c90000669.lcheck(g,lc,tp)
@@ -51,30 +43,35 @@ function c90000669.indtg(e,c)
 	return e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsSetCard(0x439)
 end
 --float stuff
-function c90000669.sumcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousPosition(POS_FACEUP) and e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
+function c90000669.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousPosition(POS_FACEUP)
 end
-function c90000669.filter(c,e,tp)
-	return c:IsSetCard(0x439) and c:IsCanBeSpecialSummoned(e,0,tp,false,true)
+
+function c90000669.spfilter(c,e,tp)
+	return c:IsSetCard(0x439) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
-function c90000669.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90000669.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000669.filter,tp,LOCATION_GRAVE+LOCATION_EXTRA,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE+LOCATION_EXTRA)
+		and Duel.IsExistingMatchingCard(c90000669.spfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA+LOCATION_GRAVE)
 end
-function c90000669.sumop(e,tp,eg,ep,ev,re,r,rp)
-	local tg=Duel.GetFirstMatchingCard(c90000669.filter,tp,LOCATION_GRAVE+LOCATION_EXTRA,0,nil,e,tp)
-	if tg then
-		Duel.SpecialSummon(tg,0,tp,tp,false,true,POS_FACEUP)>0 then
-		local e1=Effect.CreateEffect(c)
+function c90000669.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000669.spfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local tc=g:GetFirst()
+	if tc and Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP) then
+		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_DISABLE)
-		e1:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(c)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+		tc:RegisterEffect(e1,true)
+		local e2=Effect.CreateEffect(e:GetHandler())
 		e2:SetType(EFFECT_TYPE_SINGLE)
 		e2:SetCode(EFFECT_DISABLE_EFFECT)
-		e2:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e2)
+		e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+		tc:RegisterEffect(e2,true)
+		Duel.SpecialSummonComplete()
 	end
 end

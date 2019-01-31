@@ -38,6 +38,11 @@ function c90000448.initial_effect(c)
 	e4:SetOperation(c90000448.sumop)
 	c:RegisterEffect(e4)
 end
+--check
+function c90000448.lcheck(g,lc,tp)
+	return g:GetClassCount(Card.GetCode)==g:GetCount()
+end
+
 --dropping stats
 function c90000448.filter(c)
 	return c:IsFaceup()

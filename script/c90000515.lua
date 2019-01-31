@@ -22,22 +22,28 @@ function c90000515.initial_effect(c)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
 	--cannot target
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e3:SetValue(aux.tgoval)
-	c:RegisterEffect(e3)
-	--indes
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetValue(c90000515.indval)
+	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e4:SetValue(aux.tgoval)
 	c:RegisterEffect(e4)
+	--indes
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetValue(c90000515.indval)
+	c:RegisterEffect(e5)
 end
+
+--because I can get into places you can't
+function c90000515.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
+end
+
 --special summon
 function c90000515.filter(c,e,tp)
 	return c:IsSetCard(0xd0) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
@@ -54,8 +60,4 @@ function c90000515.spop(e,tp,eg,ep,ev,re,r,rp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
-end
---standard stuff
-function c90000515.indval(e,re,tp)
-	return tp~=e:GetHandlerPlayer()
 end
