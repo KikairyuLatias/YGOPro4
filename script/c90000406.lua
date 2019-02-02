@@ -28,7 +28,7 @@ end
 
 --stat booster
 function c90000406.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) and c:IsCardType(TYPE_MONSTER)
+	return c:IsFaceup() and c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) and c:IsType(TYPE_MONSTER)
 end
 function c90000406.val(e,c)
 	return Duel.GetMatchingGroupCount(c90000406.filter,c:GetControler(),LOCATION_MZONE,0,nil)*300

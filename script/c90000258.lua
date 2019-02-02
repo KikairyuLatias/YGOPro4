@@ -25,12 +25,13 @@ function c90000258.recfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x5f1)
 end
 function c90000258.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000258.recfilter,tp,LOCATION_MZONE,0,1,nil) end
-	local g=Duel.GetMatchingGroup(c90000258.recfilter,tp,LOCATION_MZONE,0,nil)
-	local rec=g:GetClassCount(Card.GetCode)*500
+	if chk==0 then return true end
+	local ct=Duel.GetMatchingGroupCount(c90000258.filter,tp,LOCATION_MZONE,0,nil)
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(ct*500)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,ct*500)
 end
 function c90000258.operation(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(c90000258.recfilter,tp,LOCATION_MZONE,0,nil)
-	local rec=g:GetClassCount(Card.GetCode)*500
-	Duel.Recover(tp,rec,REASON_EFFECT)
+	local ct=Duel.GetMatchingGroupCount(c90000258.filter,tp,LOCATION_MZONE,0,nil)
+	Duel.Recover(tp,ct*500,REASON_EFFECT)
 end

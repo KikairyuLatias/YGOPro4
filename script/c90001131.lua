@@ -15,24 +15,17 @@ function c90001131.initial_effect(c)
 	e1:SetTarget(c90001131.thtg)
 	e1:SetOperation(c90001131.thop)
 	c:RegisterEffect(e1)
-	--float when leaving
+	--float and stuff
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001131,1))
-	e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e2:SetCode(EVENT_TO_GRAVE)
-	e2:SetCondition(c90001131.sumcon)
-	e2:SetTarget(c90001131.sumtg)
-	e2:SetOperation(c90001131.sumop)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
+	e2:SetCode(EVENT_LEAVE_FIELD)
+	e2:SetCondition(c90001131.spcon)
+	e2:SetTarget(c90001131.sptg)
+	e2:SetOperation(c90001131.spop)
 	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_REMOVE)
-	c:RegisterEffect(e3)
-	local e4=e2:Clone()
-	e4:SetCode(EVENT_TO_DECK)
-	c:RegisterEffect(e4)
-	end
+end
 
 --restriction
 function c90001131.matfilter(c)
@@ -41,7 +34,7 @@ end
 
 -- kirin
 function c90001131.filter(c)
-	return c:IsFaceup() and c:IsRace(RACE_BEAST_WARRIOR) and c:IsAbleToHand()
+	return c:IsRace(RACE_BEASTWARRIOR) and c:IsAbleToHand()
 end
 function c90001131.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end
@@ -62,20 +55,24 @@ function c90001131.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --float stuff
-function c90001131.sumcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsPreviousPosition(POS_FACEUP) and e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
+function c90001131.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousPosition(POS_FACEUP)
 end
-function c90001131.filter(c,e,tp)
-	return c:IsLevelBelow(4) and c:IsRace(RACE_BEAST_WARRIOR and c:IsCanBeSpecialSummoned(e,0,tp,false,true)
+
+function c90001131.spfilter(c,e,tp)
+	return (c:IsLevelBelow(4) and c:IsRace(RACE_BEASTWARRIOR)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
-function c90001131.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90001131.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90001131.filter,tp,LOCATION_GRAVE+LOCATION_HAND,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE+LOCATION_HAND)
+		and Duel.IsExistingMatchingCard(c90001131.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90001131.sumop(e,tp,eg,ep,ev,re,r,rp)
-	local tg=Duel.GetFirstMatchingCard(c90001131.filter,tp,LOCATION_GRAVE+LOCATION_HAND,0,nil,e,tp)
-	if tg then
-		Duel.SpecialSummon(tg,0,tp,tp,false,true,POS_FACEUP)
+function c90001131.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90001131.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end

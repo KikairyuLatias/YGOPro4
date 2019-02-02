@@ -29,7 +29,7 @@ function c90000718.cfilter(c)
 end
 function c90000718.condition(e,tp,eg,ep,ev,re,r,rp)
 	local ph=Duel.GetCurrentPhase()
-	return Duel.IsExistingMatchingCard(c90000718.cfilter,tp,LOCATION_MZONE,0,2,nil) and g:GetClassCount(Card.GetCode)>=2
+	return Duel.IsExistingMatchingCard(c90000718.cfilter,tp,LOCATION_MZONE,0,2,nil)
 		and (re:IsActiveType(TYPE_MONSTER) or re:IsHasType(EFFECT_TYPE_ACTIVATE)) and Duel.IsChainNegatable(ev)
 end
 function c90000718.target(e,tp,eg,ep,ev,re,r,rp,chk)
