@@ -41,6 +41,7 @@ function c90001233.initial_effect(c)
 	e5:SetTargetRange(0,0xff)
 	e5:SetValue(LOCATION_REMOVED)
 	e5:SetTarget(c90001233.rmtg)
+	e5:SetCondition(c90001233.bancon)
 	c:RegisterEffect(e5)
 end
 
@@ -74,6 +75,12 @@ function c90001233.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 -- banishing
+function c90001233.banfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x4c9) or c:IsCode(90001215) and c:IsType(TYPE_MONSTER)
+end
+function c90001233.bancon(e)
+	return Duel.IsExistingMatchingCard(c90001233.banfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
 function c90001233.rmtg(e,c)
 	return c:GetOwner()~=e:GetHandlerPlayer()
 end

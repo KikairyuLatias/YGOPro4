@@ -38,7 +38,7 @@ function c90000119.descon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsExistingMatchingCard(c90000119.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end
 function c90000119.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4b0) and c:GetCode()~=90000119
+	return c:IsFaceup() and c:IsSetCard(0x4b0) and c~=e:GetHandler()
 end
 function c90000119.filter2(c)
 	return c:IsAbleToDeck()
