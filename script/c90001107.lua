@@ -77,3 +77,7 @@ function c90001107.spop2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+--piercer
+function c90001107.target(e,c)
+	return c:IsSetCard(0x4af)
+end
