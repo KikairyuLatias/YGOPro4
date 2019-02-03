@@ -7,7 +7,7 @@ function c90000703.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
-       --atk up
+	   --atk up
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
@@ -20,7 +20,7 @@ function c90000703.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetCode(EFFECT_UPDATE_DEFENSE)
 	e3:SetRange(LOCATION_PZONE)
-	e3:SetTargetRange(0,LOCATION_MZONE,0)
+	e3:SetTargetRange(0,LOCATION_MZONE)
 	e3:SetValue(c90000703.val)
 	c:RegisterEffect(e3)
 end

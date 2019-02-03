@@ -3,7 +3,7 @@ function c90001112.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x4af),2)
 	c:EnableReviveLimit()
-	 --atk up
+	--atk up
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_UPDATE_ATTACK)
@@ -58,5 +58,5 @@ function c90001112.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x4af)
 end
 function c90001112.val(e,c)
-	return Duel.GetMatchingGroupCount(c90001112.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-300
+	return Duel.GetMatchingGroupCount(c90001112.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-200
 end
