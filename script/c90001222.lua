@@ -18,17 +18,54 @@ function c90001222.initial_effect(c)
 	e2:SetTarget(c90001222.target)
 	e2:SetOperation(c90001222.activate)
 	c:RegisterEffect(e2)
-	---todeck
+	--return to deck
 	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90001222,0))
 	e3:SetCategory(CATEGORY_TODECK)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetCountLimit(1)
-	e3:SetTarget(c90001222.tdtg)
-	e3:SetOperation(c90001222.tdop)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e3:SetTarget(c90001222.target)
+	e3:SetCondition(c90001222.descon)
+	e3:SetOperation(c90001222.operation)
 	c:RegisterEffect(e3)
 end
+
+--ss
+function c90001222.filter(c)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_BEAST) and c~=e:GetHandler()
+end
+function c90001222.spcon(e,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90001222.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+end
+
+--bounce
+function c90001222.descon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(c90001222.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+function c90001222.cfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x4b0) and c~=e:GetHandler()
+end
+function c90001222.filter2(c)
+	return c:IsAbleToDeck()
+end
+function c90001222.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(tp) and c90001222.filter(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(c90001222.filter2,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
+	local g=Duel.SelectTarget(tp,c90001222.filter2,tp,0,LOCATION_ONFIELD,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,g:GetCount(),0,0)
+end
+function c90001222.operation(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.SendtoDeck(tc,nil,2,REASON_EFFECT)
+	end
+end
+
 --damage
 function c90001222.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
@@ -47,22 +84,4 @@ end
 function c90001222.activate(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
-end
---bounce
-function c90001222.tdfilter(c)
-	return c:IsFaceUp() and c:IsAbleToDeck()
-end
-function c90001222.tdtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsOnField() and c90001222.tdfilter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90001222.tdfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectTarget(tp,c90001222.tdfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
-	Duel.SetChainLimit(c90001222.limit(g:GetFirst()))
-end
-function c90001222.tdop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		Duel.SendtoDeck(tc,nil,2,REASON_EFFECT)
-	end
 end

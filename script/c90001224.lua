@@ -56,7 +56,7 @@ end
 
 --stat alteration
 function c90001224.filter2(c)
-	return c:IsSetCard(0x4c9) or c:IsSetCard(0x5c9) or c:IsSetCard(0xc9) and c:IsType(TYPE_MONSTER)
+	return (c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT)) and c:IsType(TYPE_MONSTER)
 end
 
 function c90001224.val(e,c)
@@ -65,5 +65,5 @@ end
 
 --protection
 function c90001224.tgtg(e,re,c)
-	return c~=e:GetHandler() and c:IsControler(e:GetHandlerPlayer()) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_BEAST)
+	return c~=e:GetHandler() and c:IsControler(e:GetHandlerPlayer()) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup() and c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsType(TYPE_MONSTER)
 end

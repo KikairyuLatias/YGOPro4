@@ -12,11 +12,12 @@ function c90001006.initial_effect(c)
 	--atkup
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetDescription(aux.Stringid(90001006,1))
+	e2:SetDescription(aux.Stringid(90001006,0))
 	e2:SetCategory(CATEGORY_ATKCHANGE)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetHintTiming(TIMING_DAMAGE_STEP)
 	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetCondition(c90001006.condition2)
 	e2:SetOperation(c90001006.operation2)
@@ -24,7 +25,7 @@ function c90001006.initial_effect(c)
 end
 --ss
 function c90001006.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x7c7) and c~=e:GetHandler()
+	return c:IsFaceup() and c:IsSetCard(0x7c7) and c:GetCode()~=90001006
 end
 function c90001006.spcon(e,c)
 	if c==nil then return true end
@@ -38,8 +39,8 @@ function c90001006.condition2(e,tp,eg,ep,ev,re,r,rp)
 	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
 	local a=Duel.GetAttacker()
 	local d=Duel.GetAttackTarget()
-	return (d~=nil and a:GetControler()==tp and a:IsSetCard(0x7c7) and a:IsRelateToBattle())
-		or (d~=nil and d:GetControler()==tp and d:IsFaceup() and d:IsSetCard(0x7c7) and d:IsRelateToBattle())
+	return (d~=nil and a:GetControler()==tp and a:IsRace(RACE_MACHINE) and a:IsAttribute(ATTRIBUTE_WIND) and a:IsRelateToBattle())
+		or (d~=nil and d:GetControler()==tp and d:IsFaceup() and d:IsRace(RACE_MACHINE) and d:IsAttribute(ATTRIBUTE_WIND) and d:IsRelateToBattle())
 end
 function c90001006.operation2(e,tp,eg,ep,ev,re,r,rp,chk)
 	local a=Duel.GetAttacker()

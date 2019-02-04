@@ -3,15 +3,6 @@ function c90001136.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,nil,2,3,c90001136.lcheck)
 	c:EnableReviveLimit()
-	--ss lock
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_SPSUMMON_COUNT_LIMIT)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e1:SetTargetRange(0,1)
-	e1:SetValue(1)
-	c:RegisterEffect(e1)
 	--sakura banishing
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_REMOVE)

@@ -25,7 +25,7 @@ end
 
 --ss
 function c90000119.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4b0) and not c:IsCode(90000119)
+	return c:IsFaceup() and c:IsSetCard(0x4b0) and c~=e:GetHandler()
 end
 function c90000119.spcon(e,c)
 	if c==nil then return true end

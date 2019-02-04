@@ -6,7 +6,7 @@ function c90001005.initial_effect(c)
 	e1:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
 	e1:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x7a7))
+	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x7c7))
 	c:RegisterEffect(e1)
 	--cannot die by battle
 	local e2=Effect.CreateEffect(c)

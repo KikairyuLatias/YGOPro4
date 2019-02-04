@@ -71,7 +71,7 @@ function c90001272.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --retrieval from gy to hand
-function c90001272.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90001272.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end

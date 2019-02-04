@@ -9,6 +9,7 @@ function c90001221.initial_effect(c)
 	c:RegisterEffect(e1)
 	--destroy replace
 	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90001221,0))
 	e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_DESTROY_REPLACE)
 	e2:SetRange(LOCATION_PZONE)
@@ -59,5 +60,5 @@ function c90001221.spcon(e,c)
 end
 --protect
 function c90001221.bttg(e,re,c)
-	return c~=e:GetHandler() and c:IsControler(e:GetHandlerPlayer()) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup() and c:IsSetCard(0x4c9) or c:IsSetCard(0x5c9) or IsSetCard(0xc9)
+	return c~=e:GetHandler() and c:IsControler(e:GetHandlerPlayer()) and c:IsLocation(LOCATION_MZONE) and c:IsFaceup() and c:IsSetCard(0x4c9)
 end

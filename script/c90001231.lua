@@ -3,11 +3,10 @@ function c90001231.initial_effect(c)
 	--synchro custom
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_SYNCHRO_MATERIAL_CUSTOM)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e1:SetTarget(c90001231.syntg)
-	e1:SetValue(1)
-	e1:SetOperation(c90001231.synop)
+	e1:SetCode(EFFECT_HAND_SYNCHRO)
+	e1:SetLabel(90001231)
+	e1:SetValue(c90001231.synval)
 	c:RegisterEffect(e1)
 	--stat boost
 	local e2=Effect.CreateEffect(c)
@@ -25,34 +24,34 @@ function c90001231.initial_effect(c)
 end
 
 --use hand as material
-function c90001231.synfilter1(c,syncard,tuner,f)
-	return c:IsFaceup() and c:IsNotTuner() and c:IsCanBeSynchroMaterial(syncard,tuner) and (f==nil or f(c))
+function c90001231.synval(e,c,sc)
+	if sc:IsRace(RACE_BEAST) and --c:IsNotTuner() 
+		(not c:IsType(TYPE_TUNER) or c:IsHasEffect(EFFECT_NONTUNER)) and c:IsRace(RACE_BEAST) and c:IsLocation(LOCATION_HAND) then
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK)
+		e1:SetLabel(90001231)
+		e1:SetTarget(c90001231.synchktg)
+		c:RegisterEffect(e1)
+		return true
+	else return false end
 end
-function c90001231.synfilter2(c,syncard,tuner,f)
-	return c:IsRace(RACE_BEAST) and c:IsNotTuner() and c:IsCanBeSynchroMaterial(syncard,tuner) and (f==nil or f(c))
-end
-function c90001231.syntg(e,syncard,f,minc,maxc)
-	local c=e:GetHandler()
-	local lv=syncard:GetLevel()-c:GetLevel()
-	if lv<=0 then return false end
-	local g=Duel.GetMatchingGroup(c90001231.synfilter1,syncard:GetControler(),LOCATION_MZONE,LOCATION_MZONE,c,syncard,c,f)
-	if syncard:IsSetCard(0x5f7) then
-		local exg=Duel.GetMatchingGroup(c90001231.synfilter2,syncard:GetControler(),LOCATION_HAND,0,c,syncard,c,f)
-		g:Merge(exg)
+function c90001231.chk2(c)
+	if not c:IsHasEffect(EFFECT_HAND_SYNCHRO) or c:IsHasEffect(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK) then return false end
+	local te={c:GetCardEffect(EFFECT_HAND_SYNCHRO)}
+	for i=1,#te do
+		local e=te[i]
+		if e:GetLabel()==90001231 then return true end
 	end
-	return g:CheckWithSumEqual(Card.GetSynchroLevel,lv,minc,maxc,syncard)
+	return false
 end
-function c90001231.synop(e,tp,eg,ep,ev,re,r,rp,syncard,f,minc,maxc)
-	local c=e:GetHandler()
-	local lv=syncard:GetLevel()-c:GetLevel()
-	local g=Duel.GetMatchingGroup(c90001231.synfilter1,syncard:GetControler(),LOCATION_MZONE,LOCATION_MZONE,c,syncard,c,f)
-	if syncard:IsType(TYPE_SYNCHRO) then
-		local exg=Duel.GetMatchingGroup(c90001231.synfilter2,syncard:GetControler(),LOCATION_HAND,0,c,syncard,c,f)
-		g:Merge(exg)
+function c90001231.synchktg(e,c,sg,tg,ntg,tsg,ntsg)
+	if c then
+		local res=tg:IsExists(c90001231.chk2,1,c) or ntg:IsExists(c90001231.chk2,1,c) or sg:IsExists(c90001231.chk2,1,c)
+		return res,Group.CreateGroup(),Group.CreateGroup()
+	else
+		return true
 	end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SMATERIAL)
-	local sg=g:SelectWithSumEqual(tp,Card.GetSynchroLevel,lv,minc,maxc,syncard)
-	Duel.SetSynchroMaterial(sg)
 end
 
 --stat boosting

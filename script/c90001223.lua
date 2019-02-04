@@ -11,7 +11,7 @@ function c90001223.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
-	e2:SetRange(LOCATION_MZONE)
+	e2:SetRange(LOCATION_PZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetValue(c90001223.val)
 	c:RegisterEffect(e2)
@@ -20,6 +20,7 @@ function c90001223.initial_effect(c)
 	c:RegisterEffect(e2a)
 	--double up
 	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90001223,0))
 	e3:SetCategory(CATEGORY_ATKCHANGE)
 	e3:SetType(EFFECT_TYPE_ACTIVATE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
@@ -33,7 +34,7 @@ end
 
 --stat up
 function c90001223.filter2(c)
-	return (c:IsSetCard(0x4c9) or c:IsSetCard(0x5c9))
+	return c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
 function c90001223.val(e,c)
 	return Duel.GetMatchingGroupCount(c90001223.filter2,c:GetControler(),0,LOCATION_MZONE,nil)*300

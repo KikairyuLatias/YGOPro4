@@ -10,6 +10,17 @@ function c90001267.initial_effect(c)
 	e1:SetTarget(c90001267.target)
 	e1:SetOperation(c90001267.activate)
 	c:RegisterEffect(e1)
+	--destroy cards on the field
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90001267,0))
+	e3:SetCategory(CATEGORY_DESTROY)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_GRAVE)
+	e3:SetTarget(c90001267.destg)
+	e3:SetCondition(aux.exccon)
+	e3:SetCost(aux.bfgcost)
+	e3:SetOperation(c90001267.desop)
+	c:RegisterEffect(e3)
 end
 --s/t sniping
 function c90001267.cfilter(c)
@@ -31,4 +42,27 @@ end
 function c90001267.activate(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
 	Duel.Destroy(g,REASON_EFFECT)
+end
+
+--blow stuff up
+function c90001267.lmfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x9d0)
+end
+function c90001267.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,nil,1,0,0)
+	if Duel.IsExistingMatchingCard(c90001267.lmfilter,tp,LOCATION_MZONE,0,1,nil) and e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+		Duel.SetChainLimit(c90001267.chainlm)
+	end
+end
+function c90001267.desop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectMatchingCard(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+	local tc=g:GetFirst()
+	if #g>0 then
+		Duel.Destroy(tc,REASON_EFFECT)
+	end
+end
+function c90001267.chainlm(e,rp,tp)
+	return tp==rp
 end

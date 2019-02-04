@@ -21,20 +21,16 @@ function c90000686.initial_effect(c)
 	--add counter
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e4:SetCode(EVENT_CHAINING)
-	e4:SetRange(LOCATION_MZONE)
+	e4:SetRange(LOCATION_FZONE)
 	e4:SetOperation(aux.chainreg)
 	c:RegisterEffect(e4)
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(90000686,0))
-	e5:SetCategory(CATEGORY_COUNTER)
-	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-	e5:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e5:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
 	e5:SetCode(EVENT_CHAIN_SOLVING)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetCondition(c90000686.ctcon2)
-	e5:SetTarget(c90000686.cttg)
+	e5:SetProperty(EFFECT_FLAG_DELAY)
+	e5:SetRange(LOCATION_FZONE)
 	e5:SetOperation(c90000686.ctop2)
 	c:RegisterEffect(e5)
 	--atk up
@@ -59,21 +55,23 @@ function c90000686.initial_effect(c)
 	local e8=Effect.CreateEffect(c)
 	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
 	e8:SetCode(EVENT_LEAVE_FIELD_P)
-	e8:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	e8:SetOperation(c90000686.regop)
+	e8:SetOperation(c90000686.damp)
 	c:RegisterEffect(e8)
 	local e9=Effect.CreateEffect(c)
-	e9:SetCategory(CATEGORY_DAMAGE)
 	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e9:SetCode(EVENT_DESTROYED)
+	e9:SetCategory(CATEGORY_DAMAGE)
 	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e9:SetCondition(c90000686.damcon)
+	e9:SetCode(EVENT_DESTROY)
 	e9:SetTarget(c90000686.damtg)
 	e9:SetOperation(c90000686.damop)
-	e9:SetLabelObject(e0)
+	e9:SetLabelObject(e8)
 	c:RegisterEffect(e9)
+	local e10=e9:Clone()
+	e10:SetTarget(c90000686.damtg2)
+	c:RegisterEffect(e10)
 end
---counter addition
+
+--counter addition for summoning
 function c90000686.cfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x43a)
 end
@@ -85,17 +83,9 @@ function c90000686.ctop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --counter addition 2
-function c90000686.ctcon2(e,tp,eg,ep,ev,re,r,rp)
-	return re:IsActiveType(TYPE_SPELL+TYPE_TRAP) or re:IsActiveType(TYPE_MONSTER) and re:GetHandler():IsSetCard(0x43a) and e:GetHandler():GetFlagEffect(1)>0
-end
-function c90000686.cttg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_COUNTER,nil,1,0,nil)
-end
 function c90000686.ctop2(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and c:IsFaceup() then
-		c:AddCounter(0x43a,1)
+	if re:IsActiveType(TYPE_MONSTER) and e:GetHandler():GetFlagEffect(1)>0 then
+		e:GetHandler():AddCounter(0x43a,1)
 	end
 end
 
@@ -109,20 +99,22 @@ function c90000686.hztg(e,c)
 end
 
 --damage
-function c90000686.regop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetHandler():GetCounter(0x43a)
-	e:SetLabel(ct)
-end
-function c90000686.damcon(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetLabelObject():GetLabel()
-	e:SetLabel(ct)
-	return ct>0
+function c90000686.damp(e,tp,eg,ep,ev,re,r,rp)
+	e:SetLabel(e:GetHandler():GetCounter(0x43a))
 end
 function c90000686.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetTargetPlayer(rp)
-	Duel.SetTargetParam(e:GetLabel()*300)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,rp,e:GetLabel()*300)
+	local ct=e:GetLabelObject():GetLabel()
+	if chk==0 then return ct~=0 end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(ct*300)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,tp,ct*300)
+end
+function c90000686.damtg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	local ct=e:GetLabelObject():GetLabel()
+	if chk==0 then return ct~=0 end
+	Duel.SetTargetPlayer(1-tp)
+	Duel.SetTargetParam(ct*300)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,tp,ct*300)
 end
 function c90000686.damop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)

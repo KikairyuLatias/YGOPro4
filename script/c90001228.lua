@@ -12,13 +12,23 @@ function c90001228.initial_effect(c)
 	e2:SetDescription(aux.Stringid(90001228,1))
 	e2:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
 	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetRange(LOCATION_MZONE)
+	e2:SetRange(LOCATION_FZONE)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCountLimit(1)
 	e2:SetTarget(c90001228.drtg)
 	e2:SetOperation(c90001228.drop)
 	c:RegisterEffect(e2)
 	--hp gain
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90001228,1))
+	e4:SetCategory(CATEGORY_RECOVER)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e4:SetCode(EVENT_BATTLE_DESTROYING)
+	e4:SetCondition(c90001228.reccon)
+	e4:SetTarget(c90001228.rectg)
+	e4:SetOperation(c90001228.recop)
+	c:RegisterEffect(e4)
 end
 
 --shuffle
@@ -43,4 +53,26 @@ function c90001228.drop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.BreakEffect()
 		Duel.Draw(p,ct,REASON_EFFECT)
 	end
+end
+
+--lp restoration
+function c90001228.reccon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4c9)
+end
+function c90001228.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	local rec=bc:GetAttack()
+	if bc:GetAttack() < bc:GetDefence() then rec=bc:GetDefence() end
+	if rec<0 then rec=0 end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(rec)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,rec)
+end
+
+function c90001228.recop(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Recover(p,d,REASON_EFFECT)
 end

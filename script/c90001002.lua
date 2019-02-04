@@ -15,7 +15,7 @@ function c90001002.initial_effect(c)
 	c:RegisterEffect(e2)
 	--draw
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90001002,0))
+	e4:SetDescription(aux.Stringid(90001002,1))
 	e4:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
 	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e4:SetType(EFFECT_TYPE_IGNITION)
@@ -45,7 +45,7 @@ end
 
 --recycle draw
 function c90001002.tdfilter(c)
-	return c:IsSetCard(0x7c7) and c:IsAbleToDeck()
+	return c:IsSetCard(0x7c7) or (c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_WIND))and c:IsAbleToDeck()
 end
 function c90001002.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and c90001002.tdfilter(chkc) end

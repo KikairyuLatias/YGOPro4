@@ -43,9 +43,11 @@ end
 
 --cut off hands
 function c90001239.cfilter(c,tp)
-	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK)
+	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK) or c:IsPreviousLocation(LOCATION_GRAVE)
 end
-
+function c90001239.damfilter(c)
+	return c:IsSetCard(0x4c9)
+end
 function c90001239.hdcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentPhase()~=PHASE_DRAW and eg:IsExists(c90001239.cfilter,1,nil,1-tp)
 end
@@ -53,11 +55,16 @@ function c90001239.hdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) and e:GetHandler():IsFaceup() 
 		and Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_HAND,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,1,tp,LOCATION_HAND)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,g:GetCount()*200)
 end
 function c90001239.hdop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)
 	if g:GetCount()>0 then
 		local sg=g:RandomSelect(tp,1)
 		Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
+		local gc=Duel.GetMatchingGroupCount(c90001239.damfilter,tp,LOCATION_MZONE,0,nil)
+		local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
+		Duel.Damage(p,gc*200,REASON_EFFECT)
+		end
 	end
 end

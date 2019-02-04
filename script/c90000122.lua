@@ -10,8 +10,8 @@ function c90000122.initial_effect(c)
 	e1:SetTarget(c90000122.postg)
 	e1:SetOperation(c90000122.posop)
 	c:RegisterEffect(e1)
-       --field drops
-	       --atk down
+	   --field drops
+		   --atk down
 		local e2=Effect.CreateEffect(c)
 		e2:SetType(EFFECT_TYPE_FIELD)
 		e2:SetCode(EFFECT_UPDATE_ATTACK)
@@ -24,7 +24,7 @@ function c90000122.initial_effect(c)
 		e3:SetType(EFFECT_TYPE_FIELD)
 		e3:SetCode(EFFECT_UPDATE_DEFENSE)
 		e3:SetRange(LOCATION_MZONE)
-		e3:SetTargetRange(0,LOCATION_MZONE,0)
+		e3:SetTargetRange(0,LOCATION_MZONE)
 		e3:SetValue(c90000122.val)
 		c:RegisterEffect(e3)
 	--GY drops
@@ -35,7 +35,7 @@ function c90000122.initial_effect(c)
 		--def
 		local e5=e3:Clone()
 		e5:SetValue(c90000122.val2)
-		c:RegisterEffect(e4)
+		c:RegisterEffect(e5)
 end
 
 --light up the world

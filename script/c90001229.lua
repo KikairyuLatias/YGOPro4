@@ -26,5 +26,25 @@ function c90001229.target(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function c90001229.activate(e,tp,eg,ep,ev,re,r,rp)
 	local sg=Duel.GetMatchingGroup(c90001229.filter,tp,0,LOCATION_ONFIELD,e:GetHandler())
+	if sg:GetCount()>0 then
 	Duel.Destroy(sg,REASON_EFFECT)
+		Duel.BreakEffect()
+		local tg=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,nil)
+		local tc=tg:GetFirst()
+		while tc do
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_UPDATE_ATTACK)
+			e1:SetValue(500)
+			e1:SetReset(RESET_EVENT+0x1fe0000)
+			tc:RegisterEffect(e1)
+			local e2=Effect.CreateEffect(e:GetHandler())
+			e2:SetType(EFFECT_TYPE_SINGLE)
+			e2:SetCode(EFFECT_UPDATE_DEFENSE)
+			e2:SetValue(500)
+			e2:SetReset(RESET_EVENT+0x1fe0000)
+			tc:RegisterEffect(e2)
+			tc=tg:GetNext()
+		end
+	end
 end

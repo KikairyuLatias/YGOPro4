@@ -80,18 +80,6 @@ function c90001232.initial_effect(c)
 	e8:SetTarget(c90001232.disable)
 	e8:SetCode(EFFECT_DISABLE)
 	c:RegisterEffect(e8)
-
-	--I'm back and ready to kick your tail
-		local e9=Effect.CreateEffect(c)
-		e9:SetDescription(aux.Stringid(90001232,0))
-		e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
-		e9:SetType(EFFECT_TYPE_IGNITION)
-		e9:SetRange(LOCATION_PZONE)
-		e9:SetCountLimit(1,90001232)
-		e9:SetCondition(c90001232.spcon)
-		e9:SetTarget(c90001232.sptg)
-		e9:SetOperation(c90001232.spop)
-		c:RegisterEffect(e9)
 end
 
 --immunity
@@ -165,19 +153,4 @@ function c90001232.filter2(c)
 end
 function c90001232.val(e,c)
 	return Duel.GetMatchingGroupCount(c90001232.filter2,c:GetControler(),LOCATION_MZONE,0,nil)*300
-end
-
---coming back to kick someone in ass
-function c90001232.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetFieldGroupCount(tp,LOCATION_MZONE)
-end
-function c90001232.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
-end
-function c90001232.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if not c:IsRelateToEffect(e) then return end
-	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end
