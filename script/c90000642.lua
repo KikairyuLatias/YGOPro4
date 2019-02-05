@@ -25,57 +25,55 @@ function c90000642.initial_effect(c)
 	c:RegisterEffect(e3)
 	--lvup
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000642,0))
+	e4:SetDescription(aux.Stringid(90000642,1))
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
-	e4:SetTarget(c90000642.target)
-	e4:SetOperation(c90000642.operation)
-	c:RegisterEffect(e4)
-	--lvdown
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000642,0))
-	e4:SetType(EFFECT_TYPE_IGNITION)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
-	e4:SetTarget(c90000642.target)
-	e4:SetOperation(c90000642.operation2)
+	e4:SetTarget(c90000642.lvtg)
+	e4:SetCountLimit(1,90000642)
+	e4:SetOperation(c90000642.lvop)
 	c:RegisterEffect(e4)
 end
 --pony power
-function c90000642.filter(c)
+function c90000642.filter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x439)
 end
 function c90000642.val(e,c)
-	return Duel.GetMatchingGroupCount(c90000621.filter,c:GetControler(),LOCATION_MZONE,0,nil)*100
+	return Duel.GetMatchingGroupCount(c90000642.filter2,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*100
 end
 --level mod
-function c90000642.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+function c90000642.filter(c)
+	return c:IsFaceup() and c:GetLevel()>0
 end
-function c90000642.operation(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
-	local c=e:GetHandler()
-	for tc in aux.Next(g) do
-		local e1=Effect.CreateEffect(c)
+function c90000642.lvtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(c90000642.filter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+	local opt=Duel.SelectOption(tp,aux.Stringid(90000642,0),aux.Stringid(90000642,1))
+	e:SetLabel(opt)
+end
+function c90000642.lvop(e,tp,eg,ep,ev,re,r,rp)
+	local opt=e:GetLabel()
+	local g=Duel.GetMatchingGroup(c90000642.filter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
+	local tc=g:GetFirst()
+	while tc do
+		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-		e1:SetValue(1)
+		e1:SetValue(opt/-1)
 		e1:SetReset(RESET_EVENT+0x1fe0000)
 		tc:RegisterEffect(e1)
+		tc=g:GetNext()
 	end
 end
-function c90000642.operation2(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
-	local c=e:GetHandler()
-	for tc in aux.Next(g) do
-		local e1=Effect.CreateEffect(c)
+function c90000642.lvop2(e,tp,eg,ep,ev,re,r,rp)
+	local opt=e:GetLabel()
+	local g=Duel.GetMatchingGroup(c90000642.filter,tp,LOCATION_MZONE,0,nil)
+	local tc=g:GetFirst()
+	while tc do
+		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 		e1:SetValue(-1)
 		e1:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e2)
+		tc:RegisterEffect(e1)
+		tc=g:GetNext()
 	end
 end

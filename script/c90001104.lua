@@ -47,7 +47,7 @@ end
 
 --attack target
 function c90001104.damfilter(c)
-	return not c:IsCode(90001104) and c:IsFaceup() and c:IsSetCard(0x4af)
+	return c~=e:GetHandler() and c:IsFaceup() and c:IsSetCard(0x4af)
 end
 function c90001104.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90001104.damfilter,tp,LOCATION_MZONE,0,1,nil) end

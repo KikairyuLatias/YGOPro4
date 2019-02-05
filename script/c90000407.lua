@@ -8,21 +8,12 @@ function c90000407.initial_effect(c)
 	e1:SetRange(LOCATION_HAND)
 	e1:SetCondition(c90000407.spcon)
 	c:RegisterEffect(e1)
-	--synchro level (inactive for VRAINS)
-	--local e2=Effect.CreateEffect(c)
-	--e2:SetType(EFFECT_TYPE_SINGLE)
-	--e2:SetCode(EFFECT_SYNCHRO_LEVEL)
-	--e2:SetValue(c90000407.slevel)
-	--c:RegisterEffect(e2)
-	--synchro custom
-	--local e3=Effect.CreateEffect(c)
-	--e3:SetType(EFFECT_TYPE_SINGLE)
-	--e3:SetCode(EFFECT_SYNCHRO_MATERIAL_CUSTOM)
-	--e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	--e3:SetTarget(c90000407.syntg)
-	--e3:SetValue(1)
-	--e3:SetOperation(c90000407.synop)
-	--c:RegisterEffect(e3)
+	--synchro level
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetCode(EFFECT_SYNCHRO_LEVEL)
+	e2:SetValue(c90000407.slevel)
+	c:RegisterEffect(e2)
 end
 
 --ss
@@ -34,4 +25,16 @@ function c90000407.spcon(e,c)
 	if c==nil then return true end
 	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
 		Duel.IsExistingMatchingCard(c90000407.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+end
+
+--level 4
+function c90000407.slevel(e,c)
+	local lv=e:GetHandler():GetLevel()
+	return 4*65536+lv or 2*65536+lv
+end
+
+--level 2
+function c90000407.slevel2(e,c)
+	local lv=e:GetHandler():GetLevel()
+	return 2*65536+lv
 end

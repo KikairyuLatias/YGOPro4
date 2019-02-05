@@ -9,21 +9,24 @@ function c90000401.initial_effect(c)
 	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
-	--cannot target
+	--protect
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
+	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetValue(aux.tgoval)
+	e2:SetProperty(EFFECT_FLAG_SET_AVAILABLE+EFFECT_FLAG_IGNORE_IMMUNE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTargetRange(LOCATION_MZONE,0)
+	e2:SetTarget(c90000401.target)
+	e2:SetValue(1)
 	c:RegisterEffect(e2)
-	--indes
 	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e3:SetProperty(EFFECT_FLAG_SET_AVAILABLE)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetValue(c90000401.indval)
+	e3:SetTargetRange(LOCATION_MZONE,0)
+	e3:SetTarget(c90000401.target)
+	e3:SetValue(1)
 	c:RegisterEffect(e3)
 	--damage
 	local e4=Effect.CreateEffect(c)
@@ -35,10 +38,60 @@ function c90000401.initial_effect(c)
 	e4:SetTarget(c90000401.damtg1)
 	e4:SetOperation(c90000401.damop)
 	c:RegisterEffect(e4)
+	--spsummon
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(90000401,0))
+	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e5:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e5:SetCondition(c90000401.spcon)
+	e5:SetTarget(c90000401.sptg)
+	e5:SetOperation(c90000401.spop)
+	c:RegisterEffect(e5)
 end
-function c90000401.indval(e,re,tp)
-	return e:GetHandler():GetControler()~=tp
+--special summon
+function c90000401.spcon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO)
 end
+function c90000401.spfilter(c,e,tp)
+	return c:IsRace(RACE_DRAGON) and c:IsType(TYPE_SYNCHRO) and c:IsLevelBelow(8) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function c90000401.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000401.spfilter,tp,LOCATION_EXTRA,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
+end
+function c90000401.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000401.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
+		if g:GetCount()>0 then
+		Duel.SpecialSummon(g,SUMMON_TYPE_SYNCHRO,tp,tp,false,false,POS_FACEUP)
+	end
+end
+
+--protect
+function c90000401.target(e,c)
+	return c:IsFaceup() or c:IsFacedown()
+end
+--negate
+function c90000401.condition2(e,tp,eg,ep,ev,re,r,rp)
+	return re:IsActiveType(TYPE_MONSTER) or re:IsActiveType(TYPE_SPELL) or re:IsActiveType(TYPE_TRAP) and Duel.IsChainNegatable(ev)
+end
+function c90000401.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
+	if re:GetHandler():IsAbleToRemove() and re:GetHandler():IsRelateToEffect(re) then
+		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
+	end
+end
+function c90000401.activate2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.NegateActivation(ev)
+	if re:GetHandler():IsRelateToEffect(re) then
+		Duel.Remove(eg,REASON_EFFECT)
+	end
+end
+--burn
 function c90000401.damtg1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetTargetPlayer(1-tp)

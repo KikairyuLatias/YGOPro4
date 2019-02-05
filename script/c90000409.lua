@@ -21,7 +21,7 @@ function c90000409.initial_effect(c)
 	e2:SetCategory(CATEGORY_DISABLE+CATEGORY_DESTROY)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_CHAINING)
-	e2:SetCountLimit(1,90000409)
+	e2:SetCountLimit(1,900004091)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCondition(c90000409.discon)
 	e2:SetTarget(c90000409.distg)
@@ -31,7 +31,7 @@ end
 
 --destroy
 function c90000409.cfilter(c)
-	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c~=e:GetHandler()
 end
 
 function c90000409.descon(e,tp,eg,ep,ev,re,r,rp)
