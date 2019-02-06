@@ -58,7 +58,7 @@ end
 
 --stuff goes here
 function c90000744.disable(e,c)
-	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
+	return (c:GetAttack()>=e:GetHandler():GetAttack() or c:GetDefense()>=e:GetHandler():GetAttack()) and c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
 end
 
 --activation locking

@@ -2,7 +2,7 @@
 function c90001109.initial_effect(c)
 	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001109,0))
+	e1:SetDescription(aux.Stringid(90001109,1))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_HAND)
@@ -12,15 +12,13 @@ function c90001109.initial_effect(c)
 	c:RegisterEffect(e1)
 	--atkup
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001109,0))
+	e2:SetDescription(aux.Stringid(90001109,2))
 	e2:SetCategory(CATEGORY_ATKCHANGE)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e2:SetHintTiming(TIMING_DAMAGE_STEP)
+	e2:SetCode(EVENT_PRE_DAMAGE_CALCULATE)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1)
 	e2:SetCondition(c90001109.atkcon)
+	e2:SetCountLimit(1)
 	e2:SetOperation(c90001109.atkop)
 	c:RegisterEffect(e2)
 end
@@ -48,23 +46,34 @@ end
 
 --atk boost
 function c90001109.atkcon(e,tp,eg,ep,ev,re,r,rp)
-	local phase=Duel.GetCurrentPhase()
-	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
 	local c=Duel.GetAttackTarget()
 	if not c then return false end
 	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
+	e:SetLabelObject(c)
 	return c and c:IsSetCard(0x4af) and c:IsRelateToBattle()
 end
-
-function c90001109.atkop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	if c:IsFaceup() and c:IsRelateToBattle() and bc:IsFaceup() and bc:IsRelateToBattle() then
-		local e1=Effect.CreateEffect(c)
+function c90001109.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetLabelObject()
+	if c:IsFaceup() and c:IsRelateToBattle() then
+		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-		e1:SetValue(bc:GetBaseAttack()*2)
 		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_DAMAGE_CAL)
+		e1:SetValue(c:GetAttack()*2)
 		c:RegisterEffect(e1)
+		local e2=Effect.CreateEffect(e:GetHandler())
+		e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
+		e2:SetRange(LOCATION_MZONE)
+		e2:SetCode(EVENT_PRE_BATTLE_DAMAGE)
+		e2:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+RESET_END)
+		e2:SetCondition(c90001109.rdcon)
+		e2:SetOperation(c90001109.rdop)
+		tc:RegisterEffect(e2)
 	end
+end
+function c90001109.rdcon(e,tp,eg,ep,ev,re,r,rp)
+	return ep~=tp
+end
+function c90001109.rdop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.ChangeBattleDamage(ep,ev/2)
 end

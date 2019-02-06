@@ -31,7 +31,7 @@ end
 
 --destroy
 function c90000409.cfilter(c)
-	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c~=e:GetHandler()
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
 
 function c90000409.descon(e,tp,eg,ep,ev,re,r,rp)

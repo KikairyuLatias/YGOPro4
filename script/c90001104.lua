@@ -46,20 +46,6 @@ function c90001104.op(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --attack target
-function c90001104.damfilter(c)
-	return c~=e:GetHandler() and c:IsFaceup() and c:IsSetCard(0x4af)
-end
-function c90001104.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90001104.damfilter,tp,LOCATION_MZONE,0,1,nil) end
-	local g=Duel.GetMatchingGroup(c90001104.damfilter,tp,LOCATION_MZONE,0,nil)
-	local dam=g:GetClassCount(Card.GetCode)*500
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
-end
-function c90001104.damop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(c90001104.damfilter,tp,LOCATION_MZONE,0,nil)
-	local dam=g:GetClassCount(Card.GetCode)*500
-	Duel.Damage(1-tp,dam,REASON_EFFECT)
-end
 function c90001104.tgtg(e,c)
-	return c~=e:GetHandler() and c:IsSetCard(0x114)
+	return c~=e:GetHandler() and c:IsSetCard(0x4af)
 end

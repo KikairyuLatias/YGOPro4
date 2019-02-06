@@ -11,7 +11,7 @@ function c90001223.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
-	e2:SetRange(LOCATION_PZONE)
+	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetValue(c90001223.val)
 	c:RegisterEffect(e2)
@@ -20,7 +20,6 @@ function c90001223.initial_effect(c)
 	c:RegisterEffect(e2a)
 	--double up
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90001223,0))
 	e3:SetCategory(CATEGORY_ATKCHANGE)
 	e3:SetType(EFFECT_TYPE_ACTIVATE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
@@ -30,6 +29,18 @@ function c90001223.initial_effect(c)
 	e3:SetTarget(c90001223.target)
 	e3:SetOperation(c90001223.activate)
 	c:RegisterEffect(e3)
+	--double up
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90001223,0))
+	e4:SetCategory(CATEGORY_ATKCHANGE)
+	e4:SetType(EFFECT_TYPE_ACTIVATE)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
+	e4:SetCode(EVENT_FREE_CHAIN)
+	e4:SetHintTiming(TIMING_DAMAGE_STEP)
+	e4:SetCondition(c90001223.condition)
+	e4:SetTarget(c90001223.target)
+	e4:SetOperation(c90001223.activate)
+	c:RegisterEffect(e4)
 end
 
 --stat up
@@ -44,15 +55,18 @@ function c90001223.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentPhase()~=PHASE_DAMAGE or not Duel.IsDamageCalculated()
 end
 function c90001223.filter(c)
-	return c:IsFaceup() and c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT)
+	return c:IsFaceup() and c:IsSetCard(0x9d0) and c:GetFlagEffect(90001223)==0
 end
 function c90001223.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and c90001223.filter(chkc) end
-	local exc=nil
-	if Duel.GetCurrentPhase()==PHASE_DAMAGE and Duel.GetAttackTarget()==nil then exc=Duel.GetAttacker() end
-	if chk==0 then return Duel.IsExistingTarget(c90001223.filter,tp,LOCATION_MZONE,0,1,exc) end
+	if chk==0 then return Duel.IsExistingTarget(c90001223.filter,tp,LOCATION_MZONE,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,c90001223.filter,tp,LOCATION_MZONE,0,1,1,exc)
+	local g=Duel.SelectTarget(tp,c90001223.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_CANNOT_DIRECT_ATTACK)
+	e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
+	g:GetFirst():RegisterEffect(e1)
 end
 function c90001223.activate(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
@@ -60,20 +74,23 @@ function c90001223.activate(e,tp,eg,ep,ev,re,r,rp)
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+RESET_END)
-		e1:SetValue(tc:GetAttack()*2)
+		e1:SetValue(tc:GetBaseAttack()*2)
+		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
 		tc:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(e:GetHandler())
-		e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-		e2:SetRange(LOCATION_MZONE)
-		e2:SetCode(EVENT_PRE_BATTLE_DAMAGE)
-		e2:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+RESET_END)
-		e2:SetCondition(c90001223.rdcon)
-		e2:SetOperation(c90001223.rdop)
+		local e2=e1:Clone()
+		e2:SetCode(EFFECT_SET_DEFENSE_FINAL)
+		e2:SetValue(tc:GetBaseDefense()*2)
 		tc:RegisterEffect(e2)
+		local e4=Effect.CreateEffect(e:GetHandler())
+		e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
+		e4:SetRange(LOCATION_MZONE)
+		e4:SetCode(EVENT_PRE_BATTLE_DAMAGE)
+		e4:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+RESET_END)
+		e4:SetCondition(c90001223.rdcon)
+		e4:SetOperation(c90001223.rdop)
+		tc:RegisterEffect(e4)
 	end
 end
-
 function c90001223.rdcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp
 end

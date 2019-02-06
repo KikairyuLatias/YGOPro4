@@ -15,7 +15,7 @@ function c90000671.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetType(EFFECT_TYPE_IGNITION
+	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetCountLimit(1)
 	e2:SetTarget(c90000671.target)
@@ -29,9 +29,8 @@ end
 
 --negate
 function c90000671.disable(e,c)
-	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
+	return c:GetAttack()<=e:GetHandler():GetAttack() and (c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT)
 end
-
 -- ss something
 function c90000671.filter(c,e,tp,zone)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)

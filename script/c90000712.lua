@@ -1,4 +1,4 @@
---Flare Bunny Cinnamon	
+--Flare Bunny Cinnamon  
 function c90000712.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(nil),1,99)
@@ -13,6 +13,7 @@ function c90000712.initial_effect(c)
 	c:RegisterEffect(e1)
 	--rest of cinnamon's stuff goes here
 end
+--negate your stuff
 function c90000712.disable(e,c)
-	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
+	return c:GetAttack()>=e:GetHandler():GetAttack() and (c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT)
 end

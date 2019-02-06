@@ -1,4 +1,4 @@
---Flare Bunny Cinnamon	
+--Flare Bunny Cinnamon  
 function c90000720.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,90000712),1,1)
@@ -35,8 +35,7 @@ function c90000720.initial_effect(c)
 	c:RegisterEffect(e4)
 	local e5=e1:Clone()
 	e5:SetTargetRange(0,LOCATION_HAND)
-	c:RegisterEffect(e5)
-	
+	c:RegisterEffect(e5) 
 end
 function c90000720.disable(e,c)
 	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT

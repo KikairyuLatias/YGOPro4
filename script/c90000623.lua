@@ -6,7 +6,7 @@ function c90000623.initial_effect(c)
 	--protection
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e1:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(LOCATION_MZONE,0)
 	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x439))
@@ -56,5 +56,5 @@ function c90000623.operation(e,tp,eg,ep,ev,re,r,rp,chk)
 		local c=e:GetHandler()
 	if c:IsFacedown() or not c:IsRelateToEffect(e) then return end
 	Duel.NegateSummon(eg)
-	Duel.Remove(eg,REASON_EFFECT)
+	Duel.Remove(eg,POS_FACEUP,REASON_EFFECT)
 end

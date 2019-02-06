@@ -5,7 +5,7 @@ function c90000675.initial_effect(c)
 	c:EnableReviveLimit()
 	--moving
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000675,0))
+	e1:SetDescription(aux.Stringid(90000675,1))
 	e1:SetType(EFFECT_TYPE_QUICK_O)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
@@ -16,7 +16,7 @@ function c90000675.initial_effect(c)
 	c:RegisterEffect(e1)
 	--search
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90000675,1))
+	e2:SetDescription(aux.Stringid(90000675,2))
 	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
@@ -25,6 +25,16 @@ function c90000675.initial_effect(c)
 	e2:SetOperation(c90000675.thop)
 	c:RegisterEffect(e2)
 	--shuffle 1 card on field to deck
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90000675,3))
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
+	e3:SetCode(EVENT_TO_GRAVE)
+	e3:SetCountLimit(1,90000675)
+	e3:SetCondition(c90000675.tdcondition)
+	e3:SetTarget(c90000675.tdtarget)
+	e3:SetOperation(c90000675.tdoperation)
+	c:RegisterEffect(e3)
 end
 
 --check if you are using a hazmanimal monster
@@ -71,4 +81,18 @@ function c90000675.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
---bounce (add later)
+--bounce
+function c90000675.tdcondition(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:GetPreviousControler()==tp and rp~=tp
+end
+function c90000675.tdtarget(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToDeck,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+end
+function c90000675.tdoperation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
+	local g=Duel.SelectMatchingCard(tp,Card.IsAbleToDeck,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
+	if #g>0 then
+		Duel.SendtoDeck(g,nil,2,REASON_EFFECT)
+	end
+end
