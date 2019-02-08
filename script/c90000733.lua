@@ -2,7 +2,7 @@
 function c90000733.initial_effect(c)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(91512835,1))
+	e1:SetDescription(aux.Stringid(90000733,1))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
@@ -24,5 +24,28 @@ function c90000733.spop(e,tp,eg,ep,ev,re,r,rp)
 		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000799,0,0x4011,1200,1000,3,RACE_BEAST,ATTRIBUTE_LIGHT) then
 		local token=Duel.CreateToken(tp,90000799)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
+	if tc and Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP) then
+		local e2=Effect.CreateEffect(e:GetHandler())
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_CANNOT_BE_FUSION_MATERIAL)
+		e2:SetReset(RESET_EVENT+0x1fe0000)
+		e2:SetValue(c90000733.synlimit)
+		tc:RegisterEffect(e2)
+		local e3=Effect.CreateEffect(e:GetHandler())
+		e3:SetType(EFFECT_TYPE_SINGLE)
+		e3:SetCode(EFFECT_CANNOT_BE_SYNCHRO_MATERIAL)
+		e3:SetReset(RESET_EVENT+0x1fe0000)
+		e3:SetValue(c90000733.synlimit)
+		tc:RegisterEffect(e3)
+		local e4=e3:Clone()
+		e4:SetCode(EFFECT_CANNOT_BE_XYZ_MATERIAL)
+		tc:RegisterEffect(e4)
+		Duel.SpecialSummonComplete()
+		end
 	end
+end
+
+function c90000733.synlimit(e,c)
+	if not c then return false end
+	return not c:IsSetCard(0x7d0)
 end

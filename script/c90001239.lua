@@ -68,3 +68,4 @@ function c90001239.hdop(e,tp,eg,ep,ev,re,r,rp)
 		end
 	end
 end
+end

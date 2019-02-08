@@ -48,7 +48,7 @@ function c90000638.initial_effect(c)
 	e5:SetTarget(c90000638.thtg)
 	e5:SetOperation(c90000638.thop)
 	c:RegisterEffect(e5)
-	--atk up
+	 --atk up
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_FIELD)
 	e6:SetCode(EFFECT_UPDATE_ATTACK)
@@ -56,8 +56,13 @@ function c90000638.initial_effect(c)
 	e6:SetTargetRange(0,LOCATION_MZONE)
 	e6:SetValue(c90000638.val)
 	c:RegisterEffect(e6)
-	local e7=e6:Clone()
+	--def up
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_FIELD)
 	e7:SetCode(EFFECT_UPDATE_DEFENSE)
+	e7:SetRange(LOCATION_PZONE)
+	e7:SetTargetRange(0,LOCATION_MZONE)
+	e7:SetValue(c90000638.val)
 	c:RegisterEffect(e7)
 end
 
@@ -98,7 +103,7 @@ function c90000638.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x439)
 end
 function c90000638.val(e,c)
-	return Duel.GetMatchingGroupCount(c90000638.filter,c:GetControler(),LOCATION_MZONE,0,nil)*300
+	return Duel.GetMatchingGroupCount(c90000638.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-300
 end
 
 --search my ass off

@@ -1,7 +1,7 @@
 --Superstar Scubapro Equestrian Duelist Enríque
 function c90000619.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,nil,7,2,c90000619.ovfilter,aux.Stringid(90000619,0))
+	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST),7,2,c90000619.ovfilter,aux.Stringid(90000619,0))
 	c:EnableReviveLimit()
 	--atk
 	local e1=Effect.CreateEffect(c)

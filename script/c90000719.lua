@@ -58,6 +58,7 @@ function c90000719.initial_effect(c)
 	e6:SetOperation(c90000719.activate2)
 	c:RegisterEffect(e6)	
 end
+--attack condition
 function c90000719.mtcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=3
 end
@@ -70,7 +71,7 @@ function c90000719.mtop(e,tp,eg,ep,ev,re,r,rp)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetCode(EFFECT_EXTRA_ATTACK)
 	e4:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END)
-	e4:SetValue(ct+1)
+	e4:SetValue(ct)
 	e:GetHandler():RegisterEffect(e4)
 end
 function c90000719.condition1(e,tp,eg,ep,ev,re,r,rp)

@@ -21,7 +21,7 @@ function c90000426.initial_effect(c)
 	c:RegisterEffect(e2)
 	--negate
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000426,0))
+	e3:SetDescription(aux.Stringid(90000426,1))
 	e3:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
 	e3:SetType(EFFECT_TYPE_QUICK_O)
 	e3:SetCode(EVENT_CHAINING)
@@ -32,11 +32,22 @@ function c90000426.initial_effect(c)
 	e3:SetTarget(c90000426.distg)
 	e3:SetOperation(c90000426.disop)
 	c:RegisterEffect(e3)
+	--burn damage
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(90000426,2))
+	e5:SetCategory(CATEGORY_DAMAGE)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e5:SetCode(EVENT_BATTLE_DESTROYING)
+	e5:SetCondition(c90000426.damcon)
+	e5:SetTarget(c90000426.damtg)
+	e5:SetOperation(c90000426.damop)
+	c:RegisterEffect(e5)
 end
 
 --multi-attack
 function c90000426.mtcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=5
+	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=4
 end
 function c90000426.mtop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -50,7 +61,7 @@ function c90000426.mtop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetCode(EFFECT_EXTRA_ATTACK)
 		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		e1:SetValue(ct-1)
+		e1:SetValue(ct)
 		c:RegisterEffect(e1)
 	end
 end
@@ -85,5 +96,41 @@ end
 function c90000426.disop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
 		Duel.Remove(eg,POS_FACEDOWN,REASON_EFFECT)
+	end
+end
+
+--burn
+function c90000426.banfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8)
+end
+
+function c90000426.damcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	return c:IsRelateToBattle() and bc:IsType(TYPE_MONSTER)
+end
+
+function c90000426.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	local dam=0
+	if bc:IsType(TYPE_XYZ) then dam=bc:GetRank()*400 else dam=bc:GetLevel()*400 end
+	if dam<0 then dam=0 end
+	Duel.SetTargetPlayer(1-tp)
+	Duel.SetTargetParam(dam)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+end
+
+function c90000426.damop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(c90000426.banfilter,tp,LOCATION_MZONE,0,nil)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	if Duel.Damage(p,d,REASON_EFFECT)>0 and g:GetClassCount(Card.GetCode)>=1 then
+	Duel.BreakEffect()
+	local g=Duel.GetDecktopGroup(1-tp,1)
+		if g:GetCount()>0 then
+			Duel.DisableShuffleCheck()
+			Duel.Remove(g,POS_FACEDOWN,REASON_EFFECT)
+		end
 	end
 end

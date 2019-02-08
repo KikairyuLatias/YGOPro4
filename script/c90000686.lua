@@ -84,7 +84,7 @@ end
 
 --counter addition 2
 function c90000686.ctop2(e,tp,eg,ep,ev,re,r,rp)
-	if re:IsActiveType(TYPE_MONSTER) and e:GetHandler():GetFlagEffect(1)>0 then
+	if re:IsActiveType(TYPE_MONSTER) and re:GetHandler():IsSetCard(0x43a) and e:GetHandler():GetFlagEffect(1)>0 then
 		e:GetHandler():AddCounter(0x43a,1)
 	end
 end

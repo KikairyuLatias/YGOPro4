@@ -62,7 +62,9 @@ function c90000650.initial_effect(c)
 	e6:SetValue(c90000650.val)
 	c:RegisterEffect(e6)
 	local e7=e6:Clone()
-	e7:SetCode(EFFECT_UPDATE_DEFENSE)
+	e7:SetCode(EFFECT_SET_DEFENSE_FINAL)
+	e7:SetTarget(c90000650.atktg2)
+	e7:SetValue(c90000650.val2)
 	c:RegisterEffect(e7)
 end
 
@@ -155,6 +157,12 @@ end
 function c90000650.atktg(e,c)
 	return c:IsSetCard(0x439)
 end
+function c90000650.atktg2(e,c)
+	return c:IsSetCard(0x439)
+end
 function c90000650.val(e,c)
 	return c:GetAttack()*2
+end
+function c90000650.val2(e,c)
+	return c:GetDefense()*2
 end

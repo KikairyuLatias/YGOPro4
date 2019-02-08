@@ -24,7 +24,7 @@ end
 
 --level 4 SS
 function c90001602.filter(c)
-	return c:IsRace(RACE_BEAST) and c:IsLevelBelow(5)
+	return c:IsRace(RACE_BEAST) and c:IsLevelBelow(4)
 end
 function c90001602.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

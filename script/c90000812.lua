@@ -15,8 +15,13 @@ function c90000812.initial_effect(c)
 end
 
 --negate
-function c90000812.discon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
+function c90001255.discon(e,tp,eg,ep,ev,re,r,rp)
+	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev) 
+	and Duel.IsExistingMatchingCard(c90001255.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+end
+
+function c90001255.cfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x640) and c~=e:GetHandler()
 end
 function c90000812.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
