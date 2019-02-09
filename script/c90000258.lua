@@ -26,12 +26,12 @@ function c90000258.recfilter(c)
 end
 function c90000258.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local ct=Duel.GetMatchingGroupCount(c90000258.filter,tp,LOCATION_MZONE,0,nil)
+	local ct=Duel.GetMatchingGroupCount(c90000258.recfilter,tp,LOCATION_MZONE,0,nil)
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(ct*500)
 	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,ct*500)
 end
 function c90000258.operation(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetMatchingGroupCount(c90000258.filter,tp,LOCATION_MZONE,0,nil)
+	local ct=Duel.GetMatchingGroupCount(c90000258.recfilter,tp,LOCATION_MZONE,0,nil)
 	Duel.Recover(tp,ct*500,REASON_EFFECT)
 end

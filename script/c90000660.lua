@@ -25,17 +25,17 @@ function c90000660.initial_effect(c)
 	c:RegisterEffect(e2)
 	--become a scale
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000645,0))
+	e3:SetDescription(aux.Stringid(90000660,1))
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetCode(EVENT_DESTROYED)
-	e3:SetCondition(c90000645.pencon)
-	e3:SetTarget(c90000645.pentg)
-	e3:SetOperation(c90000645.penop)
+	e3:SetCondition(c90000660.pencon)
+	e3:SetTarget(c90000660.pentg)
+	e3:SetOperation(c90000660.penop)
 	c:RegisterEffect(e3)
 	--special summon (modify to send from Deck)
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000660,0))
+	e4:SetDescription(aux.Stringid(90000660,2))
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_PZONE)
@@ -47,14 +47,14 @@ function c90000660.initial_effect(c)
 end
 
 --to pendulumZ
-function c90000645.pencon(e,tp,eg,ep,ev,re,r,rp)
+function c90000660.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return r&REASON_EFFECT+REASON_BATTLE~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
 end
-function c90000645.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90000660.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
 end
-function c90000645.penop(e,tp,eg,ep,ev,re,r,rp)
+function c90000660.penop(e,tp,eg,ep,ev,re,r,rp)
 	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then

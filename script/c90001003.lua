@@ -18,18 +18,19 @@ function c90001003.initial_effect(c)
 	e1:SetValue(c90001003.val)
 	e1:SetTarget(c90001003.tg)
 	c:RegisterEffect(e1)
-	--burn damage
+	--burn damage (needs fixing)
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001003,0))
 	e2:SetCategory(CATEGORY_DAMAGE)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetCondition(c90001003.damcon)
-	e2:SetTarget(c90001003.damtg)
-	e2:SetOperation(c90001003.damop)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCondition(c90001003.condition)
+	e2:SetTarget(c90001003.target)
+	e2:SetOperation(c90001003.activate)
 	c:RegisterEffect(e2)
 end
+
 --boost
 function c90001003.tg(e,c)
 	return c:IsType(TYPE_MONSTER) and c~=e:GetHandler()
@@ -42,21 +43,21 @@ function c90001003.val(e,c)
 end
 
 --burn
-function c90001003.damcon(e,tp,eg,ep,ev,re,r,rp)
+function c90001003.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x7c7)
+	local bc=tc:GetBattleTarget()
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x7c7)
+		and bc:IsReason(REASON_BATTLE)
 end
-
-function c90001003.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90001003.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local tc=e:GetHandler():GetBattleTarget()
-	local atk=tc:GetBaseAttack()
-	if atk<0 then atk=0 end
 	Duel.SetTargetPlayer(1-tp)
+	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
+	if atk<0 then atk=0 end
 	Duel.SetTargetParam(atk)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,atk)
 end
-function c90001003.damop(e,tp,eg,ep,ev,re,r,rp)
+function c90001003.activate(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
 end

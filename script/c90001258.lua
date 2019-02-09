@@ -13,37 +13,35 @@ function c90001258.initial_effect(c)
 	c:RegisterEffect(e1)
 	--burn damage (needs fixing)
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001258,0))
+	e2:SetDescription(aux.Stringid(90001258,1))
 	e2:SetCategory(CATEGORY_DAMAGE)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetCondition(c90001258.damcon)
-	e2:SetTarget(c90001258.damtg)
-	e2:SetOperation(c90001258.damop)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
+	e2:SetCondition(c90001258.condition)
+	e2:SetTarget(c90001258.target)
+	e2:SetOperation(c90001258.activate)
 	c:RegisterEffect(e2)
 end
 
 --burn
-function c90001258.damcon(e,tp,eg,ep,ev,re,r,rp)
+function c90001258.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	return c:IsRelateToBattle() and bc:IsType(TYPE_MONSTER) and ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x9d0)
+	local bc=tc:GetBattleTarget()
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x9d0)
+		and bc:IsReason(REASON_BATTLE)
 end
-
-function c90001258.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function c90001258.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	local dam=bc:GetAttack()*1
-	if dam<0 then dam=0 end
 	Duel.SetTargetPlayer(1-tp)
-	Duel.SetTargetParam(dam)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
+	if atk<0 then atk=0 end
+	Duel.SetTargetParam(atk)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,atk)
 end
-
-function c90001258.damop(e,tp,eg,ep,ev,re,r,rp)
+function c90001258.activate(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
 end

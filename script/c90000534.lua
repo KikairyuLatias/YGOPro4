@@ -10,7 +10,7 @@ function c90000534.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 function c90000534.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0xaa) and c:IsType(TYPE_PENDULUM) and c:IsAbleToHand()
+	return c:IsFaceup() and c:IsSetCard(0xd0) and c:IsType(TYPE_PENDULUM) and c:IsAbleToHand()
 end
 function c90000534.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000534.filter,tp,LOCATION_EXTRA,0,1,nil) end

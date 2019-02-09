@@ -11,7 +11,6 @@ function c90000232.initial_effect(c)
 	e1:SetOperation(c90000232.activate)
 	e1:SetCountLimit(1,90000232+EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
-		--something SS4 goes here
 end
 function c90000232.cfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x5f1)
@@ -25,7 +24,9 @@ function c90000232.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,e:GetHandler())
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
-	Duel.SetChainLimit(aux.FALSE)
+	if e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+		Duel.SetChainLimit(aux.FALSE)
+	end
 end
 function c90000232.activate(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()

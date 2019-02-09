@@ -85,10 +85,16 @@ function c90000744.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE_SUMMON,eg,eg:GetCount(),0,0)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,eg:GetCount(),0,0)
+	if Duel.IsExistingMatchingCard(c90000744.lmfilter,tp,LOCATION_MZONE,0,1,nil) and e:IsHasType(EFFECT_TYPE_ACTIVATE) then
+			Duel.SetChainLimit(c90000744.chainlm)
+		end
 end
 function c90000744.disop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsFacedown() or not c:IsRelateToEffect(e) then return end
 	Duel.NegateSummon(eg)
 	Duel.Remove(eg,POS_FACEDOWN,REASON_EFFECT)
+end
+function c90000744.chainlm(e,rp,tp)
+	return tp==rp
 end

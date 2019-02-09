@@ -10,7 +10,20 @@ function c90000259.initial_effect(c)
 	e1:SetTarget(c90000259.thtg)
 	e1:SetOperation(c90000259.thop)
 	c:RegisterEffect(e1)
-	--ss thing (work on later)
+	local e3=e1:Clone()
+	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	c:RegisterEffect(e3)
+	--spsummon
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000259,0))
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetRange(LOCATION_GRAVE)
+	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e2:SetCondition(c90000259.condition)
+	e2:SetTarget(c90000259.target)
+	e2:SetOperation(c90000259.operation)
+	c:RegisterEffect(e2)
 end
 --searching
 function c90000259.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -31,4 +44,20 @@ function c90000259.thop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ShuffleHand(tp)
 	end
 	Duel.ShuffleDeck(tp)
+end
+
+--special
+function c90000259.condition(e,tp,eg,ep,ev,re,r,rp)
+	local c=eg:GetFirst()
+	return eg:GetCount()==1 and c:IsControler(tp) and c:IsSetCard(0x5f1) and c:IsType(TYPE_SYNCHRO) or c:IsSummonType(TYPE_LINK) or c:IsSummonType(TYPE_XYZ)
+end
+function c90000259.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function c90000259.operation(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end

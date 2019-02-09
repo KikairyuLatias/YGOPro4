@@ -100,8 +100,8 @@ function c90001261.operation(e,tp,eg,ep,ev,re,r,rp)
 	local p=e:GetHandler():GetControler()
 	if d==nil then return end
 	local tc=nil
-	if a:GetControler()==p and a:IsSetCard(0x9d0) and d:IsStatus(STATUS_BATTLE_DESTROYED) then tc=d
-	elseif d:GetControler()==p and d:IsSetCard(0x9d0) and a:IsStatus(STATUS_BATTLE_DESTROYED) then tc=a end
+	if a:GetControler()==p and a:IsSetCard(0x9d0) then tc=d
+	elseif d:GetControler()==p and d:IsSetCard(0x9d0) then tc=a end
 	if not tc then return end
 	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetType(EFFECT_TYPE_SINGLE)
