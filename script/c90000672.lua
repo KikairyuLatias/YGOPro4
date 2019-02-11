@@ -43,22 +43,19 @@ function c90000672.hspfilter(c,e,tp)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
 function c90000672.hsptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000672.hspfilter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_DECK)
+	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_HAND+LOCATION_DECK) and c90000672.filter(chkc,e,tp,zone) end
+	if chk==0 then return Duel.IsExistingTarget(c90000672.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e,tp,zone) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectTarget(tp,c90000672.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil,e,tp,zone)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
 end
 function c90000672.hspop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000672.hspfilter,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil,e,tp)
-	local tc=g:GetFirst()
-	if tc and Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP,zone) then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_CANNOT_TRIGGER)
-		tc:RegisterEffect(e1)
+	local tc=Duel.GetFirstTarget()
+	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
+	if tc and tc:IsRelateToEffect(e) and zone~=0  then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
 	end
-	Duel.SpecialSummonComplete()
 end
 
 --negate
