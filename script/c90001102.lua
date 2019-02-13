@@ -24,7 +24,7 @@ end
 
 --ss
 function c90001102.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4b0) and not c:IsCode(90001102)
+	return c:IsFaceup() and c:IsSetCard(0x4af) and not c:IsCode(90001102)
 end
 function c90001102.spcon(e,c)
 	if c==nil then return true end

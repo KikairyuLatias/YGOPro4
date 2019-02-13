@@ -8,39 +8,41 @@ function c90000254.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_MATERIAL_CHECK)
 	e1:SetValue(c90000254.matcheck)
-	c:RegisterEffect(e1)
-	--halve stats
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_SET_ATTACK_FINAL)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_DELAY)
-	e2:SetTargetRange(0,LOCATION_MZONE)
-	e2:SetCondition(c90000254.atkcon)
-	e2:SetTarget(c90000254.atktg)
-	e2:SetValue(c90000254.atkval)
-	c:RegisterEffect(e2)
+	c:RegisterEffect(e1)	
 	--healing
-	local e4=Effect.CreateEffect(c)
-	e4:SetCategory(CATEGORY_RECOVER)
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EVENT_BATTLE_DESTROYING)
-	e4:SetCondition(c90000254.reccon)
-	e4:SetTarget(c90000254.rectg)
-	e4:SetOperation(c90000254.recop)
+	local e2=Effect.CreateEffect(c)
+	e2:SetCategory(CATEGORY_RECOVER)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e2:SetCode(EVENT_BATTLE_DESTROYING)
+	e2:SetCondition(c90000254.reccon)
+	e2:SetTarget(c90000254.rectg)
+	e2:SetOperation(c90000254.recop)
+	c:RegisterEffect(e2)
+	--half atk
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_SET_ATTACK_FINAL)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetTargetRange(0,LOCATION_MZONE)
+	e3:SetCondition(c90000254.statcon)
+	e3:SetValue(c90000254.atkval)
+	c:RegisterEffect(e3)
+	local e4=e3:Clone()
+	e4:SetCode(EFFECT_SET_DEFENSE_FINAL)
+	e4:SetValue(c90000254.defval)
 	c:RegisterEffect(e4)
 end
 
---check if you only used psychic dragon
+--you should use only psychic dragons for this, but fix later, i guesc90000254...
 function c90000254.filter(c)
-	return c:IsSetCard(0x5f1)
+	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x5f1)
 end
 function c90000254.matcheck(e,c)
 	local g=c:GetMaterial()
-	if g:IsExists(c90000254.filter,2,3) then
+	if g:IsExists(c90000254.filter,1,nil) then
 		local e1=Effect.CreateEffect(c)
-		e1:SetDescription(aux.Stringid(id,0))
 		e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CLIENT_HINT)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
@@ -59,12 +61,8 @@ function c90000254.indval(e,re,tp)
 end
 
 --halve everything the opponent got
-function c90000254.atkcon(e)
+function c90000254.statcon(e)
 	return e:GetHandler():GetLinkedGroupCount()>0
-end
-
-function c90000254.atktg(e,c)
-	return c~=e:GetHandler()
 end
 function c90000254.atkval(e,c)
 	return math.ceil(c:GetAttack()/2)

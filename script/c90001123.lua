@@ -8,30 +8,39 @@ function c90001123.initial_effect(c)
 	e1:SetTarget(c90001123.synlimit)
 	c:RegisterEffect(e1)
 	--fusion custom
-	--xyz custom
-	--link custom
-	--lv change
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCountLimit(1)
-	e2:SetTarget(c90001123.target)
-	e2:SetOperation(c90001123.operation)
+	local e2=e1:Clone()
+	e2:SetCode(EFFECT_FUSION_MATERIAL_LIMIT)
 	c:RegisterEffect(e2)
-	--draw
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90001123,0))
-	e3:SetCategory(CATEGORY_DRAW)
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e3:SetCode(EVENT_BE_MATERIAL)
-	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e3:SetCondition(c90001123.drcon)
-	e3:SetCountLimit(1,90001123)
-	e3:SetTarget(c90001123.drtg)
-	e3:SetOperation(c90001123.drop)
-	e3:SetCountLimit(1,90001123)
+	--xyz custom
+	local e3=e1:Clone()
+	e3:SetCode(EFFECT_XYZ_MATERIAL_LIMIT)
 	c:RegisterEffect(e3)
+	--link custom
+	local e4=e1:Clone()
+	e4:SetCode(EFFECT_LINK_MATERIAL_LIMIT)
+	c:RegisterEffect(e4)
+	--lv change
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_IGNITION)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e5:SetCountLimit(1)
+	e5:SetTarget(c90001123.target)
+	e5:SetOperation(c90001123.operation)
+	c:RegisterEffect(e5)
+	--draw
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(90001123,0))
+	e6:SetCategory(CATEGORY_DRAW)
+	e6:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e6:SetCode(EVENT_BE_MATERIAL)
+	e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e6:SetCondition(c90001123.drcon)
+	e6:SetCountLimit(1,90001123)
+	e6:SetTarget(c90001123.drtg)
+	e6:SetOperation(c90001123.drop)
+	e6:SetCountLimit(1,90001123)
+	c:RegisterEffect(e6)
 end
 
 --synchro limit

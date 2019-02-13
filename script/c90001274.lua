@@ -30,10 +30,10 @@ function c90001274.thcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function c90001274.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
 function c90001274.thop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(c90001274.thfilter,tp,LOCATION_DECK,0,nil)
+	local g=Duel.GetMatchingGroup(c90001274.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil)
 	if g:GetCount()==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g1=g:Select(tp,1,1,nil)

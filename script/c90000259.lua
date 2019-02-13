@@ -36,7 +36,7 @@ function c90000259.thop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<5 then return end
 	Duel.ConfirmDecktop(tp,5)
 	local g=Duel.GetDecktopGroup(tp,5)
-	if g:IsExists(c90000259.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(90000259,2)) then
+	if g:IsExists(c90000259.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(90000259,0)) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local sg=g:FilterSelect(tp,c90000259.thfilter,1,1,nil)
 		Duel.SendtoHand(sg,nil,REASON_EFFECT)

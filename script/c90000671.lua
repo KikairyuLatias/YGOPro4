@@ -1,7 +1,7 @@
 --Scuba Pony Akari GX
 function c90000671.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,99,c90000671.lcheck)
+	aux.AddLinkProcedure(c,nil,2,nil,c90000671.lcheck)
 	c:EnableReviveLimit()
 	---disable
 	local e1=Effect.CreateEffect(c)
@@ -24,7 +24,7 @@ function c90000671.initial_effect(c)
 end
 --condition
 function c90000671.lcheck(g,lc)
-	return g:IsExists(Card.IsType,1,nil,RACE_BEAST)
+	return g:GetClassCount(Card.GetCode)==g:GetCount()
 end
 
 --negate
@@ -37,22 +37,20 @@ function c90000671.filter(c,e,tp,zone)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
 function c90000671.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then
-		local zone=e:GetHandler():GetLinkedZone()
-		return zone~=0 and Duel.IsExistingMatchingCard(c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone)
-	end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
+	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_HAND+LOCATION_GRAVE) and c90000671.filter(chkc,e,tp,zone) end
+	if chk==0 then return Duel.IsExistingTarget(c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectTarget(tp,c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
 end
 function c90000671.operation(e,tp,eg,ep,ev,re,r,rp)
-	local zone=e:GetHandler():GetLinkedZone()
-	if zone==0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP,zone)
-	local tc=g:GetFirst()
-		if tc then
+	local tc=Duel.GetFirstTarget()
+	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
+	if tc:IsRelateToEffect(e) and zone~=0  then
 			Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
+		local tc=g:GetFirst()
+		if tc then
 			local e1=Effect.CreateEffect(e:GetHandler())
 			e1:SetType(EFFECT_TYPE_SINGLE)
 			e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
