@@ -17,7 +17,7 @@ function c90000874.initial_effect(c)
 end
 --special summon
 function c90000874.filter(c,e,tp)
-	return not is c:IsCode(90000874) and c:IsSetCard(0x641) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(0x641) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000874) 
 end
 function c90000874.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

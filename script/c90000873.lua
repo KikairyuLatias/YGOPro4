@@ -16,7 +16,7 @@ function c90000873.initial_effect(c)
 end
 --searcher
 function c90000873.filter(c)
-	return c:IsSetCard(0x641) and c:IsAbleToHand() and not c:IsCode(90000873)
+	return c:IsSetCard(0x641) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand() and not c:IsCode(90000873)
 end
 function c90000873.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000873.filter,tp,LOCATION_DECK,0,1,nil) end

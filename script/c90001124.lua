@@ -44,7 +44,7 @@ function c90001124.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 --retrieval from gy to hand
 function c90001124.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToHand() end
+	if chk==0 then return Duel.GetTurnPlayer()==tp and e:GetHandler():IsAbleToHand() end
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
 function c90001124.operation(e,tp,eg,ep,ev,re,r,rp)
