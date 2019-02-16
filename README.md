@@ -1,24 +1,21 @@
 # YGOPro4
 All of my custom YGOPro stuff. 
 
-Please be warned that these are written with YGOPro 1.034 and beyond in mind. Some may work on previous versions with exceptions.
+Please be warned that these are written with YGOPro 1.034 and beyond in mind. Some MAY work on previous versions with exceptions.
 
 # Disclaimer
 
 I am fully aware that a lot of the cards here are one of the following on this list.
-
-1. Lack of pictures
-2. Coding is broken somewhere or has not been updated (as I originally wrote this for 1.033.V7)
-3. Code does not match up with the actual effects on card.
-4. Cards do not have coding due to technical difficulties with coding at the present time. 
-
-I should have a list of what those problems are in another text doc, while hopefully fixing them at a later time.
+1. Lack of pictures or using filler ones thereof. (Please try not to confuse cards with similar artwork)
+2. Coding is broken somewhere or has not been updated (as all of the coding was originally written in 1.033V7-2 (from 2015)
+3. Code does not match up with the actual effects on card due to difficulties/issues with the core at this time.
+4. Cards do not have coding at all, due to technical difficulties with coding at the present time. 
 
 # Uploading schedule
 
-To be determined based on free time. Please note that I'm an engineering major with my own work, NOT a programming/computer science major. 
+To be determined based on free time. Please note that I'm an engineering major with my own work, NOT a programming/computer science major. I will do the best I can, but no guarantees.
 
-I will do the best I can, but no guarantees.
+I'll try for maybe every 3-7 days, time permitting.
 
 # General stuff
 - If anything is amiss (code is broken, pictures need fixing, etc), message me on Discord @Sakura#2014
