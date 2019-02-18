@@ -15,14 +15,14 @@ end
 --summon a token
 function c90000733.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000799,0,0x4011,1200,1000,3,RACE_BEAST,ATTRIBUTE_LIGHT) end
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000752,0,0x4011,1200,1000,3,RACE_BEAST,ATTRIBUTE_LIGHT) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
 end
 function c90000733.spop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000799,0,0x4011,1200,1000,3,RACE_BEAST,ATTRIBUTE_LIGHT) then
-		local token=Duel.CreateToken(tp,90000799)
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000752,0,0x4011,1200,1000,3,RACE_BEAST,ATTRIBUTE_LIGHT) then
+		local token=Duel.CreateToken(tp,90000752)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
 	if tc and Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP) then
 		local e2=Effect.CreateEffect(e:GetHandler())

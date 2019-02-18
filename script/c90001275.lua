@@ -51,7 +51,7 @@ function c90001275.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --cut off hands
 function c90001275.cfilter(c,tp)
-	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_REMOVED) or c:IsPreviousLocation(LOCATION_ONFIELD) or c:IsPreviousLocation(LOCATION_DECK) or c:IsPreviousLocation(LOCATION_GRAVE)
+	return c:IsControler(tp) and (c:IsPreviousLocation(LOCATION_REMOVED) or c:IsPreviousLocation(LOCATION_ONFIELD) or c:IsPreviousLocation(LOCATION_DECK) or c:IsPreviousLocation(LOCATION_GRAVE))
 end
 function c90001275.damfilter(c)
 	return c:IsSetCard(0x4c9)
@@ -68,6 +68,6 @@ function c90001275.hdop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)
 	if g:GetCount()>0 then
 		local sg=g:RandomSelect(tp,1)
-		Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
+		Duel.Remove(sg,POS_FACEDOWN,REASON_EFFECT)
 	end
 end
