@@ -50,7 +50,7 @@ function c90000127.indval(e,re,tp)
 end
 --shuffle and replace
 function c90000127.cfilter(c)
-	return c:IsRace(RACE_BEAST) and c:IsAbleToDeckAsCost()
+	return c:IsRace(RACE_BEASTWARRIOR) and c:IsAbleToDeckAsCost()
 end
 function c90000127.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000127.cfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil) end
@@ -76,13 +76,13 @@ function c90000127.cost2(e,tp,eg,ep,ev,re,r,rp,chk)
 	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
 end
 function c90000127.target2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_GRAVE,1,nil) end 
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_GRAVE+LOCATION_HAND,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_GRAVE,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function c90000127.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_GRAVE,1,1,nil)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_GRAVE+LOCATION_HAND,1,1,nil)
 	e:GetHandler():RegisterFlagEffect(90000127,RESET_EVENT+0x1fe0000,0,1)
 	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
 end
