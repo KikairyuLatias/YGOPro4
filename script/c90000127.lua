@@ -3,18 +3,6 @@ function c90000127.initial_effect(c)
 	--xyz
 	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),4,2)
 	c:EnableReviveLimit()
-	--shuffle and draw
-	local e0=Effect.CreateEffect(c)
-	e0:SetDescription(aux.Stringid(90000127,1))
-	e0:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e0:SetCategory(CATEGORY_DRAW)
-	e0:SetType(EFFECT_TYPE_IGNITION)
-	e0:SetRange(LOCATION_MZONE)
-	e0:SetCountLimit(1)
-	e0:SetCost(c90000127.cost)
-	e0:SetTarget(c90000127.target)
-	e0:SetOperation(c90000127.operation)
-	c:RegisterEffect(e0)
 	--lock on and shoot
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000127,0))
@@ -43,6 +31,18 @@ function c90000127.initial_effect(c)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetValue(c90000127.indval)
 	c:RegisterEffect(e3)
+		--shuffle and draw
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90000127,1))
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetCategory(CATEGORY_DRAW)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1)
+	e4:SetCost(c90000127.cost)
+	e4:SetTarget(c90000127.target)
+	e4:SetOperation(c90000127.operation)
+	c:RegisterEffect(e4)
 end
 --because I can get into places you can't
 function c90000127.indval(e,re,tp)
@@ -77,12 +77,12 @@ function c90000127.cost2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function c90000127.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,1,nil) end 
-	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_GRAVE,nil)
+	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function c90000127.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,1,1,nil)
-	e:GetHandler():RegisterFlagEffect(90000127,RESET_EVENT+0x1fe0000,0,1)
+	e:GetHandler():RegisterFlagEffect(90000127,RESET_EVENT+0x1fe4000,0,1)
 	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
 end
