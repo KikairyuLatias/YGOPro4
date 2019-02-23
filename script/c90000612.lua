@@ -67,12 +67,8 @@ end
 
 --2x damage
 function c90000612.dcon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x439)
-end
-function c90000612.dcon2(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x1439)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x439) and tc:GetBattleTarget()~=nil
 end
 function c90000612.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

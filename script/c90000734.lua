@@ -34,8 +34,8 @@ function c90000734.indval(e,re,tp)
 end
 --double the pain
 function c90000734.dcon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x7d0)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x7d0) and tc:GetBattleTarget()~=nil
 end
 function c90000734.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

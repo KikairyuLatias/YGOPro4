@@ -17,8 +17,8 @@ function c90001133.initial_effect(c)
 end
 --functions
 function c90001133.dcon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x4af)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x4af) and tc:GetBattleTarget()~=nil
 end
 function c90001133.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

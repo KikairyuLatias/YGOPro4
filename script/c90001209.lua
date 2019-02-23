@@ -12,8 +12,8 @@ end
 
 --functions
 function c90001209.dcon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x14c9)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x14c9) and tc:GetBattleTarget()~=nil
 end
 function c90001209.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

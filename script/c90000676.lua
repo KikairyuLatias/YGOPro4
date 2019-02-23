@@ -1,72 +1,70 @@
---Hazmanimal White Horse Flame
+--Rainbow Pegasus
 function c90000676.initial_effect(c)
-	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),3)
-	c:EnableReviveLimit()
-	--protection
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e1:SetValue(aux.tgoval)
-	c:RegisterEffect(e1)
-	--double
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EVENT_PRE_BATTLE_DAMAGE)
-	e2:SetCondition(c90000676.dcon)
-	e2:SetOperation(c90000676.dop)
-	c:RegisterEffect(e2)
-	--pierce
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD)
-	e3:SetCode(EFFECT_PIERCE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetTargetRange(LOCATION_MZONE,0)
-	e3:SetTarget(c90000676.target)
-	c:RegisterEffect(e3)
 	--spsummon
-	local e4=Effect.CreateEffect(c)
-	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e4:SetCode(EVENT_TO_GRAVE)
-	e4:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
-	e4:SetCondition(c90000676.spcon)
-	e4:SetTarget(c90000676.sptg)
-	e4:SetOperation(c90000676.spop)
-	c:RegisterEffect(e4)
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(90000676,0))
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1,90000676)
+	e1:SetTarget(c90000676.target)
+	e1:SetOperation(c90000676.activate)
+	c:RegisterEffect(e1)
+	--spsummon level 5+
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000676,1))
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1,90000676)
+	e2:SetCost(c90000676.spcost)
+	e2:SetTarget(c90000676.sptg)
+	e2:SetOperation(c90000676.spop)
+	c:RegisterEffect(e2)
 end
 
---double damage
-function c90000676.dcon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetAttackTarget()==nil then return false end
-	return eg:GetFirst():IsSetCard(0x43a)
+--level 4 SS
+function c90000676.filter(c)
+	return c:IsRace(RACE_BEAST) and c:IsLevelBelow(4)
 end
-function c90000676.dop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.ChangeBattleDamage(ep,ev*3)
+function c90000676.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000676.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
+end
+function c90000676.activate(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000676.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+	end
 end
 
---piercing
-function c90000676.target(e,c)
-	return c:IsSetCard(0x43a)
+--level 5 SS
+function c90000676.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsReleasable() end
+	Duel.Release(e:GetHandler(),REASON_COST)
 end
-
---revival
-function c90000676.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and rp~=tp and c:GetPreviousControler()==tp
+function c90000676.spfilter(c,e,tp)
+	return c:IsRace(RACE_BEAST) and c:IsLevelAbove(5)
 end
 function c90000676.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
+	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
+	if e:GetHandler():GetSequence()<5 then ft=ft+1 end
+	if chk==0 then return ft>0 and Duel.IsExistingMatchingCard(c90000676.spfilter,tp,LOCATION_GRAVE+LOCATION_HAND,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE+LOCATION_HAND)
 end
 function c90000676.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000676.spfilter,tp,LOCATION_GRAVE+LOCATION_HAND,0,1,1,nil,e,tp)
+	local tc=g:GetFirst()
+	if tc and Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP) then
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_CANNOT_TRIGGER)
+		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
+		tc:RegisterEffect(e1)
 	end
+	Duel.SpecialSummonComplete()
 end
