@@ -13,3 +13,4 @@ function c90000247.initial_effect(c)
 	--burn and boost
 	--revive and banish the opponent GY
 end
+c90000247.xyz_number=26

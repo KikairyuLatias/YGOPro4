@@ -17,7 +17,7 @@ function c90001137.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function c90001137.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,90001199,0x4af,0x4011,0,0,3,RACE_BEASTWARRIOR,ATTRIBUTE_WATER) end
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,90001140,0x4af,0x4011,0,0,3,RACE_BEASTWARRIOR,ATTRIBUTE_WATER) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,0,0)
 end
@@ -40,7 +40,7 @@ function c90001137.spop(e,tp,eg,ep,ev,re,r,rp)
 	e4:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
 	Duel.RegisterEffect(e4,tp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	if Duel.IsPlayerCanSpecialSummonMonster(tp,90001199,0x4af,0x4011,0,0,3,RACE_BEASTWARRIOR,ATTRIBUTE_WATER) then
+	if Duel.IsPlayerCanSpecialSummonMonster(tp,90001140,0x4af,0x4011,0,0,3,RACE_BEASTWARRIOR,ATTRIBUTE_WATER) then
 		local token=Duel.CreateToken(tp,90001199)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
 	end

@@ -37,6 +37,7 @@ function c90000245.initial_effect(c)
 	e3:SetOperation(c90000245.spop)
 	c:RegisterEffect(e3)
 end
+c90000245.xyz_number=110
 --protection
 function c90000245.indval(e,re,rp)
 	return re:IsActiveType(TYPE_SPELL+TYPE_TRAP)

@@ -52,7 +52,7 @@ end
 --activation limit
 function c90000421.chainop(e,tp,eg,ep,ev,re,r,rp)
 	local rc=re:GetHandler()
-	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x5d7) or rc:IsSetCard(0x5d8) then
+	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x5f7) or rc:IsSetCard(0x5f8) then
 		Duel.SetChainLimit(c90000421.chainlm)
 	end
 end

@@ -1,71 +1,35 @@
---Hazmanimal Orange Conflagratiger
+--Defender Moon Unicorn
 function c90000685.initial_effect(c)
-	--spsummon
+	--lvchange
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_SPSUMMON_PROC)
-	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e1:SetRange(LOCATION_GRAVE)
-	e1:SetCondition(c90000685.spcon)
-	e1:SetCountLimit(1,90000685)
+	e1:SetDescription(aux.Stringid(90000685,0))
+	e1:SetCategory(CATEGORY_LVCHANGE)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(2)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetTarget(c90000685.lvtg)
+	e1:SetOperation(c90000685.lvop)
 	c:RegisterEffect(e1)
-	--ss destruct
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCountLimit(1,90000682)
-	e2:SetCondition(c90000685.condition)
-	e2:SetTarget(c90000685.target)
-	e2:SetOperation(c90000685.activate)
-	c:RegisterEffect(e2)
 end
 
---ss
-function c90000685.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x43a) and not c:IsCode(90000685)
+function c90000685.filter(c)
+	return c:IsFaceup() and not c:IsType(TYPE_XYZ)
 end
-function c90000685.spcon(e,c)
-	if c==nil then return true end
-	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000685.cfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+function c90000685.lvtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and c90000685.filter(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(c90000685.filter,tp,LOCATION_MZONE,0,1,e:GetHandler()) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
+	Duel.SelectTarget(tp,c90000685.filter,tp,LOCATION_MZONE,0,1,1,e:GetHandler())
 end
-
---banish for 
-function c90000685.condition(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x43a)
-end
-function c90000685.spfilter(c,e,tp)
-	return c:IsSetCard(0x43a) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
-end
-function c90000685.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000685.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
-end
-function c90000685.activate(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000685.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil,e,tp)
-	if g:GetCount()~=0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-		local e1=Effect.CreateEffect(c)
+function c90000685.lvop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
+		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_DISABLE)
-		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
+		e1:SetCode(EFFECT_UPDATE_LEVEL)
+		e1:SetValue(4)
+		e1:SetReset(RESET_EVENT+0x1fe0000)
 		tc:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(c)
-		e2:SetType(EFFECT_TYPE_SINGLE)
-		e2:SetCode(EFFECT_DISABLE_EFFECT)
-		e2:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		tc:RegisterEffect(e2)
-		local e3=Effect.CreateEffect(e:GetHandler())
-		e3:SetType(EFFECT_TYPE_SINGLE)
-		e3:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
-		e3:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		tc:RegisterEffect(e3)
 	end
 end

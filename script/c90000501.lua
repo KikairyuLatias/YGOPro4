@@ -1,6 +1,6 @@
 --Ｎｏ．７１エリート馬術スーパースター・ゴールドライダー
 function c90000501.initial_effect(c)
-        --xyz summon
+		--xyz summon
 	aux.AddXyzProcedure(c,nil,4,2)
 	c:EnableReviveLimit()
 	--spsummon
@@ -33,7 +33,7 @@ function c90000501.initial_effect(c)
 	e3:SetValue(aux.tgoval)
 	c:RegisterEffect(e3)
 end
-
+c90000501.xyz_number=71
 --ss
 function c90000501.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end

@@ -51,7 +51,7 @@ function c90001234.initial_effect(c)
 	e5:SetOperation(c90001234.disop)
 	c:RegisterEffect(e5)
 end
-
+c90001234.xyz_number=119
 --filter on summon
 function c90001234.mfilter(c)
 return c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT)
