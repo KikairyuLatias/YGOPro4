@@ -41,7 +41,7 @@ function c90001137.spop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.RegisterEffect(e4,tp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	if Duel.IsPlayerCanSpecialSummonMonster(tp,90001140,0x4af,0x4011,0,0,3,RACE_BEASTWARRIOR,ATTRIBUTE_WATER) then
-		local token=Duel.CreateToken(tp,90001199)
+		local token=Duel.CreateToken(tp,90001140)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
 	end
 end

@@ -3,6 +3,14 @@ function c90000253.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,90000251),1,1)
 	c:EnableReviveLimit()
+	--added typing
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e0:SetCode(EFFECT_ADD_RACE)
+	e0:SetRange(LOCATION_MZONE)
+	e0:SetValue(RACE_PSYCHIC)
+	c:RegisterEffect(e0)
 	--immunity and cannot be hit for attacks
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

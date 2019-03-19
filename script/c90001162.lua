@@ -29,7 +29,7 @@ function c90001162.thop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<3 then return end
 	Duel.ConfirmDecktop(tp,3)
 	local g=Duel.GetDecktopGroup(tp,3)
-	if g:IsExists(c90001162.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(90001162,2)) then
+	if g:IsExists(c90001162.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(90001162,0)) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local sg=g:FilterSelect(tp,c90001162.thfilter,1,1,nil)
 		Duel.SendtoHand(sg,nil,REASON_EFFECT)
@@ -46,7 +46,6 @@ function c90001162.efop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=c:GetReasonCard()
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90001162,0))
 	e3:SetCategory(CATEGORY_DAMAGE)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)

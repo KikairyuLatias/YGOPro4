@@ -1,8 +1,7 @@
 --Hazmanimal C-Class - Silver Blaze Fox
 function c90001159.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,2,c90001159.lcheck)
-	c:EnableReviveLimit()
+	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2,2)
 	--recovery
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90001159,0))
@@ -30,10 +29,6 @@ function c90001159.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 
---check if you are using a hazmanimal monster
-function c90001159.lcheck(g,lc)
-	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
-end
 --return
 function c90001159.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp

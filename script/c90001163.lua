@@ -1,4 +1,4 @@
---Hazmanimal B-Class Brown Inferno Leo
+--Hazmanimal B-Class Brown Inferno Cow
 function c90001163.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2)
@@ -65,12 +65,21 @@ function c90001163.tdcondition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsPreviousLocation(LOCATION_MZONE) and c:GetPreviousControler()==tp and rp~=tp
 end
+function c90001163.tdfilter(c)
+	return c:IsType(TYPE_MONSTER) and c:IsDestructable()
+end
 function c90001163.tdtarget(e,tp,eg,ep,ev,re,r,rp,chk)
-	local g=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
-	if chk==0 then return #g>0 end
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0,nil)
+	if chk==0 then return true end
+	local g=Duel.GetMatchingGroup(c90001163.tdfilter,tp,LOCATION_ONFIELD,0,nil)
+	if g:GetCount()>0 then
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
+	end
 end
 function c90001163.tdoperation(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(aux.TRUE,tp,0,LOCATION_MZONE,nil)
-	Duel.Destroy(g,REASON_EFFECT)
+	local g=Duel.GetMatchingGroup(c90001163.tdfilter,tp,LOCATION_ONFIELD,0,nil)
+	if g:GetCount()>0 then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+		local sg=g:Select(tp,1,2,nil)
+		Duel.Destroy(sg,REASON_EFFECT)
+	end
 end

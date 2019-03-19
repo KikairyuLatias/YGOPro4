@@ -32,7 +32,7 @@ function c90000422.initial_effect(c)
 end
 --ss function
 function c90000422.spfilter(c,ft,tp)
-	return c:IsSetCard(0x5d7) or c:IsSetCard(0x5d8)
+	return c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8)
 		and (ft>0 or (c:IsControler(tp) and c:GetSequence()<5)) and (c:IsControler(tp) or c:IsFaceup())
 end
 function c90000422.spcon(e,c)
@@ -49,13 +49,13 @@ end
 
 --banish
 function c90000422.target(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end 
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function c90000422.operation(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-    local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
 	e:GetHandler():RegisterFlagEffect(90000422,RESET_EVENT+0x1fe0000,0,1)
 	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
 end

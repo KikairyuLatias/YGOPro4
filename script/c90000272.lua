@@ -1,46 +1,47 @@
---Eclipse Dream Reindeer
-function c90000463.initial_effect(c)
-   --negate
+--Psychic Hero Blizzard Striker
+function c90000272.initial_effect(c)
+	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000463,0))
-	e1:SetCategory(CATEGORY_DISABLE)
-	e1:SetType(EFFECT_TYPE_QUICK_O)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetHintTiming(0,0x1c0)
-	e1:SetCountLimit(1,90000463)
-	e1:SetTarget(c90000463.target)
-	e1:SetOperation(c90000463.operation)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_SPSUMMON_PROC)
+	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e1:SetRange(LOCATION_HAND)
+	e1:SetCondition(c90000272.spcon)
 	c:RegisterEffect(e1)
-	--act limit
+	--negate
 	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e3:SetCode(EVENT_CHAINING)
+	e3:SetDescription(aux.Stringid(90000272,1))
+	e3:SetCategory(CATEGORY_DISABLE)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetOperation(c90000463.chainop)
+	e3:SetHintTiming(0,0x1c0)
+	e3:SetCountLimit(1,90000272)
+	e3:SetTarget(c90000272.target2)
+	e3:SetOperation(c90000272.operation2)
 	c:RegisterEffect(e3)
 end
---activation limit
-function c90000463.chainop(e,tp,eg,ep,ev,re,r,rp)
-	local rc=re:GetHandler()
-	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x5f9) then
-		Duel.SetChainLimit(c90000463.chainlm)
-	end
+
+--if you do not have another member, get free summon.
+function c90000272.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x5f2)
 end
-function c90000463.chainlm(e,rp,tp)
-	return tp==rp
+function c90000272.spcon(e,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
+		Duel.IsExistingMatchingCard(c90000272.filter,c:GetControler(),LOCATION_MZONE,0,0,nil)
 end
 
---neg
-function c90000463.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+--freeze everything for life!
+function c90000272.target2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and aux.disfilter1(chkc) end
 	if chk==0 then return Duel.IsExistingTarget(aux.disfilter1,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
 	local g=Duel.SelectTarget(tp,aux.disfilter1,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
 end
-function c90000463.operation(e,tp,eg,ep,ev,re,r,rp)
+function c90000272.operation2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local tc=Duel.GetFirstTarget()
 	if tc and ((tc:IsFaceup() and not tc:IsDisabled()) or tc:IsType(TYPE_TRAPMONSTER)) and tc:IsRelateToEffect(e) then
@@ -63,14 +64,5 @@ function c90000463.operation(e,tp,eg,ep,ev,re,r,rp)
 			e3:SetCode(EFFECT_DISABLE_TRAPMONSTER)
 			tc:RegisterEffect(e3)
 		end
-		local e4=Effect.CreateEffect(e:GetHandler())
-		e4:SetType(EFFECT_TYPE_SINGLE)
-		e4:SetCode(EFFECT_SET_ATTACK_FINAL)
-		e4:SetValue(tc:GetAttack()/2)
-		tc:RegisterEffect(e4)
-		local e5=e4:Clone()
-		e5:SetCode(EFFECT_SET_DEFENSE_FINAL)
-		e5:SetValue(tc:GetDefense()/2)
-		tc:RegisterEffect(e5)
 	end
 end

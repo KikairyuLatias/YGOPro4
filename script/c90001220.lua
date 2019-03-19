@@ -69,7 +69,7 @@ end
 function c90001220.actcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetAttacker()
 	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:IsSetCard(0x4c9) or tc:IsSetCard(0x5c9) or tc:IsSetCard(0xc9) or tc:IsCode(90001215)
+	return tc and tc:IsControler(tp) and tc:IsSetCard(0x4c9) or tc:IsCode(90001215)
 end
 
 function c90001220.actop(e,tp,eg,ep,ev,re,r,rp)
@@ -85,4 +85,3 @@ end
 function c90001220.aclimit(e,re,tp)
 	return not re:GetHandler():IsImmuneToEffect(e)
 end
-

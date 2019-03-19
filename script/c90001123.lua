@@ -39,7 +39,6 @@ function c90001123.initial_effect(c)
 	e6:SetCountLimit(1,90001123)
 	e6:SetTarget(c90001123.drtg)
 	e6:SetOperation(c90001123.drop)
-	e6:SetCountLimit(1,90001123)
 	c:RegisterEffect(e6)
 end
 

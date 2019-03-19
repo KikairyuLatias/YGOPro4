@@ -1,7 +1,8 @@
 --Hazmanimal C-Class Gold Ember Gazelle
 function c90001164.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2,2)
+	aux.AddLinkProcedure(c,nil,2,2,c90001164.lcheck)
+	c:EnableReviveLimit()
 	--to hand or grave
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90001164,0))
@@ -34,6 +35,10 @@ function c90001164.initial_effect(c)
 	e3:SetTarget(c90001164.sumtg)
 	e3:SetOperation(c90001164.sumop)
 	c:RegisterEffect(e3)
+end
+--check if you are using a hazmanimal monster
+function c90001164.lcheck(g,lc)
+	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
 end
 --grab the field, damn it!
 function c90001164.thcon(e,tp,eg,ep,ev,re,r,rp)

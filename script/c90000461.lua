@@ -17,16 +17,16 @@ function c90000461.initial_effect(c)
 	local e3=e1:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e3)
-	--ditch revive
+	--banish revive
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000461,1))
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetType(EFFECT_TYPE_QUICK_O)
-	e4:SetRange(LOCATION_HAND)
-	e4:SetCost(c90000461.cost)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_GRAVE)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetCountLimit(1,900004611)
+	e4:SetCost(c90000461.descost)
 	e4:SetTarget(c90000461.sptg2)
 	e4:SetOperation(c90000461.spop2)
-	e4:SetCountLimit(1,900004610)
 	c:RegisterEffect(e4)
 end
 --spsummon
@@ -46,19 +46,13 @@ function c90000461.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
---send to GY, then stuff happens
-function c90000461.trigfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f9) and c:IsType(TYPE_LINK) and c:IsLinkAbove(3)
-end
-function c90000461.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
-	Duel.SendtoGrave(e:GetHandler(),REASON_COST)
+--banish revive
+function c90000461.descost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsAbleToRemoveAsCost() end
+	Duel.Remove(e:GetHandler(),POS_FACEUP,REASON_COST)
 end
 function c90000461.spfilter2(c,e,tp)
-	return c:IsSetCard(0x5f9) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
-end
-function c90000461.spfilter3(c,e,tp)
-	return c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(0x5f9) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000461)
 end
 function c90000461.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>-1
@@ -68,11 +62,8 @@ end
 function c90000461.spop2(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.GetMatchingGroup(c90000461.trigfilter,tp,LOCATION_MZONE,0,nil)
 	local g=Duel.SelectMatchingCard(tp,c90000461.spfilter2,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
-	if Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)>0 and g:GetClassCount(Card.GetCode)>=1 then
-	Duel.BreakEffect()
-		local g=Duel.SelectMatchingCard(tp,c90000461.spfilter3,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
-end
+end 

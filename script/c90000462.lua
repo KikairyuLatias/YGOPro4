@@ -10,16 +10,17 @@ function c90000462.initial_effect(c)
 	e1:SetOperation(c90000462.extracon)
 	e1:SetValue(c90000462.extraval)
 	c:RegisterEffect(e1)
-	--indes
+	--draw
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetRange(LOCATION_HAND)
+	e2:SetDescription(aux.Stringid(90000462,0))
+	e2:SetCategory(CATEGORY_DRAW)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_BE_MATERIAL)
+	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e2:SetCondition(c90000462.drcon)
 	e2:SetCountLimit(1,90000462)
-	e2:SetCost(c90000462.indcost)
-	e2:SetTarget(c90000462.indtg)
-	e2:SetOperation(c90000462.indop)
+	e2:SetTarget(c90000462.drtg)
+	e2:SetOperation(c90000462.drop)
 	c:RegisterEffect(e2)
 end
 --extra material
@@ -34,7 +35,7 @@ function c90000462.extraval(chk,summon_type,e,...)
 	local c=e:GetHandler()
 	if chk==0 then
 		local tp,sc=...
-		if not summon_type==SUMMON_TYPE_LINK or not sc:IsSetCard(0x5f9) or Duel.GetFlagEffect(tp,id)>0 then
+		if not summon_type==SUMMON_TYPE_LINK or not sc:IsSetCard(0x5f9) or Duel.GetFlagEffect(tp,90000463)>0 then
 			return Group.CreateGroup()
 		else
 			local feff=c:RegisterFlagEffect(id,0,0,1)
@@ -54,37 +55,17 @@ function c90000462.extraval(chk,summon_type,e,...)
 	end
 end
 
---protection (and draw)
-function c90000462.indcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
-	Duel.SendtoGrave(e:GetHandler(),REASON_COST)
+--draw when you Link
+function c90000462.drcon(e,tp,eg,ep,ev,re,r,rp)
+	return r==REASON_LINK and re:GetHandler():IsSetCard(0x5f9) and re:GetHandler():IsLinkAbove(3)
 end
-function c90000462.trigfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f9) and c:IsType(TYPE_LINK) and c:IsLinkAbove(3)
+function c90000462.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(2)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
-function c90000462.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f9)
+function c90000462.drop(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Draw(p,d,REASON_EFFECT)
 end
-function c90000462.indtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and c90000462.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90000462.filter,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,c90000462.filter,tp,LOCATION_MZONE,0,1,1,nil)
-end
-function c90000462.indop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(c90000460.trigfilter,tp,LOCATION_MZONE,0,nil)
-	local tc=Duel.GetFirstTarget()
-	local g=Duel.SelectMatchingCard(tp,c90000460.filter,tp,LOCATION_MZONE,0,1,1,nil)
-	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-		e1:SetValue(1)
-		tc:RegisterEffect(e1)
-		local e2=e1:Clone()
-		e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
-		tc:RegisterEffect(e2)
-	end
-end
---add rest of the effect later for drawing
