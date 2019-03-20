@@ -1,35 +1,39 @@
---Midnight Unicorn
+--Crimson Galactic Pegasus Alphacentauris
 function c90001610.initial_effect(c)
-	--lvchange
+	--xyz summon
+	aux.AddXyzProcedure(c,nil,8,2)
+	c:EnableReviveLimit()
+	--destroy
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90001610,0))
-	e1:SetCategory(CATEGORY_LVCHANGE)
+	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCountLimit(2)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetTarget(c90001610.lvtg)
-	e1:SetOperation(c90001610.lvop)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCost(c90001610.cost)
+	e1:SetTarget(c90001610.target)
+	e1:SetOperation(c90001610.operation)
 	c:RegisterEffect(e1)
 end
-
-function c90001610.filter(c)
-	return c:IsFaceup() and not c:IsType(TYPE_XYZ)
+function c90001610.cfilter(c)
+	return c:IsRace(RACE_BEAST) and c:IsAbleToGraveAsCost()
 end
-function c90001610.lvtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and c90001610.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90001610.filter,tp,LOCATION_MZONE,0,1,e:GetHandler()) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	Duel.SelectTarget(tp,c90001610.filter,tp,LOCATION_MZONE,0,1,1,e:GetHandler())
+function c90001610.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(c90001610.cfilter,tp,LOCATION_HAND,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local cg=Duel.SelectMatchingCard(tp,c90001610.cfilter,tp,LOCATION_HAND,0,1,1,nil)
+	Duel.SendtoGrave(cg,REASON_COST)
 end
-function c90001610.lvop(e,tp,eg,ep,ev,re,r,rp)
+function c90001610.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsDestructable() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsDestructable,tp,0,LOCATION_MZONE,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectTarget(tp,Card.IsDestructable,tp,0,LOCATION_MZONE,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+end
+function c90001610.operation(e,tp,eg,ep,ev,re,r,rp,chk)
 	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_UPDATE_LEVEL)
-		e1:SetValue(1)
-		e1:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e1)
+	if tc:IsRelateToEffect(e) then 
+		Duel.Destroy(tc,REASON_EFFECT)
 	end
 end
