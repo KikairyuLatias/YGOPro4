@@ -6,7 +6,6 @@ function c90000466.initial_effect(c)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
 	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
 	e1:SetRange(LOCATION_HAND)
-	e1:SetCountLimit(1,90000466)
 	e1:SetCondition(c90000466.spcon)
 	c:RegisterEffect(e1)
 	--shuffle and draw

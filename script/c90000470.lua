@@ -1,7 +1,7 @@
 --Eclipse Dream Kitsune
 function c90000470.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,4,c90000470.lcheck)
+	aux.AddLinkProcedure(c,nil,2,3,c90000470.lcheck)
 	c:EnableReviveLimit()
 	--to hand
 	local e1=Effect.CreateEffect(c)

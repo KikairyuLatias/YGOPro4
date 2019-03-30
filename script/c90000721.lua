@@ -19,7 +19,7 @@ function c90000721.initial_effect(c)
 	e2:SetCode(EFFECT_REVERSE_DAMAGE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(1,0)
-	e2:SetValue(c90000721.rev)
+	e2:SetValue(c90000721.rev2)
 	c:RegisterEffect(e2)
 	--tohand
 	local e3=Effect.CreateEffect(c)
