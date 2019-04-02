@@ -3,25 +3,25 @@ function c90000474.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,nil,2,2,c90000474.lcheck)
 	c:EnableReviveLimit()
-	--zero battle damage with Eclipse Dream
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
-	e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetTargetRange(LOCATION_MZONE,0)
-	e1:SetTarget(c90000474.efilter)
-	e1:SetValue(1)
-	c:RegisterEffect(e1)
 	--special summon member
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000474,0))
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_BATTLE_DESTROYING)
+	e2:SetCondition(aux.bdocon)
+	e2:SetTarget(c90000474.target)
+	e2:SetOperation(c90000474.operation)
+	c:RegisterEffect(e2)
+	--zero battle damage with Eclipse Dream
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000474,0))
-	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e3:SetCode(EVENT_BATTLE_DESTROYING)
-	e3:SetCondition(aux.bdocon)
-	e3:SetTarget(c90000474.target)
-	e3:SetOperation(c90000474.operation)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_AVOID_BATTLE_DAMAGE)
+	e3:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetTargetRange(LOCATION_MZONE,0)
+	e3:SetTarget(c90000474.efilter)
+	e3:SetValue(1)
 	c:RegisterEffect(e3)
 end
 --req
@@ -34,20 +34,18 @@ function c90000474.efilter(e,c)
 end
 --ss condition
 function c90000474.filter(c,e,tp)
-	return c:IsSetCard(0x5f9) and c:IsAttackBelow(2300) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone) and not c:IsCode(90000474)
+	return c:IsSetCard(0x5f9) and c:IsAttackBelow(2400) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000474)
 end
 function c90000474.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
-	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_HAND+LOCATION_GRAVE) and c90000474.filter(chkc,e,tp,zone) end
-	if chk==0 then return Duel.IsExistingTarget(c90000474.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectTarget(tp,c90000474.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000474.filter,tp,LOCATION_DECK,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 function c90000474.operation(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
-	if tc and tc:IsRelateToEffect(e) and zone~=0  then
-		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000474.filter,tp,LOCATION_DECK,0,1,1,nil,e,tp)
+	if g:GetCount()~=0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end

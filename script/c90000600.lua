@@ -3,14 +3,6 @@ function c90000600.initial_effect(c)
 	--summon conditions
 	c:EnableReviveLimit()
 	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),3,5,c90000600.lcheck)
-	--protection
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_FIELD)
-	e0:SetRange(LOCATION_MZONE)
-	e0:SetTargetRange(0,LOCATION_MZONE)
-	e0:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
-	e0:SetValue(c90000600.atlimit)
-	c:RegisterEffect(e0) 
 	--banish stuff
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_REMOVE)
@@ -18,14 +10,6 @@ function c90000600.initial_effect(c)
 	e1:SetTarget(c90000600.thtg)
 	e1:SetOperation(c90000600.thop)
 	c:RegisterEffect(e1)
-	--cannot target
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetValue(aux.tgoval)
-	c:RegisterEffect(e2)
 	--indes
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
@@ -47,17 +31,10 @@ end
 function c90000600.lcheck(g,lc,tp)
 	return g:IsExists(Card.IsRace,1,nil,RACE_BEAST)
 end
-
 --so advanced it is not funny
 function c90000600.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
-
---protection from attack
-function c90000600.atlimit(e,c)
-	return c~=e:GetHandler()
-end
-
 --banish forever
 function c90000600.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc:IsAbleToRemove() end

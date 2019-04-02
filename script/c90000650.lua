@@ -52,20 +52,14 @@ function c90000650.initial_effect(c)
 	e5:SetTarget(c90000650.target)
 	e5:SetOperation(c90000650.activate)
 	c:RegisterEffect(e5)
-	--atk and def up
+	--double
 	local e6=Effect.CreateEffect(c)
-	e6:SetType(EFFECT_TYPE_FIELD)
-	e6:SetCode(EFFECT_SET_ATTACK_FINAL)
-	e6:SetRange(LOCATION_PZONE)
-	e6:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e6:SetTarget(c90000650.atktg)
-	e6:SetValue(c90000650.val)
+	e6:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
+	e6:SetRange(0,LOCATION_MZONE)
+	e6:SetCode(EVENT_PRE_BATTLE_DAMAGE)
+	e6:SetCondition(c90000650.dcon)
+	e6:SetOperation(c90000650.dop)
 	c:RegisterEffect(e6)
-	local e7=e6:Clone()
-	e7:SetCode(EFFECT_SET_DEFENSE_FINAL)
-	e7:SetTarget(c90000650.atktg2)
-	e7:SetValue(c90000650.val2)
-	c:RegisterEffect(e7)
 end
 
 --no target
@@ -153,16 +147,11 @@ function c90000650.activate(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
---pump for days
-function c90000650.atktg(e,c)
-	return c:IsSetCard(0x439)
+--2x damage
+function c90000650.dcon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x439) and tc:GetBattleTarget()~=nil
 end
-function c90000650.atktg2(e,c)
-	return c:IsSetCard(0x439)
-end
-function c90000650.val(e,c)
-	return c:GetAttack()*2
-end
-function c90000650.val2(e,c)
-	return c:GetDefense()*2
+function c90000650.dop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.ChangeBattleDamage(ep,ev*2)
 end

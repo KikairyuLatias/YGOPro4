@@ -29,7 +29,7 @@ end
 
 --negate
 function c90000671.disable(e,c)
-	return c:GetAttack()<=e:GetHandler():GetAttack() and (c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT)
+	return c:GetAttack()<=e:GetHandler():GetBaseAttack() and (c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT)
 end
 
 --special summon

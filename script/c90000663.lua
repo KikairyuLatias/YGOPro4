@@ -3,7 +3,7 @@ function c90000663.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,nil,2)
 	c:EnableReviveLimit()
-	--banish until end phase
+	--negate until end phase
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000663,0))
 	e1:SetCategory(CATEGORY_NEGATE)
@@ -71,18 +71,32 @@ end
 function c90000663.thop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
-	if Duel.Negateg,0,REASON_EFFECT+REASON_TEMPORARY)~=0
-		local fid=c:GetFieldID()
-		local og=Duel.GetOperatedGroup()
-		for oc in aux.Next(og) do
-			oc:RegisterFlagEffect(90000663,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1,fid)
+	local tc=g:GetFirst()
+	while tc do
+		if ((tc:IsFaceup() and not tc:IsDisabled()) or tc:IsType(TYPE_TRAPMONSTER)) and tc:IsRelateToEffect(e) then
+			Duel.NegateRelatedChain(tc,RESET_TURN_SET)
+			local e1=Effect.CreateEffect(c)
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+			e1:SetCode(EFFECT_DISABLE)
+			e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+			tc:RegisterEffect(e1)
+			local e2=Effect.CreateEffect(c)
+			e2:SetType(EFFECT_TYPE_SINGLE)
+			e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+			e2:SetCode(EFFECT_DISABLE_EFFECT)
+			e2:SetValue(RESET_TURN_SET)
+			e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+			tc:RegisterEffect(e2)
+			if tc:IsType(TYPE_TRAPMONSTER) then
+				local e3=Effect.CreateEffect(c)
+				e3:SetType(EFFECT_TYPE_SINGLE)
+				e3:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+				e3:SetCode(EFFECT_DISABLE_TRAPMONSTER)
+				e3:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+				tc:RegisterEffect(e3)
+			end
 		end
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_FIELD)
-		e1:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-		e1:SetTarget(c90000663.filter)
-		e1:SetCode(EFFECT_DISABLE)
-		e1:SetReset(RESET_PHASE+PHASE_STANDBY+RESET_SELF_TURN)
-		Duel.RegisterEffect(e1,tp)
+		tc=g:GetNext()
 	end
 end

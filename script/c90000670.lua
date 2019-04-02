@@ -1,7 +1,7 @@
 --Pony Rebreather Superhorse
 function c90000670.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x439),1)
+	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x439),2)
 	--tribute to boost
 	 local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000670,0))

@@ -46,7 +46,7 @@ function c90001273.activate(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(c90001273.filter,tp,LOCATION_ONFIELD+LOCATION_GRAVE,LOCATION_ONFIELD+LOCATION_GRAVE,nil)
 	if g:GetCount()>0 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-		local sg=g:Select(tp,1,3,nil)
+		local sg=g:Select(tp,1,2,nil)
 		Duel.SendtoDeck(sg,nil,0,REASON_EFFECT)
 	end
 end
@@ -63,10 +63,10 @@ function c90001273.damtg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	local gc=Duel.GetMatchingGroupCount(c90001273.damfilter,tp,LOCATION_ONFIELD+LOCATION_GRAVE,0,nil)
 	if chk==0 then return gc>0 end
 	Duel.SetTargetPlayer(1-tp)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,gc*300)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,gc*400)
 end
 function c90001273.damop2(e,tp,eg,ep,ev,re,r,rp)
 	local gc=Duel.GetMatchingGroupCount(c90001273.damfilter,tp,LOCATION_ONFIELD+LOCATION_GRAVE,0,nil)
 	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
-	Duel.Damage(p,gc*300,REASON_EFFECT)
+	Duel.Damage(p,gc*400,REASON_EFFECT)
 end
