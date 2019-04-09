@@ -33,7 +33,7 @@ function c90000652.initial_effect(c)
 end
 --special summon
 function c90000652.filter(c,e,tp)
-	return c:GetLevel()<=6 and (c:IsSetCard(0x439) or c:IsSetCard(0x1439)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsLevelBelow(5) and (c:IsSetCard(0x439) or c:IsSetCard(0x1439)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function c90000652.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

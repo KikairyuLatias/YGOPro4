@@ -1,35 +1,154 @@
---Flame Charger
+--Superstar Pony Planetary Diver
 function c90000677.initial_effect(c)
-	--spsummon
+	 --synchro summon
+	aux.AddSynchroProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),1,1,aux.NonTuner(Card.IsSetCard,0x439),1,99)
+	c:EnableReviveLimit()
+	--mill the deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000677,0))
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetCountLimit(1,90000677)
-	e1:SetTarget(c90000677.sptg)
-	e1:SetOperation(c90000677.spop)
+	e1:SetCategory(CATEGORY_DECKDES)
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e1:SetCode(EVENT_BATTLE_DAMAGE)
+	e1:SetCondition(c90000677.condition)
+	e1:SetTarget(c90000677.target)
+	e1:SetOperation(c90000677.operation)
 	c:RegisterEffect(e1)
-	Duel.AddCustomActivityCounter(90000677,ACTIVITY_SPSUMMON,c90000677.counterfilter)
+	--multiple attack
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(90000677,1))
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetCountLimit(1)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCondition(c90000677.mtcon)
+	e2:SetOperation(c90000677.mtop)
+	c:RegisterEffect(e2)
+	--become a scale
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(90000677,2))
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetCode(EVENT_DESTROYED)
+	e3:SetCondition(c90000677.pencon)
+	e3:SetTarget(c90000677.pentg)
+	e3:SetOperation(c90000677.penop)
+	c:RegisterEffect(e3)
+	--my name is Pony Electrumite
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90000677,3))
+	e4:SetCategory(CATEGORY_DESTROY+CATEGORY_TOHAND)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetRange(LOCATION_PZONE)
+	e4:SetCountLimit(1,90000677)
+	e4:SetTarget(c90000677.destg)
+	e4:SetOperation(c90000677.desop)
+	c:RegisterEffect(e4)
+	--spsummon
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(90000677,4))
+	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e5:SetType(EFFECT_TYPE_IGNITION)
+	e5:SetRange(LOCATION_PZONE)
+	e5:SetCost(c90000677.spcost)
+	e5:SetTarget(c90000677.sptg)
+	e5:SetOperation(c90000677.spop)
+	c:RegisterEffect(e5)
+end
+--deck kill
+function c90000677.condition(e,tp,eg,ep,ev,re,r,rp)
+	return ep~=tp
+end
+function c90000677.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_DECKDES,0,0,1-tp,1)
+end
+function c90000677.operation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.DiscardDeck(1-tp,1,REASON_EFFECT)
+end
+--to pendulumZ
+function c90000677.pencon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return r&REASON_EFFECT+REASON_BATTLE~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
+end
+function c90000677.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
+end
+function c90000677.penop(e,tp,eg,ep,ev,re,r,rp)
+	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
+	end
 end
 
-function c90000677.counterfilter(c)
-	return c:IsRace(RACE_BEAST)
+--ssd
+function c90000677.mtcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=2
 end
-function c90000677.filter(c,e,tp)
-	return c:IsRace (RACE_BEAST) and c:GetLevel()<=4 and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+function c90000677.mtop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	Duel.ConfirmDecktop(tp,2)
+	local g=Duel.GetDecktopGroup(tp,2)
+	local ct=g:FilterCount(Card.IsSetCard,nil,0x439)
+	Duel.ShuffleDeck(tp)
+	if ct>1 then
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_EXTRA_ATTACK)
+		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
+		e1:SetValue(ct)
+		c:RegisterEffect(e1)
+	end
+end
+
+--electrumite for horses
+function c90000677.thfilter(c)
+	return c:IsFaceup() and c:IsSetCode(0x439) and c:IsType(TYPE_PENDULUM) and c:IsAbleToHand()
+end
+function c90000677.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	local c=e:GetHandler()
+	if chkc then return chkc:IsOnField() and chkc:IsControler(tp) and chkc:IsFaceup() and chkc:IsSetCard(0x439) 
+	and chkc~=c and not chkc:IsCode(90000677)
+end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_ONFIELD,0,1,c)
+		and Duel.IsExistingMatchingCard(c90000677.thfilter,tp,LOCATION_EXTRA,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_ONFIELD,0,1,1,c)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_EXTRA)
+end
+function c90000677.desop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) and Duel.Destroy(tc,REASON_EFFECT)~=0 then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+		local g=Duel.SelectMatchingCard(tp,c90000677.thfilter,tp,LOCATION_EXTRA,0,1,1,nil)
+		if #g>0 then
+			Duel.BreakEffect()
+			Duel.SendtoHand(g,tp,REASON_EFFECT)
+			Duel.ConfirmCards(1-tp,g)
+		end
+	end
+end
+
+--ss from pend zone
+function c90000677.cfilter(c)
+	return c:IsSetCard(0x439) and c:IsType(TYPE_MONSTER) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c,true)
+end
+function c90000677.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(c90000677.cfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,3,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,c90000677.cfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,3,3,nil)
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
 end
 function c90000677.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000677.filter,tp,LOCATION_HAND,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
+		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
 function c90000677.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000677.filter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 	end
 end

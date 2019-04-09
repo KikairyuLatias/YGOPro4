@@ -72,8 +72,8 @@ function c90000660.mtcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function c90000660.mtop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	Duel.ConfirmDecktop(tp,3)
-	local g=Duel.GetDecktopGroup(tp,3)
+	Duel.ConfirmDecktop(tp,2)
+	local g=Duel.GetDecktopGroup(tp,2)
 	local ct=g:FilterCount(Card.IsSetCard,nil,0x2439)
 	Duel.ShuffleDeck(tp)
 	if ct>1 then

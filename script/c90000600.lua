@@ -6,9 +6,12 @@ function c90000600.initial_effect(c)
 	--banish stuff
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_REMOVE)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
-	e1:SetTarget(c90000600.thtg)
-	e1:SetOperation(c90000600.thop)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1)
+	e1:SetTarget(c90000600.target2)
+	e1:SetOperation(c90000600.operation2)
 	c:RegisterEffect(e1)
 	--indes
 	local e3=Effect.CreateEffect(c)
@@ -36,18 +39,16 @@ function c90000600.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 --banish forever
-function c90000600.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsOnField() and chkc:IsAbleToRemove() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD+LOCATION_ONFIELD,LOCATION_GRAVE+LOCATION_GRAVE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
-	local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,LOCATION_ONFIELD+LOCATION_ONFIELD,LOCATION_GRAVE+LOCATION_GRAVE,1,2,nil)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),0,0)
+function c90000600.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+   if chkc then return false end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_ONFIELD+LOCATION_GRAVE,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g1,g1:GetCount(),0,0)
 end
-function c90000600.thop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
-	if g:GetCount()>0 then
-		Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
-	end
+function c90000600.operation2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,LOCATION_ONFIELD+LOCATION_GRAVE,LOCATION_ONFIELD+LOCATION_GRAVE,1,2,nil)
+	e:GetHandler():RegisterFlagEffect(90000600,RESET_EVENT+0x1fe0000,0,1)
+	Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
 end
 
 --stat value

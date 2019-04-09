@@ -24,7 +24,7 @@ function c90001274.initial_effect(c)
 end
 --search stuff
 function c90001274.thfilter(c)
-	return c:IsSetCard(0x9d0) and c:IsType(TYPE_QUICKPLAY) or c:IsType(TYPE_COUNTER) and c:IsAbleToHand() and not c:IsCode(90001274)
+	return (c:IsSetCard(0x9d0) and c:IsType(TYPE_QUICKPLAY) or c:IsType(TYPE_COUNTER) and c:IsAbleToHand()) and not c:IsCode(90001274)
 end
 function c90001274.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():GetFlagEffect(90001274)>0

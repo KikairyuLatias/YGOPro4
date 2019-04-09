@@ -55,7 +55,7 @@ function c90000650.initial_effect(c)
 	--double
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-	e6:SetRange(0,LOCATION_MZONE)
+	e6:SetRange(0,LOCATION_PZONE)
 	e6:SetCode(EVENT_PRE_BATTLE_DAMAGE)
 	e6:SetCondition(c90000650.dcon)
 	e6:SetOperation(c90000650.dop)

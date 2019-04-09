@@ -2,28 +2,29 @@
 function c90000668.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x439),2)
+	--to hand
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(90000668,0))
+	e1:SetCategory(CATEGORY_TOHAND)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1,90000668)
+	e1:SetCost(c90000668.thcost)
+	e1:SetTarget(c90000668.thtg)
+	e1:SetOperation(c90000668.thop)
+	c:RegisterEffect(e1)
 	--float and stuff
 	local e3=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000668,1))
+	e1:SetDescription(aux.Stringid(90000668,1))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e3:SetCode(EVENT_LEAVE_FIELD)
+	e3:SetCountLimit(1,90000668)
 	e3:SetCondition(c90000668.spcon)
 	e3:SetTarget(c90000668.sptg)
 	e3:SetOperation(c90000668.spop)
 	c:RegisterEffect(e3)
-	--to hand
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000668,0))
-	e4:SetCategory(CATEGORY_TOHAND)
-	e4:SetType(EFFECT_TYPE_IGNITION)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1,90000668)
-	e4:SetCost(c90000668.thcost)
-	e4:SetTarget(c90000668.thtg)
-	e4:SetOperation(c90000668.thop)
-	c:RegisterEffect(e4)
 end
 --mill stuff; search again
 function c90000668.thcfilter(c)
@@ -36,7 +37,7 @@ function c90000668.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SendtoGrave(g,REASON_COST)
 end
 function c90000668.thfilter(c)
-	return c:IsSetCard(0x439) and c:IsAbleToHand()
+	return c:IsSetCard(0x439) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
 end
 function c90000668.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000668.thfilter,tp,LOCATION_DECK,0,2,nil) end
