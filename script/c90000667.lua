@@ -2,6 +2,17 @@
 function c90000667.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x439),2)
+	--destroy
+	local e0=Effect.CreateEffect(c)
+	e0:SetDescription(aux.Stringid(90000667,0))
+	e0:SetCategory(CATEGORY_DESTROY)
+	e0:SetType(EFFECT_TYPE_IGNITION)
+	e0:SetRange(LOCATION_MZONE)
+	e0:SetCountLimit(1)
+	e0:SetCost(c90000667.descost)
+	e0:SetTarget(c90000667.destg)
+	e0:SetOperation(c90000667.desop)
+	c:RegisterEffect(e0)
 	--float and stuff
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000667,1))
@@ -27,8 +38,36 @@ end
 function c90000667.sumop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 or not c:IsRelateToEffect(e) then return end
-	if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP) then
-		Duel.BreakEffect()
+	if Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP) then  
 		Duel.Damage(tp,1500,REASON_EFFECT)
+	end
+end
+
+--destroy stuff
+function c90000667.cfilter(c,e)
+	local g=e:GetHandler():GetLinkedGroup()
+	return g:IsContains(c)
+end
+function c90000667.descost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,c90000667.cfilter,1,false,false,nil,e) end 
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RELEASE)
+	local cg=Duel.SelectReleaseGroupCost(tp,c90000667.cfilter,1,#g,false,false,nil,e)
+	e:SetLabel(#cg)
+	Duel.Release(cg,REASON_COST)
+end
+function c90000667.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end 
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,e:GetLabel(),0,0)
+end
+function c90000667.desop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
+	local n=e:GetLabel()
+	if n>#g then n=#g end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local tg=g:Select(tp,n,n,nil)
+	if #tg>0 then 
+		Duel.Destroy(tg,REASON_EFFECT)
 	end
 end

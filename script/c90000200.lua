@@ -12,7 +12,7 @@ function c90000200.initial_effect(c)
 	e2:SetRange(LOCATION_FZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetTarget(c90000200.tg)
-	e2:SetValue(500)
+	e2:SetValue(c90000200.val)
 	c:RegisterEffect(e2)
 	--def boost
 	local e3=e2:Clone()
@@ -58,6 +58,12 @@ end
 --Psychic Dragon power up
 function c90000200.tg(e,c)
 	return c:IsSetCard(0x5f1) and c:IsType(TYPE_MONSTER)
+end
+function c90000200.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x5f1)
+end
+function c90000200.val(e,c)
+	return Duel.GetMatchingGroupCount(c90000200.filter,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*200
 end
 
 -- spsummon
