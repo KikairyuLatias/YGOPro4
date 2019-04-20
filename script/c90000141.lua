@@ -34,10 +34,21 @@ function c90000141.initial_effect(c)
 	e4:SetTarget(c90000141.sptg2)
 	e4:SetOperation(c90000141.spop2)
 	c:RegisterEffect(e4)
+	--summon friends and make opponent smaller (need to add in stat drop later)
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(90000141,2))
+	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e5:SetType(EFFECT_TYPE_IGNITION)
+	e5:SetRange(LOCATION_PZONE)
+	e5:SetCountLimit(1,90000141)
+	e5:SetCondition(c90000141.condition)
+	e5:SetTarget(c90000141.target)
+	e5:SetOperation(c90000141.activate)
+	c:RegisterEffect(e5)
 end
 --spsummon
 function c90000141.filter(c,e,tp)
-	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY) and not c:IsCode(90000141)
 end
 function c90000141.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -86,5 +97,30 @@ function c90000141.spop2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummonStep(tc1,0,tp,tp,false,false,POS_FACEUP)
 		Duel.SpecialSummonStep(tc2,0,tp,tp,false,false,POS_FACEUP)
 		Duel.SpecialSummonComplete()
+	end
+end
+--ss from hand/Pend zone
+function c90000141.filter3(c)
+	return c:IsSetCard(0x5f3) and c:IsType(TYPE_MONSTER)
+end
+--function c90000141.cfilter(c)
+	--return c:IsFaceup() and c:IsSetCard(0x5f3)
+--end
+function c90000141.condition(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetTurnPlayer()~=tp 
+	--Duel.IsExistingMatchingCard(c90000141.cfilter,tp,LOCATION_PZONE,0,1,e:GetHandler())
+end
+function c90000141.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(c90000141.filter,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_EXTRA)
+end
+
+function c90000141.activate(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,c90000141.filter3,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)		
 	end
 end

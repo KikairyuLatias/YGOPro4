@@ -52,18 +52,18 @@ function c90000143.initial_effect(c)
 	e7:SetType(EFFECT_TYPE_FIELD)
 	e7:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e7:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
-	e7:SetRange(LOCATION_MZONE)
+	e7:SetRange(LOCATION_PZONE)
 	e7:SetTargetRange(LOCATION_MZONE,0)
 	e7:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x5f3))
 	e7:SetValue(aux.tgoval)
 	c:RegisterEffect(e7)
-	local e8=e7:clone()
+	local e8=e7:Clone()
 	e8:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	c:RegisterEffect(e8)
 end
 --spsummon
 function c90000143.filter(c,e,tp)
-	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY) and not c:IsCode(90000143)
 end
 function c90000143.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -83,12 +83,12 @@ function c90000143.tdfilter(c)
 	return c:IsSetCard(0x9d0) and c:IsAbleToDeck()
 end
 function c90000143.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_GRAVE) or chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and c90000143.tdfilter(chkc) end
+	if chkc then return chkc:IsLocation(LOCATION_GRAVE) or chkc:IsLocation(LOCATION_EXTRA) and chkc:IsControler(tp) and c90000143.tdfilter(chkc) end
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,2)
-		and Duel.IsExistingTarget(c90000143.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,nil) end
+		and Duel.IsExistingTarget(c90000143.tdfilter,tp,LOCATION_GRAVE+LOCATION_EXTRA,0,5,nil) end
 	Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectTarget(tp,c90000143.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,5,nil)
+	local g=Duel.SelectTarget(tp,c90000143.tdfilter,tp,LOCATION_GRAVE+LOCATION_EXTRA,0,5,5,nil)
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,g:GetCount(),0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
