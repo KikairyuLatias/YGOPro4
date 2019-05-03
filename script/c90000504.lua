@@ -1,58 +1,102 @@
---空牙団の医療忍 サクラ
-function c90000504.initial_effect(c)
-	--atk up
+--Rider Deer Kojo
+local s,id=GetID()
+function s.initial_effect(c)
+	--pendulum summon
+	aux.EnablePendulumAttribute(c,false)
+	--Activate
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_ACTIVATE)
+	e0:SetCode(EVENT_FREE_CHAIN)
+	c:RegisterEffect(e0)
+	--replace me
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000504,0))
-	e1:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCondition(c90000504.atkcon)
-	e1:SetOperation(c90000504.atkop)
-	e1:SetCountLimit(1,90000504)
+	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e1:SetRange(LOCATION_PZONE)
+	e1:SetCode(EVENT_BATTLE_DESTROYED)
+	e1:SetCountLimit(1)
+	e1:SetTarget(s.destg)
+	e1:SetOperation(s.desop)
 	c:RegisterEffect(e1)
-	--act limit
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e3:SetCode(EVENT_CHAINING)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetOperation(c90000504.chainop)
+	--special summon
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_SUMMON_SUCCESS)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e2:SetCountLimit(1,id)
+	e2:SetTarget(s.sptg)
+	e2:SetOperation(s.spop2)
+	c:RegisterEffect(e2)
+	local e3=e2:Clone()
+	e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e3)
+	local e4=e2:Clone()
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	c:RegisterEffect(e4)
 end
-
---stat dropping (shannaro!)
-function c90000504.atkcon(e,tp,eg,ep,ev,re,r,rp)
-	return bit.band(e:GetHandler():GetSummonType(),SUMMON_TYPE_SPECIAL)==SUMMON_TYPE_SPECIAL
+--replace
+function s.cfilter(c,e,tp)
+	return c:IsSetCard(0x5f4) and c:IsControler(tp) and c:IsReason(REASON_BATTLE)
+		and Duel.IsExistingMatchingCard(s.filterx,tp,LOCATION_DECK,0,1,nil,c:GetAttack(),nil,e,tp)
 end
-function c90000504.atkop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local tg=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
-	local tc=tg:GetFirst()
-	while tc do
+function s.filterx(c,atk,att,e,tp)
+	local a=c:GetAttack()
+	return a>=0 and a<atk and c:IsSetCard(0x5f4)
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and eg:IsExists(s.cfilter,1,nil,e,tp) end
+	Duel.SetTargetCard(eg)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
+end
+function s.cfilterx2(c,e,tp)
+	return c:IsSetCard(0x5f4) and c:IsControler(tp) and c:IsRelateToEffect(e)
+		and Duel.IsExistingMatchingCard(s.filterx,tp,LOCATION_DECK,0,1,nil,c:GetAttack(),nil,e,tp)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	local sg=eg:Filter(s.cfilterx2,nil,e,tp)
+	if sg:GetCount()==1 then
+		local tc=sg:GetFirst()
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+		local g=Duel.SelectMatchingCard(tp,s.filterx,tp,LOCATION_DECK,0,1,1,nil,tc:GetAttack(),nil,e,tp)
+		if g:GetCount()>0 then
+			Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+		end
+	else
+		local tc=sg:GetFirst()
+		if not tc then return end
 		local atk=tc:GetAttack()
-		local def=tc:GetDefense()
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_SET_ATTACK_FINAL)
-		e1:SetValue(atk/2)
-		e1:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e1)
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_SET_DEFENSE_FINAL)
-		e1:SetValue(def/2)
-		e1:SetReset(RESET_EVENT+0x1fe0000)
-		tc:RegisterEffect(e1)
-		tc=tg:GetNext()
+		tc=sg:GetNext()
+		if tc then
+			if tc:GetAttack()>atk then atk=tc:GetAttack() end		 
+		end
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+		local g=Duel.SelectMatchingCard(tp,s.filterx,tp,LOCATION_DECK,0,1,1,nil,atk,att,e,tp)
+		if g:GetCount()>0 then
+			Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+		end
 	end
 end
-
---don't bother chaining.
-function c90000504.chainop(e,tp,eg,ep,ev,re,r,rp)
-	local rc=re:GetHandler()
-	if rc:IsSetCard(0x114) and re:IsActiveType(TYPE_MONSTER) then
-		Duel.SetChainLimit(c90000504.chainlm)
-	end
+--on summon
+function s.filter(c,e,tp)
+	return c:IsSetCard(0x5f4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsLevelBelow(5) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
-function c90000504.chainlm(e,rp,tp)
-	return tp==rp
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	if g:GetCount()>0 then
+		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+	end
 end

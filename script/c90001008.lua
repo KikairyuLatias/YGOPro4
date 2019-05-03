@@ -1,8 +1,8 @@
 --Skystorm Mecha Fighter Jet - X-Tornado
 function c90001008.initial_effect(c)
 	--summon reqs
-	function c90001008.initial_effect(c)
 	aux.AddLinkProcedure(c,c90001008.matfilter,2)
+	c:EnableReviveLimit()
 	--attack everything the opponent has
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -10,7 +10,7 @@ function c90001008.initial_effect(c)
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
 	--destroy eggman
-	local e3=Effect.CreateEffect(c)
+	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_REMOVE)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)

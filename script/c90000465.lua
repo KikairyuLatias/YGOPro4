@@ -1,7 +1,7 @@
 --Eclipse Dream Dragon Champion
 function c90000465.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x5f9),2,nil,c90000465.lcheck)
+	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x5f9),3,nil,c90000465.lcheck)
 	c:EnableReviveLimit()
 	--cannot be target
 	local e1=Effect.CreateEffect(c)

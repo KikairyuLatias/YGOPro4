@@ -1,7 +1,7 @@
 --Dreamlight Raccoon
 function c90000439.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x5f7),2,2)
+	aux.AddLinkProcedure(c,c90000439.matfilter,2,2)
 	--retrieval
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(90000439,0))
@@ -14,7 +14,18 @@ function c90000439.initial_effect(c)
 	e1:SetTarget(c90000439.tg)
 	e1:SetOperation(c90000439.op)
 	c:RegisterEffect(e1)
-	--shuffle opponent's hand (add later)
+	--added NS for dreamlight
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
+	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x5f7))
+	c:RegisterEffect(e2)
+end
+--materials
+function c90000439.matfilter(c,scard,sumtype,tp)
+	return c:IsSetCard(0x5f7,scard,sumtype,tp) or c:IsSetCard(0x5f8,scard,sumtype,tp)
 end
 --return
 function c90000439.con(e,tp,eg,ep,ev,re,r,rp)

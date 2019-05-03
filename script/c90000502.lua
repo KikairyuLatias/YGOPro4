@@ -1,38 +1,78 @@
---氷結界の泊豹
-function c90000502.initial_effect(c)
-	--spsummon
+--Rider Deer Rikusho
+local s,id=GetID()
+function s.initial_effect(c)
+	--pendulum summon
+	aux.EnablePendulumAttribute(c,false)
+	--Activate
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_ACTIVATE)
+	e0:SetCode(EVENT_FREE_CHAIN)
+	c:RegisterEffect(e0)
+	--atk up
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000502,0))
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetTarget(c90000502.sptg)
-	e1:SetOperation(c90000502.spop)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetRange(LOCATION_PZONE)
+	e1:SetTargetRange(0,LOCATION_MZONE)
+	e1:SetValue(s.val)
 	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+	--def up
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	e2:SetRange(LOCATION_PZONE)
+	e2:SetTargetRange(0,LOCATION_MZONE)
+	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
-	local e3=e1:Clone()
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	--pierce
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_PIERCE)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetTargetRange(LOCATION_MZONE,0)
+	e3:SetTarget(s.target)
 	c:RegisterEffect(e3)
+	--shuffle into deck
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(90000852,2))
+	e4:SetCategory(CATEGORY_TODECK)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1)
+	e4:SetTarget(s.target2)
+	e4:SetOperation(s.operation2)
+	c:RegisterEffect(e4)
+end
+--drop
+function s.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x5f4)
+end
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-300
 end
 
---ss stuff
-function c90000502.filter(c,e,tp)
-	return c:IsSetCard(0x2f) and not c:IsCode(90000502) and c:GetLevel()<=4 and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+-- lock and fire
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToDeck,tp,0,LOCATION_HAND,1,nil) end 
+	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
+end
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_HAND,1,1,nil)
+	e:GetHandler():RegisterFlagEffect(90000852,RESET_EVENT+0x1fe0000,0,1)
+	Duel.SendtoDeck(tc,nil,2,REASON_EFFECT)
+end
+--piercer
+function s.target(e,c)
+	return c:IsSetCard(0x5f4)
 end
 
-function c90000502.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000502.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
+--weaken shit up
+function s.filter2(c)
+	return c:IsFaceup() and c:IsSetCard(0x5f4)
 end
-function c90000502.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000502.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-	end
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter2,c:GetControler(),0,LOCATION_MZONE,nil)*-300
 end

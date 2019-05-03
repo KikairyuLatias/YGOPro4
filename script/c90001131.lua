@@ -1,7 +1,8 @@
 --Diver Deer Veteran Lākana
-function c90001131.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,c90001110.matfilter,2)
+	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--kirin in diving form
 	local e1=Effect.CreateEffect(c)
@@ -12,8 +13,8 @@ function c90001131.initial_effect(c)
 	e1:SetHintTiming(0,0x1e0)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,90001131)
-	e1:SetTarget(c90001131.thtg)
-	e1:SetOperation(c90001131.thop)
+	e1:SetTarget(s.thtg)
+	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
 	--float and stuff
 	local e2=Effect.CreateEffect(c)
@@ -21,33 +22,33 @@ function c90001131.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetCode(EVENT_LEAVE_FIELD)
-	e2:SetCondition(c90001131.spcon)
-	e2:SetTarget(c90001131.sptg)
-	e2:SetOperation(c90001131.spop)
+	e2:SetCondition(s.spcon)
+	e2:SetTarget(s.sptg)
+	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 end
 
 --restriction
-function c90001131.matfilter(c)
-	return c:IsRace(RACE_BEAST_WARRIOR) and not c:IsType(TYPE_TOKEN)
+function s.lcheck(g,lc,tp)
+	return g:GetClassCount(Card.GetCode)==#g
 end
 
 -- kirin
-function c90001131.filter(c)
+function s.filter(c)
 	return c:IsRace(RACE_BEASTWARRIOR) and c:IsAbleToHand()
 end
-function c90001131.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end
-	if chk==0 then return Duel.IsExistingTarget(c90001131.filter,tp,LOCATION_MZONE,0,1,nil)
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,nil)
 		and Duel.IsExistingTarget(Card.IsAbleToHand,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
-	local g1=Duel.SelectTarget(tp,c90001131.filter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g1=Duel.SelectTarget(tp,s.filter,tp,LOCATION_MZONE,0,1,1,nil)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOHAND)
 	local g2=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,0,LOCATION_MZONE,1,1,nil)
 	g1:Merge(g2)
 	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g1,2,0,0)
 end
-function c90001131.thop(e,tp,eg,ep,ev,re,r,rp)
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
 	if g:GetCount()>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
@@ -55,23 +56,23 @@ function c90001131.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --float stuff
-function c90001131.spcon(e,tp,eg,ep,ev,re,r,rp)
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsPreviousPosition(POS_FACEUP)
 end
 
-function c90001131.spfilter(c,e,tp)
+function s.spfilter(c,e,tp)
 	return (c:IsLevelBelow(4) and c:IsRace(RACE_BEASTWARRIOR)) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
-function c90001131.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90001131.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90001131.spop(e,tp,eg,ep,ev,re,r,rp)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90001131.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end

@@ -90,4 +90,3 @@ end
 function c90000105.aclimit(e,re,tp)
 	return not re:GetHandler():IsImmuneToEffect(e)
 end
-

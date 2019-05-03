@@ -68,6 +68,6 @@ function c90001275.hdop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)
 	if g:GetCount()>0 then
 		local sg=g:RandomSelect(tp,1)
-		Duel.Remove(sg,POS_FACEDOWN,REASON_EFFECT)
+		Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
 	end
 end

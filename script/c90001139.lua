@@ -5,7 +5,7 @@ function c90001139.initial_effect(c)
 	c:EnableReviveLimit()
 	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001139,0))
+	e1:SetDescription(aux.Stringid(90001139,1))
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
@@ -14,7 +14,7 @@ function c90001139.initial_effect(c)
 	c:RegisterEffect(e1)
 	--attach stuff to this as material
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001139,1))
+	e2:SetDescription(aux.Stringid(90001139,2))
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
@@ -32,7 +32,7 @@ function c90001139.initial_effect(c)
 end
 --alt summon condition (not like you can summon this normally anyway...)
 function c90001139.ovfilter(c)
-	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x4af) and c:IsAttackAbove(2000)
 end
 
 function c90001139.xyzop(e,tp,chk)
