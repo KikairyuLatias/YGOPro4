@@ -58,7 +58,7 @@ return c:IsRace(RACE_BEAST) and c:IsAttribute(ATTRIBUTE_LIGHT)
 end
 
 function c90001234.ovfilter(c)
-	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsLevel(3) and c:IsSetCard(0x4c9)
+	return c:IsFaceup() and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsSetCard(0x4c9) and not c:IsCode(90001234)
 end
 function c90001234.xyzop(e,tp,chk)
 	if chk==0 then return Duel.GetFlagEffect(tp,90001234)==0 end

@@ -1,75 +1,76 @@
 --Diver Deer Elite Sakura
-function c90001110.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),2)
 	c:EnableReviveLimit()
 	--banish until end phase
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001110,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_REMOVE)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetCountLimit(1,90001110)
+	e1:SetCountLimit(1,id)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetHintTiming(0,0x1e0)
-	e1:SetTarget(c90001110.thtg)
-	e1:SetOperation(c90001110.thop)
+	e1:SetTarget(s.thtg)
+	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
 	--summon friends and make opponent smaller (need to add in stat drop later)
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001110,1))
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_ATKCHANGE)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,90001199)
-	e2:SetTarget(c90001110.target)
-	e2:SetOperation(c90001110.activate)
+	e2:SetCountLimit(1,id+99999)
+	e2:SetTarget(s.target)
+	e2:SetOperation(s.activate)
 	c:RegisterEffect(e2)
 end
 
 -- spsummon
-function c90001110.filter(c)
+function s.filter(c)
 	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER)
 end
 
-function c90001110.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90001110.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
 
-function c90001110.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90001110.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)		
 	end
 end
 
 --banish until end phase
-function c90001110.thfilter(c)
+function s.thfilter(c)
 	return c:IsType(TYPE_MONSTER) or c:IsType(SPELL) or c:IsType(TYPE_TRAP) and c:IsAbleToRemove()
 end
-function c90001110.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local c=e:GetHandler()
 	local ct=c:GetLinkedGroupCount()
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and c90001110.thfilter(chkc) end
-	if chk==0 then return ct>0 and Duel.IsExistingTarget(c90001110.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.thfilter(chkc) end
+	if chk==0 then return ct>0 and Duel.IsExistingTarget(s.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectTarget(tp,c90001110.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,ct,nil)
+	local g=Duel.SelectTarget(tp,s.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,ct,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),0,0)
-	c:RegisterFlagEffect(0,RESET_EVENT+0x1fe0000,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(90001110,1))
+	c:RegisterFlagEffect(0,RESET_EVENT+0x1fe0000,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(id,1))
 end
-function c90001110.thop(e,tp,eg,ep,ev,re,r,rp)
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
 	if Duel.Remove(g,0,REASON_EFFECT+REASON_TEMPORARY)~=0 then
 		local fid=c:GetFieldID()
 		local og=Duel.GetOperatedGroup()
 		for oc in aux.Next(og) do
-			oc:RegisterFlagEffect(90001110,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1,fid)
+			oc:RegisterFlagEffect(id,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1,fid)
 		end
 		og:KeepAlive()
 		local e1=Effect.CreateEffect(c)
@@ -79,17 +80,17 @@ function c90001110.thop(e,tp,eg,ep,ev,re,r,rp)
 		e1:SetCountLimit(1)
 		e1:SetLabel(fid)
 		e1:SetLabelObject(og)
-		e1:SetCondition(c90001110.retcon)
-		e1:SetOperation(c90001110.retop)
+		e1:SetCondition(s.retcon)
+		e1:SetOperation(s.retop)
 		Duel.RegisterEffect(e1,tp)
 	end
 end
-function c90001110.retfilter(c,fid)
-	return c:GetFlagEffectLabel(90001110)==fid
+function s.retfilter(c,fid)
+	return c:GetFlagEffectLabel(id)==fid
 end
-function c90001110.retcon(e,tp,eg,ep,ev,re,r,rp)
+function s.retcon(e,tp,eg,ep,ev,re,r,rp)
 	local g=e:GetLabelObject()
-	if g:IsExists(c90001110.retfilter,1,nil,e:GetLabel()) then
+	if g:IsExists(s.retfilter,1,nil,e:GetLabel()) then
 		return true
 	else 
 		g:DeleteGroup()
@@ -97,9 +98,9 @@ function c90001110.retcon(e,tp,eg,ep,ev,re,r,rp)
 		return false
 	end
 end
-function c90001110.retop(e,tp,eg,ep,ev,re,r,rp)
+function s.retop(e,tp,eg,ep,ev,re,r,rp)
 	local og=e:GetLabelObject()
-	local g=og:Filter(c90001110.retfilter,nil,e:GetLabel())
+	local g=og:Filter(s.retfilter,nil,e:GetLabel())
 	og:DeleteGroup()
 	if g:GetCount()<=0 then return end
 	local p=g:GetFirst():GetPreviousControler()

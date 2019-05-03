@@ -77,6 +77,7 @@ function c90001232.initial_effect(c)
 	e8:SetType(EFFECT_TYPE_FIELD)
 	e8:SetRange(LOCATION_PZONE)
 	e8:SetTargetRange(0,LOCATION_MZONE)
+	e8:SetCondition(c90001232.condition)
 	e8:SetTarget(c90001232.disable)
 	e8:SetCode(EFFECT_DISABLE)
 	c:RegisterEffect(e8)
@@ -140,6 +141,12 @@ function c90001232.penop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --negate the opponent
+function c90001232.condfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x4c9)
+end
+function c90001232.condition(e)
+	return Duel.IsExistingMatchingCard(c90001232.condfilter,e:GetHandlerPlayer(),LOCATION_PZONE,0,1,nil)
+end
 function c90001232.disable(e,c)
 	return c:IsType(TYPE_EFFECT) or bit.band(c:GetOriginalType(),TYPE_EFFECT)==TYPE_EFFECT
 end

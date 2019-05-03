@@ -1,5 +1,6 @@
 -- Diver Deer Elite Bluestar
-function c90001112.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x4af),2)
 	c:EnableReviveLimit()
@@ -9,7 +10,7 @@ function c90001112.initial_effect(c)
 	e1:SetCode(EFFECT_UPDATE_ATTACK)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(0,LOCATION_MZONE)
-	e1:SetValue(c90001112.val)
+	e1:SetValue(s.val)
 	c:RegisterEffect(e1)
 	--def up
 	local e2=Effect.CreateEffect(c)
@@ -17,7 +18,7 @@ function c90001112.initial_effect(c)
 	e2:SetCode(EFFECT_UPDATE_DEFENSE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(0,LOCATION_MZONE)
-	e2:SetValue(c90001112.val)
+	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
 	--banish
 	local e3=Effect.CreateEffect(c)
@@ -26,26 +27,29 @@ function c90001112.initial_effect(c)
 	e3:SetCode(EVENT_BATTLE_DESTROYING)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e3:SetCountLimit(1)
-	e3:SetCondition(c90001112.descon)
-	e3:SetTarget(c90001112.destg)
-	e3:SetOperation(c90001112.desop)
+	e3:SetCountLimit(1,id)
+	e3:SetCondition(s.descon)
+	e3:SetTarget(s.destg)
+	e3:SetOperation(s.desop)
 	c:RegisterEffect(e3)
 end
 
 --banish for ZPD
-function c90001112.descon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4af)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local rc=eg:GetFirst()
+	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
+		and rc:IsFaceup() and rc:IsSetCard(0x4af) and rc:IsControler(tp)
 end
-function c90001112.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsRemovable() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectTarget(tp,Card.IsRemovable,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
-function c90001112.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) then
@@ -54,9 +58,9 @@ function c90001112.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --weaken shit up
-function c90001112.filter(c)
+function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x4af)
 end
-function c90001112.val(e,c)
-	return Duel.GetMatchingGroupCount(c90001112.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-200
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-200
 end
