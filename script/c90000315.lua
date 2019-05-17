@@ -1,4 +1,4 @@
---Dreamlight Castle
+--Skateboard Dragon Ascension Park
 function c90000315.initial_effect(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)

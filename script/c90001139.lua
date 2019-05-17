@@ -33,7 +33,7 @@ function s.initial_effect(c)
 end
 --alt summon condition (not like you can summon this normally anyway...)
 function s.ovfilter(c)
-	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x4af) and c:IsAttackAbove(2000)
+	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x4af)
 end
 
 function s.xyzop(e,tp,chk)
