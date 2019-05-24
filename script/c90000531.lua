@@ -1,62 +1,47 @@
---Valkyrie Kára
-function c90000531.initial_effect(c)
-	--spsummon
+--SG Morph Gear
+local s,id=GetID()
+function s.initial_effect(c)
+	--Activate
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000531,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetCountLimit(1)
-	e1:SetTarget(c90000531.sptg)
-	e1:SetOperation(c90000531.spop)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetHintTiming(0,TIMING_END_PHASE)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-	--destroy
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_REMOVE)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e2:SetCode(EVENT_BATTLE_DAMAGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCountLimit(1)
-	e2:SetCondition(c90000531.descon)
-	e2:SetTarget(c90000531.destg)
-	e2:SetOperation(c90000531.desop)
-	c:RegisterEffect(e2)
 end
---special summon
-function c90000531.filter(c,e,tp)
-	return c:IsSetCard(0x122) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(90000531) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+function s.tfilter(c,att,e,tp)
+	return c:IsSetCard(0x27d5) and c:IsAttribute(att) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
 end
-function c90000531.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000531.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_DECK)
+function s.filter(c,e,tp)
+	return c:IsFaceup() and c:IsSetCard(0x17d5)
+		and Duel.IsExistingMatchingCard(s.tfilter,tp,LOCATION_EXTRA,0,1,nil,c:GetAttribute(),e,tp)
+		and Duel.GetLocationCountFromEx(tp,tp,c)>0
 end
-function c90000531.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000531.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,1,nil,e,tp)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-	end
+function s.chkfilter(c,att)
+	return c:IsFaceup() and c:IsSetCard(0x17d5) and c:IsAttribute(att)
 end
---destruction for Valkyries
-function c90000531.descon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x55b)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.chkfilter(chkc,e:GetLabel()) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,nil,e,tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_MZONE,0,1,1,nil,e,tp)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
+	e:SetLabel(g:GetFirst():GetAttribute())
 end
-function c90000531.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsDestructable() end
-	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,Card.IsRemovable,tp,0,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
-end
-function c90000531.desop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		Duel.Destroy(tc,REASON_EFFECT)
+	if not tc:IsRelateToEffect(e) then return end
+	local att=tc:GetAttribute()
+	if Duel.SendtoGrave(tc,REASON_EFFECT)==0 then return end
+	if Duel.GetLocationCountFromEx(tp)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local sg=Duel.SelectMatchingCard(tp,s.tfilter,tp,LOCATION_EXTRA,0,1,1,nil,att,e,tp)
+	if sg:GetCount()>0 then
+		Duel.BreakEffect()
+		Duel.SpecialSummon(sg,0,tp,tp,true,false,POS_FACEUP)
+		sg:GetFirst():CompleteProcedure()
 	end
 end

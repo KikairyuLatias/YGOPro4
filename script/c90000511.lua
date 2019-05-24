@@ -92,7 +92,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		local atk=tc:GetAttack()
 		tc=sg:GetNext()
 		if tc then
-			if tc:GetAttack()>atk then atk=tc:GetAttack() end	   
+			if tc:GetAttack()>atk then atk=tc:GetAttack() end	  
 		end
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local g=Duel.SelectMatchingCard(tp,s.filterx,tp,LOCATION_DECK,0,1,1,nil,atk,att,e,tp)
@@ -139,7 +139,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --spsummon
 function s.filter2(c,e,tp)
-	return c:IsSetCard(0x5f9) and c:IsLevelBelow(5) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x5f4) and c:IsLevelBelow(5) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

@@ -1,35 +1,57 @@
---Advance Aerial
-function c90000516.initial_effect(c)
---Activate
+--SG Catcher Kei
+local s,id=GetID()
+function s.initial_effect(c)
+	--atk buff
 	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCountLimit(1,90000516+EFFECT_COUNT_CODE_OATH)
-	e1:SetCondition(c90000516.condition)
-	e1:SetTarget(c90000516.target)
-	e1:SetOperation(c90000516.activate)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetCondition(s.condition)
+	e1:SetValue(300)
 	c:RegisterEffect(e1)
+	local e2=e1:Clone()
+	e2:SetCode(EVENT_UPDATE_DEFENSE)
+	c:RegisterEffect(e2)
+	--searcher
+	local e3=Effect.CreateEffect(c)
+	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
+	e3:SetCode(EVENT_SUMMON_SUCCESS)
+	e3:SetCountLimit(1,id)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation2)
+	c:RegisterEffect(e3)
+	local e4=e3:Clone()
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	c:RegisterEffect(e4)
 end
-function c90000516.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x101b)
+--searcher
+function s.con(e)
+	return e:GetHandler():IsFaceup() and e:GetHandler():IsLocation(LOCATION_MZONE)
 end
-function c90000516.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(c90000516.cfilter,tp,LOCATION_MZONE,0,1,nil)
+function s.indval(e,re,tp)
+	return e:GetHandler():GetControler()~=tp
 end
-function c90000516.spfilter(c,e,tp)
-	return c:IsSetCard(0x101b) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
+function s.filter(c)
+	return c:IsSetCard(0x47d5) and c:IsAbleToHand()
 end
-function c90000516.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000516.spfilter,tp,LOCATION_HAND,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
-function c90000516.activate(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000516.spfilter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
 	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,false)
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
 	end
+end
+--stat buff
+function s.condition(e)
+	local ph=Duel.GetCurrentPhase()
+	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
+		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
 end

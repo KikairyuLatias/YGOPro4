@@ -1,73 +1,57 @@
---Majespecter Phoenix - Suzaku
-function c90000533.initial_effect(c)
-	--summon conditions
-	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsAttribute,ATTRIBUTE_WIND),2,3,c90000533.lcheck)
-	--protection
+--SG Dash Hoop
+local s,id=GetID()
+function s.initial_effect(c)
+	aux.AddEquipProcedure(c,nil,aux.FilterBoolFunction(Card.IsSetCard,0x7d5))
+	--to hand
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_IMMUNE_EFFECT)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e1:SetTarget(c90000533.unaffecttg)
-	e1:SetValue(c90000533.unaffectval)
+	e1:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
+	e1:SetCategory(CATEGORY_TOHAND)
+	e1:SetCode(EVENT_PHASE+PHASE_END)
+	e1:SetRange(LOCATION_GRAVE)
+	e1:SetTarget(s.target2)
+	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-	--cannot be tributed
+	--direct attack
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EFFECT_UNRELEASABLE_SUM)
-	e2:SetTarget(c90000533.unaffecttg)
-	e2:SetValue(1)
+	e2:SetType(EFFECT_TYPE_EQUIP)
+	e2:SetCode(EFFECT_DIRECT_ATTACK)
 	c:RegisterEffect(e2)
-	--tribute to negate effects
+	--damage reduce
 	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE+CATEGORY_DAMAGE)
-	e3:SetType(EFFECT_TYPE_TRIGGER_O)
-	e3:SetCode(EVENT_CHAINING)
-	e3:SetTargetRange(0,LOCATION_MZONE)
-	e3:SetCondition(c90000533.condition)
-	e3:SetCost(c90000533.cost)
-	e3:SetTarget(c90000533.target)
-	e3:SetOperation(c90000533.activate)
+	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e3:SetCode(EVENT_PRE_BATTLE_DAMAGE)
+	e3:SetRange(LOCATION_SZONE)
+	e3:SetCondition(s.rdcon)
+	e3:SetOperation(s.rdop)
 	c:RegisterEffect(e3)
 end
---summon condition
-function c90000533.lcheck(g,lc,tp)
-	return g:IsExists(Card.IsSetCard,1,nil,0xd0)
+--retrieval from gy to hand
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsAbleToHand() end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
---protection
-function c90000533.unaffecttg(e,c)
-	return (e:GetHandler():GetLinkedGroup():IsContains(c) or c==e:GetHandler()) and c:IsSetCard(0xd0) and c:IsFaceup()
-end
-function c90000533.unaffectedval(e,te)
-	return te:GetOwnerPlayer()~=e:GetHandlerPlayer()
-end
---delete thisv(effect neg)
-function c90000533.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsChainNegatable(ev) and (re:IsActiveType(TYPE_MONSTER) or re:IsHasType(EFFECT_TYPE_ACTIVATE))
-end
-function c90000533.cfilter(c)
-	return (c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_SPELLCASTER)) and not c:IsStatus(STATUS_BATTLE_DESTROYED)
-end
-function c90000533.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckReleaseGroupCost(tp,c90000533.cfilter,1,false,nil,nil) end
-	local g=Duel.SelectReleaseGroupCost(tp,c90000533.cfilter,1,1,false,nil,nil)
-	Duel.Release(g,REASON_COST)
-end
-function c90000533.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
-	if re:GetHandler():IsDestructable() and re:GetHandler():IsRelateToEffect(re) then
-		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 	end
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,800)
 end
-function c90000533.activate(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
-		Duel.Remove(eg,POS_FACEDOWN,REASON_EFFECT)
+--attack directly for half damage
+function s.rdcon(e,tp,eg,ep,ev,re,r,rp)
+	return ep~=tp and Duel.GetAttacker()==e:GetHandler():GetEquipTarget() and Duel.GetAttackTarget()==nil
+		and e:GetHandler():GetEquipTarget() and e:GetHandler():GetEquipTarget():IsHasEffect(EFFECT_DIRECT_ATTACK)
+		and Duel.IsExistingMatchingCard(aux.NOT(Card.IsHasEffect),tp,0,LOCATION_MZONE,1,nil,EFFECT_IGNORE_BATTLE_TARGET)
+end
+function s.rdop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local tc=c:GetEquipTarget()
+	local effs={tc:GetCardEffect(EFFECT_DIRECT_ATTACK)}
+	local eg=Group.CreateGroup()
+	for _,eff in ipairs(effs) do
+		eg:AddCard(eff:GetOwner())
 	end
-		Duel.BreakEffect()
-		Duel.Damage(1-tp,800,REASON_EFFECT)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_EFFECT)
+	local ec = #eg==1 and eg:GetFirst() or eg:Select(tp,1,1,nil):GetFirst()
+	if c==ec then
+		Duel.HalfBattleDamage(ep)
+	end
 end
