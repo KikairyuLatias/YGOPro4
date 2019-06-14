@@ -10,6 +10,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_GRAVE)
 	e1:SetTarget(s.target2)
 	e1:SetOperation(s.operation)
+	e1:SetCountLimit(1,id)
 	c:RegisterEffect(e1)
 	--direct attack
 	local e2=Effect.CreateEffect(c)

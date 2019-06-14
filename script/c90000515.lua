@@ -1,17 +1,18 @@
 --SG Catcher Yumi
 local s,id=GetID()
 function s.initial_effect(c)
-	--atk buff
+	--atk def
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e1:SetRange(LOCATION_MZONE)
+	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetCondition(s.condition)
-	e1:SetValue(300)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetTargetRange(0,LOCATION_MZONE)
+	e1:SetCondition(s.adcon)
+	e1:SetTarget(s.adtg)
+	e1:SetValue(-300)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
-	e2:SetCode(EVENT_UPDATE_DEFENSE)
+	e2:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e2)
 	--searcher
 	local e3=Effect.CreateEffect(c)
@@ -19,7 +20,6 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e3:SetCode(EVENT_SUMMON_SUCCESS)
-	e3:SetCountLimit(1,id)
 	e3:SetTarget(s.target)
 	e3:SetOperation(s.operation2)
 	c:RegisterEffect(e3)
@@ -49,9 +49,15 @@ function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end
---stat buff
-function s.condition(e)
-	local ph=Duel.GetCurrentPhase()
-	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
-		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
+--stat drop
+function s.adcon(e)
+	if Duel.GetCurrentPhase()~=PHASE_DAMAGE_CAL then return false end
+	local d=Duel.GetAttackTarget()
+	if not d then return false end
+	local tp=e:GetHandlerPlayer()
+	if d:IsControler(1-tp) then d=Duel.GetAttacker() end
+	return d:IsCode(id)
+end
+function s.adtg(e,c)
+	return c==Duel.GetAttacker() or c==Duel.GetAttackTarget()
 end

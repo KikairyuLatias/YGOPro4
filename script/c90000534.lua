@@ -1,26 +1,58 @@
---Majespecter Rescue
-function c90000534.initial_effect(c)
-	--Activate
+--SG Monkey Radar
+local s,id=GetID()
+function s.initial_effect(c)
+	aux.AddEquipProcedure(c,nil,aux.FilterBoolFunction(Card.IsSetCard,0x7d5))
+	--to hand
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCountLimit(1,90000534+EFFECT_COUNT_CODE_OATH)
-	e1:SetTarget(c90000534.target)
-	e1:SetOperation(c90000534.activate)
+	e1:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
+	e1:SetCategory(CATEGORY_TOHAND)
+	e1:SetCode(EVENT_PHASE+PHASE_END)
+	e1:SetRange(LOCATION_GRAVE)
+	e1:SetCountLimit(1,id)
+	e1:SetTarget(s.target2)
+	e1:SetOperation(s.operation2)
 	c:RegisterEffect(e1)
+	--look at stuff
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetRange(LOCATION_SZONE)
+	e2:SetCountLimit(1,id+99999)
+	e2:SetTarget(s.target)
+	e2:SetOperation(s.operation)
+	c:RegisterEffect(e2)
+	--your deck
+	local e3=e2:Clone()
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_SZONE)
+	e3:SetCountLimit(1,id+99999)
+	e3:SetTarget(s.targetx)
+	e3:SetOperation(s.operationx)
+	c:RegisterEffect(e3)
 end
-function c90000534.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0xd0) and c:IsType(TYPE_PENDULUM) and c:IsAbleToHand()
+--retrieval from gy to hand
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsAbleToHand() end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,e:GetHandler(),1,0,0)
 end
-function c90000534.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000534.filter,tp,LOCATION_EXTRA,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_EXTRA)
-end
-function c90000534.activate(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,c90000534.filter,tp,LOCATION_EXTRA,0,1,3,nil)
-	if g:GetCount()>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():IsRelateToEffect(e) then
+		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 	end
+end
+--look at deck
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)>2 end
+end
+function s.targetx(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>2 end
+end
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	Duel.SortDecktop(tp,1-tp,3)
+end
+function s.operationx(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	Duel.ConfirmCards(tp,3)
 end

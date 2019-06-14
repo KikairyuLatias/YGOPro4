@@ -34,7 +34,7 @@ end
 
 --search for Psychic Dragon stuff
 function c90000249.filter1(c)
-	return c:IsSetCard(0x5f1) and c:IsAbleToHand()
+	return c:IsSetCard(0x5f1) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
 end
 function c90000249.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(c90000249.filter1,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
