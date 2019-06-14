@@ -1,58 +1,89 @@
---No.101 S・H・Ark Knight
-function c90000903.initial_effect(c)
-	--xyz summon
-	aux.AddXyzProcedure(c,nil,4,2)
+--Legendary Dragon Hero of the Sacred Storm
+local s,id=GetID()
+function s.initial_effect(c)
+	--synchro summon
+	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
-	--material
+	--double attack
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000903,0))
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCountLimit(1,90000903)
-	e1:SetCost(c90000903.cost)
-	e1:SetTarget(c90000903.target)
-	e1:SetOperation(c90000903.operation)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_EXTRA_ATTACK)
+	e1:SetValue(1)
 	c:RegisterEffect(e1)
-	--destroy replace
+	--burn damage
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-	e2:SetCode(EFFECT_DESTROY_REPLACE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetTarget(c90000903.reptg)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_DAMAGE)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e2:SetCode(EVENT_BATTLE_DESTROYING)
+	e2:SetCondition(s.damcon)
+	e2:SetTarget(s.damtg)
+	e2:SetOperation(s.damop)
 	c:RegisterEffect(e2)
+	--banish and negate
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_CHAINING)
+	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCondition(s.discon)
+	e3:SetCost(s.discost)
+	e3:SetTarget(s.distg)
+	e3:SetOperation(s.disop)
+	c:RegisterEffect(e3)
 end
-c90000903.xyz_number=101
-function c90000903.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
-function c90000903.filter(c)
-	return c:IsPosition(POS_FACEUP_ATTACK) and c:IsAbleToChangeControler()
-		and not c:IsType(TYPE_TOKEN) and bit.band(c:GetSummonType(),SUMMON_TYPE_SPECIAL)==SUMMON_TYPE_SPECIAL
-end
-function c90000903.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and c90000903.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90000903.filter,tp,0,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
-	Duel.SelectTarget(tp,c90000903.filter,tp,0,LOCATION_MZONE,1,1,nil)
-end
-function c90000903.operation(e,tp,eg,ep,ev,re,r,rp)
+--burn damage
+function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=Duel.GetFirstTarget()
-	if c:IsRelateToEffect(e) and tc:IsRelateToEffect(e) and not tc:IsImmuneToEffect(e) then
-		local og=tc:GetOverlayGroup()
-		if og:GetCount()>0 then
-			Duel.SendtoGrave(og,REASON_RULE)
-		end
-		Duel.Overlay(c,Group.FromCards(tc))
+	local bc=c:GetBattleTarget()
+	return c:IsRelateToBattle() and bc:IsType(TYPE_MONSTER)
+end
+function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local c=e:GetHandler()
+	local bc=c:GetBattleTarget()
+	local dam=bc:GetAttack()*1
+	if dam<0 then dam=0 end
+	Duel.SetTargetPlayer(1-tp)
+	Duel.SetTargetParam(dam)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+end
+function s.damop(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Damage(p,d,REASON_EFFECT)
+end
+--no one escapes the law
+function s.discon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsStatus(STATUS_BATTLE_DESTROYED) then return false end
+	return (re:IsActiveType(TYPE_MONSTER) or re:IsHasType(EFFECT_TYPE_ACTIVATE)) and Duel.IsChainNegatable(ev)
+end
+function s.discost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return c:IsAbleToRemoveAsCost() end
+	if Duel.Remove(c,POS_FACEUP,REASON_COST+REASON_TEMPORARY)~=0 then
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+		e1:SetCode(EVENT_PHASE+PHASE_END)
+		e1:SetReset(RESET_PHASE+PHASE_END)
+		e1:SetLabelObject(c)
+		e1:SetCountLimit(1)
+		e1:SetOperation(s.retop)
+		Duel.RegisterEffect(e1,tp)
 	end
 end
-function c90000903.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_EFFECT) end
-	if Duel.SelectYesNo(tp,aux.Stringid(90000903,1)) then
-		e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_EFFECT)
-		return true
-	else return false end
+function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
+	if re:GetHandler():IsAbleToRemoveAsCost() and re:GetHandler():IsRelateToEffect(re) then
+		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
+	end
+end
+function s.disop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
+		Duel.Remove(eg,POS_FACEDOWN,REASON_EFFECT)
+	end
 end

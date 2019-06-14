@@ -1,5 +1,6 @@
 --Magical Girl of Invocation
-function c90000141.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate
@@ -9,13 +10,13 @@ function c90000141.initial_effect(c)
 	c:RegisterEffect(e0)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000141,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetTarget(c90000141.sptg)
-	e1:SetOperation(c90000141.spop)
+	e1:SetTarget(s.sptg)
+	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
@@ -25,66 +26,66 @@ function c90000141.initial_effect(c)
 	c:RegisterEffect(e3)
 	--special summon
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000141,1))
+	e4:SetDescription(aux.Stringid(id,1))
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e4:SetType(EFFECT_TYPE_TRIGGER_O)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1,90000141)
-	e4:SetCost(c90000141.spcost)
-	e4:SetTarget(c90000141.sptg2)
-	e4:SetOperation(c90000141.spop2)
+	e4:SetCountLimit(1,id)
+	e4:SetCost(s.spcost)
+	e4:SetTarget(s.sptg2)
+	e4:SetOperation(s.spop2)
 	c:RegisterEffect(e4)
 	--summon friends and make opponent smaller (need to add in stat drop later)
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(90000141,2))
+	e5:SetDescription(aux.Stringid(id,2))
 	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e5:SetType(EFFECT_TYPE_IGNITION)
 	e5:SetRange(LOCATION_PZONE)
-	e5:SetCountLimit(1,90000141)
-	e5:SetCondition(c90000141.condition)
-	e5:SetTarget(c90000141.target)
-	e5:SetOperation(c90000141.activate)
+	e5:SetCountLimit(1,id)
+	e5:SetCondition(s.condition)
+	e5:SetTarget(s.target)
+	e5:SetOperation(s.activate)
 	c:RegisterEffect(e5)
 end
 --spsummon
-function c90000141.filter(c,e,tp)
-	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY) and not c:IsCode(90000141)
+function s.filter(c,e,tp)
+	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY) and not c:IsCode(id)
 end
-function c90000141.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000141.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90000141.spop(e,tp,eg,ep,ev,re,r,rp)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000141.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 --ss 2
-function c90000141.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
 	Duel.Release(e:GetHandler(),REASON_spcost)
 end
-function c90000141.spfilter(c,e,tp)
+function s.spfilter(c,e,tp)
 	return c:IsSetCard(0x5f3) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
-function c90000141.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
 		local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
 		if e:GetHandler():GetSequence()<5 then ft=ft+1 end
-		local g=Duel.GetMatchingGroup(c90000141.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
+		local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
 		return ft>1 and not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT)
 			and g:GetClassCount(Card.GetCode)>=2
 	end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,2,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
-function c90000141.spop2(e,tp,eg,ep,ev,re,r,rp)
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then return end
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<2 then return end
-	local g=Duel.GetMatchingGroup(c90000141.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
+	local g=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
 	if #g>=2 and g:GetClassCount(Card.GetCode)>=2 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local sg1=g:Select(tp,1,1,nil)
@@ -100,26 +101,26 @@ function c90000141.spop2(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --ss from hand/Pend zone
-function c90000141.filter3(c)
+function s.filter3(c)
 	return c:IsSetCard(0x5f3) and c:IsType(TYPE_MONSTER)
 end
---function c90000141.cfilter(c)
+--function s.cfilter(c)
 	--return c:IsFaceup() and c:IsSetCard(0x5f3)
 --end
-function c90000141.condition(e,tp,eg,ep,ev,re,r,rp)
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp 
-	--Duel.IsExistingMatchingCard(c90000141.cfilter,tp,LOCATION_PZONE,0,1,e:GetHandler())
+	--Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_PZONE,0,1,e:GetHandler())
 end
-function c90000141.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000141.filter,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_EXTRA)
 end
 
-function c90000141.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000141.filter3,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.filter3,tp,LOCATION_HAND+LOCATION_EXTRA,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)		
 	end

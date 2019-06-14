@@ -1,5 +1,6 @@
 --Arashizakura the War Dragon Sovereign
-function c90000911.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsType,TYPE_SYNCHRO),1)
 	c:EnableReviveLimit()
@@ -25,7 +26,7 @@ function c90000911.initial_effect(c)
 		e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 		e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 		e3:SetRange(LOCATION_MZONE)
-		e3:SetValue(c90000911.indval)
+		e3:SetValue(s.indval)
 		c:RegisterEffect(e3)
 	--the power of ZPD banish authority, so lock on and shoot
 	local e4=Effect.CreateEffect(c)
@@ -34,23 +35,23 @@ function c90000911.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetTarget(c90000911.target2)
-	e4:SetOperation(c90000911.operation2)
+	e4:SetTarget(s.target2)
+	e4:SetOperation(s.operation2)
 	c:RegisterEffect(e4)
 end
 
 --immunity
-function c90000911.indval(e,re,tp)
+function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 
 -- lock and fire
-function c90000911.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
    if chkc then return false end
 	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g1,g1:GetCount(),0,0)
 end
-function c90000911.operation2(e,tp,eg,ep,ev,re,r,rp)
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,2,nil)
 	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)

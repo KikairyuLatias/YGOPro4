@@ -47,7 +47,6 @@ function c90000707.damcon(e,tp,eg,ep,ev,re,r,rp)
 	local bc=c:GetBattleTarget()
 	return c:IsRelateToBattle() and bc:IsType(TYPE_MONSTER)
 end
-
 function c90000707.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	local c=e:GetHandler()

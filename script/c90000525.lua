@@ -1,77 +1,90 @@
---Elemental HERO Flower Valkyria
-function c90000525.initial_effect(c)
-	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsSetCard,0x3008),1,99)
+--SG Transformation Kei - Miracle Ninja
+local s,id=GetID()
+function s.initial_effect(c)
 	c:EnableReviveLimit()
-	--negation
+	c:SetUniqueOnField(1,0,90000522)
+	--spsummon condition
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetRange(LOCATION_EXTRA)
+	e0:SetValue(s.splimit)
+	c:RegisterEffect(e0)
+	--code
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000525,1))
-	e1:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
-	e1:SetType(EFFECT_TYPE_QUICK_O)
-	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
-	e1:SetCode(EVENT_CHAINING)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e1:SetCode(EFFECT_CHANGE_CODE)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(c90000525.negcon)
-	e1:SetCost(c90000525.negcost)
-	e1:SetTarget(c90000525.negtg)
-	e1:SetOperation(c90000525.negop)
+	e1:SetValue(90000522)
 	c:RegisterEffect(e1)
-	--remove
+	--kei boosting
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90000525,2))
-	e2:SetCategory(CATEGORY_REMOVE+CATEGORY_DAMAGE)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
-	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetCondition(c90000525.rmcon)
-	e2:SetTarget(c90000525.rmtg)
-	e2:SetOperation(c90000525.rmop)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCode(EFFECT_UPDATE_ATTACK)
+	e2:SetCondition(s.condition)
+	e2:SetValue(300)
 	c:RegisterEffect(e2)
+	local e3=e2:Clone()
+	e3:SetCode(EVENT_UPDATE_DEFENSE)
+	c:RegisterEffect(e3)
+	--float back original form
+	local e4=Effect.CreateEffect(c)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetCode(EVENT_LEAVE_FIELD)
+	e4:SetCondition(s.spcon)
+	e4:SetTarget(s.sptg)
+	e4:SetOperation(s.spop)
+	c:RegisterEffect(e4)
+	--no kill me once per turn
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
+	e5:SetCountLimit(1)
+	e5:SetValue(s.valcon)
+	c:RegisterEffect(e5)
+	--direct attack
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetCode(EFFECT_DIRECT_ATTACK)
+	c:RegisterEffect(e6)
 end
-
---neg
-function c90000525.negcon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
-		and ep~=tp and re:IsActiveType(TYPE_SPELL+TYPE_TRAP) and Duel.IsChainNegatable(ev)
+--you better summon this properly
+function s.splimit(e,se,sp,st)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
 end
-function c90000525.cfilter(c)
-	return c:IsSetCard(0x3008) and c:IsAbleToRemoveAsCost()
+--stat buff
+function s.condition(e)
+	local ph=Duel.GetCurrentPhase()
+	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
+		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
 end
-function c90000525.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000525.cfilter,tp,LOCATION_GRAVE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,c90000525.cfilter,tp,LOCATION_GRAVE,0,1,1,nil)
-	Duel.Remove(g,POS_FACEUP,REASON_COST)
+--revive original form
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	return c:IsPreviousPosition(POS_FACEUP)
 end
-function c90000525.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_NEGATE+CATEGORY_DESTROY,eg,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
-function c90000525.negop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.NegateActivation(ev) and re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:GetHandler():IsRelateToEffect(re) then
-		Duel.Destroy(eg,REASON_EFFECT)
+function s.spfilter(c,e,tp)
+	return c:IsCode(90000522) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	local tc=Duel.GetFirstMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
+	if tc then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
-
---banish
-function c90000525.rmcon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	return c:IsRelateToBattle() and c:GetBattleTarget():IsType(TYPE_MONSTER)
-end
-function c90000525.filter(c)
-	return c:IsType(TYPE_MONSTER) and c:IsAbleToRemove() and aux.SpElimFilter(c)
-end
-function c90000525.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE+LOCATION_GRAVE) and c90000525.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90000525.filter,tp,0,LOCATION_MZONE+LOCATION_GRAVE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectTarget(tp,c90000525.filter,tp,0,LOCATION_MZONE+LOCATION_GRAVE,1,2,nil)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),0,0)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,800)
-end
-function c90000525.rmop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
-	local sg=g:Filter(Card.IsRelateToEffect,nil,e)
-	Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
-	Duel.Damage(1-tp,800,REASON_EFFECT)
+--protection from getting sniped by sneak shots
+function s.valcon(e,re,r,rp)
+	return bit.band(r,REASON_EFFECT)~=0
 end

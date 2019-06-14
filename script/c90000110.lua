@@ -1,16 +1,17 @@
 --ＺＰＤ警察 − 「ペニングトン」
-function c90000110.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--special summon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000110,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_QUICK_O)
 	e1:SetCode(EVENT_CHAINING)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(c90000110.tgcon)
-	e1:SetOperation(c90000110.tgop)
+	e1:SetCondition(s.tgcon)
+	e1:SetOperation(s.tgop)
 	c:RegisterEffect(e1)
 end
-function c90000110.tgcon(e,tp,eg,ep,ev,re,r,rp)
+function s.tgcon(e,tp,eg,ep,ev,re,r,rp)
 	if not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return false end
 	local g=Duel.GetChainInfo(ev,CHAININFO_TARGET_CARDS)
 	if not g or g:GetCount()~=1 then return false end
@@ -21,7 +22,7 @@ function c90000110.tgcon(e,tp,eg,ep,ev,re,r,rp)
 	local res,ceg,cep,cev,cre,cr,crp=Duel.CheckEvent(re:GetCode(),true)
 	return tf(re,rp,ceg,cep,cev,cre,cr,crp,0,c)
 end
-function c90000110.tgop(e,tp,eg,ep,ev,re,r,rp)
+function s.tgop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and c:IsFaceup() then
 		local g=Group.CreateGroup()

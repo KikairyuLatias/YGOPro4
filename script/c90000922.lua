@@ -1,7 +1,8 @@
 --Latios the Eon Dragon of Altomare
-function c90000922.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,nil,c90000922.lcheck)
+	aux.AddLinkProcedure(c,nil,2,nil,s.lcheck)
 	c:EnableReviveLimit()
 	--Add a Type
 	local e0=Effect.CreateEffect(c)
@@ -17,8 +18,8 @@ function c90000922.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetTarget(c90000922.destg)
-	e1:SetOperation(c90000922.desop)
+	e1:SetTarget(s.destg)
+	e1:SetOperation(s.desop)
 	c:RegisterEffect(e1)
 	--protection
 	local e2=Effect.CreateEffect(c)
@@ -27,7 +28,7 @@ function c90000922.initial_effect(c)
 	e2:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e2:SetTarget(c90000922.indtg)
+	e2:SetTarget(s.indtg)
 	e2:SetValue(1)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
@@ -36,43 +37,43 @@ function c90000922.initial_effect(c)
 	c:RegisterEffect(e3)
 	--come back
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000922,0))
+	e4:SetDescription(aux.Stringid(id,0))
 	e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e4:SetCode(EVENT_TO_GRAVE)
-	e4:SetCountLimit(1,90000922)
-	e4:SetCondition(c90000922.sumcon)
-	e4:SetTarget(c90000922.sumtg)
-	e4:SetOperation(c90000922.sumop)
+	e4:SetCountLimit(1,id)
+	e4:SetCondition(s.sumcon)
+	e4:SetTarget(s.sumtg)
+	e4:SetOperation(s.sumop)
 	c:RegisterEffect(e4)
 end
 
 --summon cond
-function c90000922.lcheck(g,lc,tp)
+function s.lcheck(g,lc,tp)
 	return g:GetClassCount(Card.GetCode)==g:GetCount()
 end
 
 --protection
-function c90000922.indtg(e,c)
+function s.indtg(e,c)
 	return e:GetHandler():GetLinkedGroup():IsContains(c)
 end
 
 -- lock and fire
-function c90000922.filter(c,atk)
+function s.filter(c,atk)
 	return c:IsFaceup() and c:IsAttackBelow(atk)
 end
 
-function c90000922.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000922.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack()) end
-	local g=Duel.GetMatchingGroup(c90000922.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack()) end
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),LOCATION_MZONE,0,1)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,g:GetCount()*300)
 end
-function c90000922.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) or c:IsFacedown() then return end
-	local g=Duel.GetMatchingGroup(c90000922.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
 	local ct=Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
 	if ct>0 then
 		Duel.BreakEffect()
@@ -81,15 +82,15 @@ function c90000922.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --revive
-function c90000922.sumcon(e,tp,eg,ep,ev,re,r,rp)
+function s.sumcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsPreviousLocation(LOCATION_ONFIELD)
 end
-function c90000922.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
-function c90000922.sumop(e,tp,eg,ep,ev,re,r,rp)
+function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 or not c:IsRelateToEffect(e) then return end
 	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)

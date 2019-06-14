@@ -1,5 +1,6 @@
 --ZPD Officer - Shinsetsu
-function c90000122.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--position change
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_DISABLE+CATEGORY_POSITION)
@@ -7,8 +8,8 @@ function c90000122.initial_effect(c)
 	e1:SetCode(EVENT_SUMMON_SUCCESS+EVENT_FLIP_SUMMON_SUCCESS+EVENT_SPSUMMON_SUCCESS)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetTarget(c90000122.postg)
-	e1:SetOperation(c90000122.posop)
+	e1:SetTarget(s.postg)
+	e1:SetOperation(s.posop)
 	c:RegisterEffect(e1)
 	   --field drops
 		   --atk down
@@ -17,7 +18,7 @@ function c90000122.initial_effect(c)
 		e2:SetCode(EFFECT_UPDATE_ATTACK)
 		e2:SetRange(LOCATION_MZONE)
 		e2:SetTargetRange(0,LOCATION_MZONE)
-		e2:SetValue(c90000122.val)
+		e2:SetValue(s.val)
 		c:RegisterEffect(e2)
 		--def down
 		local e3=Effect.CreateEffect(c)
@@ -25,31 +26,31 @@ function c90000122.initial_effect(c)
 		e3:SetCode(EFFECT_UPDATE_DEFENSE)
 		e3:SetRange(LOCATION_MZONE)
 		e3:SetTargetRange(0,LOCATION_MZONE)
-		e3:SetValue(c90000122.val)
+		e3:SetValue(s.val)
 		c:RegisterEffect(e3)
 	--GY drops
 		--atk
 		local e4=e2:Clone()
-		e4:SetValue(c90000122.val2)
+		e4:SetValue(s.val2)
 		c:RegisterEffect(e4)
 		--def
 		local e5=e3:Clone()
-		e5:SetValue(c90000122.val2)
+		e5:SetValue(s.val2)
 		c:RegisterEffect(e5)
 end
 
 --light up the world
-function c90000122.filter(c,sp)
+function s.filter(c,sp)
 	return c:GetSummonPlayer()==sp
 end
-function c90000122.postg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return eg:IsExists(c90000122.filter,1,nil,1-tp) end
-	local g=eg:Filter(c90000122.filter,nil,1-tp)
+function s.postg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return eg:IsExists(s.filter,1,nil,1-tp) end
+	local g=eg:Filter(s.filter,nil,1-tp)
 	Duel.SetTargetCard(g)
 	Duel.SetOperationInfo(0,CATEGORY_POSITION,g,g:GetCount(),0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,g:GetCount(),0,0)
 end
-function c90000122.posop(e,tp,eg,ep,ev,re,r,rp)
+function s.posop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
 	Duel.ChangePosition(g,POS_FACEUP_DEFENSE,POS_FACEUP_DEFENSE,POS_FACEUP_ATTACK,POS_FACEUP_ATTACK)
 	local og=Duel.GetOperatedGroup()
@@ -72,12 +73,12 @@ function c90000122.posop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --stat drop
-function c90000122.filter(c)
+function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x4b0) and c:IsType(TYPE_MONSTER)
 end
-function c90000122.val(e,c)
-	return Duel.GetMatchingGroupCount(c90000122.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-300
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-300
 end
-function c90000122.val2(e,c)
-	return Duel.GetMatchingGroupCount(c90000122.filter,c:GetControler(),0,LOCATION_GRAVE,nil)*-300
+function s.val2(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_GRAVE,nil)*-300
 end

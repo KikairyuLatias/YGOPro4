@@ -99,9 +99,9 @@ end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) and Duel.GetLocationCount(tp,LOCATION_MZONE)>1 
 		and Duel.IsPlayerCanSpecialSummonMonster(tp,31533705,0x101b,TYPES_TOKEN,0,0,3,RACE_MACHINE,ATTRIBUTE_WIND) then
-		local token1=Duel.CreateToken(tp,id+1)
+		local token1=Duel.CreateToken(tp,31533705)
 		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
-		local token2=Duel.CreateToken(tp,id+1)
+		local token2=Duel.CreateToken(tp,31533705)
 		Duel.SpecialSummonStep(token2,0,tp,tp,false,false,POS_FACEUP)
 		Duel.SpecialSummonComplete()
 	end

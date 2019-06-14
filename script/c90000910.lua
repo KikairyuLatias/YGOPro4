@@ -1,5 +1,6 @@
 --Fēngbàoshén the Sacred Blade Dragon
-function c90000910.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsType,TYPE_SYNCHRO),1)
 	c:EnableReviveLimit()
@@ -26,20 +27,20 @@ function c90000910.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_IGNITION+EFFECT_TYPE_QUICK_O)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetTarget(c90000910.target2)
-	e4:SetOperation(c90000910.operation2)
+	e4:SetTarget(s.target2)
+	e4:SetOperation(s.operation2)
 	c:RegisterEffect(e4)
 end
 
 -- lock and fire
-function c90000910.target2(e,tp,eg,ep,ev,re,r,rp,chk)
-    if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end 
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
-function c90000910.operation2(e,tp,eg,ep,ev,re,r,rp)
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-    local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,1,nil)
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,1,nil)
 	e:GetHandler():RegisterFlagEffect(90000910,RESET_EVENT+0x1fe0000,0,1)
 	Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
 end

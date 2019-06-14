@@ -29,7 +29,7 @@ function s.initial_effect(c)
 	e4:SetOperation(s.thop)
 	c:RegisterEffect(e4)
 end
---Dreamlight/star power up
+--Ape Escape Power up!
 function s.tg(e,c)
 	return c:IsSetCard(0x7d5) and c:IsType(TYPE_MONSTER)
 end

@@ -1,132 +1,112 @@
---Elemental HERO Spear Angel
-function c90000521.initial_effect(c)
-	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsSetCard,0x3008),1,99)
+--SG Transformation Yumi - Cyber Ace
+local s,id=GetID()
+function s.initial_effect(c)
 	c:EnableReviveLimit()
-	--remove
+	c:SetUniqueOnField(1,0,90000515)
+	--spsummon condition
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetRange(LOCATION_EXTRA)
+	e0:SetValue(s.splimit)
+	c:RegisterEffect(e0)
+	--code
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000521,0))
-	e1:SetCategory(CATEGORY_REMOVE)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e1:SetCode(EFFECT_CHANGE_CODE)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCountLimit(1,90000521)
-	e1:SetTarget(c90000521.target)
-	e1:SetCondition(c90000521.descon)
-	e1:SetOperation(c90000521.operation)
+	e1:SetValue(90000515)
 	c:RegisterEffect(e1)
-	--atk bonus
+	--yumi drops
 	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_ATKCHANGE)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetCondition(c90000521.atkcon)
-	e2:SetOperation(c90000521.atkop)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_UPDATE_ATTACK)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTargetRange(0,LOCATION_MZONE)
+	e2:SetCondition(s.adcon)
+	e2:SetTarget(s.adtg)
+	e2:SetValue(-300)
 	c:RegisterEffect(e2)
-	--lp boosting
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000521,1))
-	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e3:SetCategory(CATEGORY_RECOVER)
-	e3:SetType(EFFECT_TYPE_IGNITION)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCountLimit(1)
-	e3:SetCost(c90000521.lpcost)
-	e3:SetTarget(c90000521.lptg)
-	e3:SetOperation(c90000521.lpop)
+	local e3=e2:Clone()
+	e3:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e3)
-	--evade destruction and stuff
+	--float back original form
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000521,2))
-	e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCode(EFFECT_DESTROY_REPLACE)
-	e4:SetCondition(c90000521.repcon)
-	e4:SetTarget(c90000521.desreptg)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e4:SetCode(EVENT_LEAVE_FIELD)
+	e4:SetCondition(s.spcon)
+	e4:SetTarget(s.sptg)
+	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
+	--attack everything
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetCode(EFFECT_ATTACK_ALL)
+	e5:SetValue(1)
+	c:RegisterEffect(e5)
+	--don`t bother trying touching me
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,0))
+	e6:SetCategory(CATEGORY_DISABLE)
+	e6:SetType(EFFECT_TYPE_QUICK_O)
+	e6:SetCode(EVENT_CHAINING)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetCondition(s.discon)
+	e6:SetTarget(s.distg)
+	e6:SetOperation(s.disop)
+	c:RegisterEffect(e6)
 end
-
--- lock and fire
-function c90000521.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x3008)
+--you better summon this properly
+function s.splimit(e,se,sp,st)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
 end
-function c90000521.descon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(c90000521.cfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+--stat drop
+function s.adcon(e)
+	if Duel.GetCurrentPhase()~=PHASE_DAMAGE_CAL then return false end
+	local d=Duel.GetAttackTarget()
+	if not d then return false end
+	local tp=e:GetHandlerPlayer()
+	if d:IsControler(1-tp) then d=Duel.GetAttacker() end
+	return d:IsCode(id)
 end
-
-function c90000521.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end 
-	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,nil)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+function s.adtg(e,c)
+	return c==Duel.GetAttacker() or c==Duel.GetAttackTarget()
 end
-function c90000521.operation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
-	e:GetHandler():RegisterFlagEffect(90000521,RESET_EVENT+0x1fe0000,0,1)
-	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
-end
-
---stat raising
-function c90000521.atkcon(e,tp,eg,ep,ev,re,r,rp)
+--revive original form
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	return bc and c:IsRelateToBattle() and bc:IsLocation(LOCATION_GRAVE) and bc:IsReason(REASON_BATTLE) and bc:IsType(TYPE_MONSTER)
+	return c:IsPreviousPosition(POS_FACEUP)
 end
-function c90000521.atkop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) and c:IsFaceup() then
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetProperty(EFFECT_FLAG_COPY_INHERIT)
-		e1:SetCode(EFFECT_UPDATE_ATTACK)
-		e1:SetValue(300)
-		e1:SetReset(RESET_EVENT+0x1ff0000+RESET_PHASE+PHASE_END,2)
-		c:RegisterEffect(e1)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
+end
+function s.spfilter(c,e,tp)
+	return c:IsCode(90000515) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	local tc=Duel.GetFirstMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
+	if tc then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
-
---lp gain
-function c90000521.recfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f1)
+--negate
+function s.discon(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsStatus(STATUS_BATTLE_DESTROYED) then return false end
+	if not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return end
+	local loc,tg=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION,CHAININFO_TARGET_CARDS)
+	if not tg or not tg:IsContains(c) then return false end
+	return Duel.IsChainDisablable(ev) and loc~=LOCATION_DECK
 end
-function c90000521.lpcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():GetAttackAnnouncedCount()==0 end
-	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_CANNOT_ATTACK)
-	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_OATH)
-	e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-	e:GetHandler():RegisterEffect(e1)
-end
-function c90000521.lptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local ct=Duel.GetMatchingGroupCount(c90000521.recfilter,tp,LOCATION_MZONE,0,nil)
-	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(ct*400)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,ct*400)
+	Duel.SetOperationInfo(0,CATEGORY_DISABLE,eg,1,0,0)
 end
-function c90000521.lpop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetMatchingGroupCount(c90000521.recfilter,tp,LOCATION_MZONE,0,nil)
-	Duel.Recover(tp,ct*400,REASON_EFFECT)
-end
-
---evasion
-function c90000521.repcon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	return rp~=tp and c:GetPreviousControler()==tp
-end
-function c90000521.repfilter(c)
-	return c:IsSetCard(0x3008) and c:IsAbleToRemoveAsCost()
-end
-function c90000521.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return not c:IsReason(REASON_REPLACE) 
-		and Duel.IsExistingMatchingCard(c90000521.repfilter,tp,LOCATION_GRAVE,0,1,nil) end
-	if Duel.SelectEffectYesNo(tp,c,96) then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-		local g=Duel.SelectMatchingCard(tp,c90000521.repfilter,tp,LOCATION_GRAVE,0,1,1,nil)
-		Duel.Remove(g,POS_FACEUP,REASON_COST)
-		return true
-else return false end
+function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
+	Duel.NegateEffect(ev)
 end
