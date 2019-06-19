@@ -1,8 +1,9 @@
 --Comet the Snowstorm Reindeer Ninja
-function c90001256.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--atkup
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001256,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_ATKCHANGE)
 	e1:SetType(EFFECT_TYPE_QUICK_O)
 	e1:SetCode(EVENT_FREE_CHAIN)
@@ -10,8 +11,8 @@ function c90001256.initial_effect(c)
 	e1:SetHintTiming(TIMING_DAMAGE_STEP)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetCondition(c90001256.atkcon)
-	e1:SetOperation(c90001256.atkop)
+	e1:SetCondition(s.atkcon)
+	e1:SetOperation(s.atkop)
 	c:RegisterEffect(e1)
 	--spsummon
 	local e2=Effect.CreateEffect(c)
@@ -19,23 +20,23 @@ function c90001256.initial_effect(c)
 	e2:SetCode(EFFECT_SPSUMMON_PROC)
 	e2:SetProperty(EFFECT_FLAG_UNCOPYABLE)
 	e2:SetRange(LOCATION_GRAVE)
-	e2:SetCondition(c90001256.spcon)
-	e2:SetCountLimit(1,90001256)
+	e2:SetCondition(s.spcon)
+	e2:SetCountLimit(1,id)
 	c:RegisterEffect(e2)
 end
 
 --ss
-function c90001256.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x9d0) and not c:IsCode(90001256)
+function s.cfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x9d0) and not c:IsCode(id)
 end
-function c90001256.spcon(e,c)
+function s.spcon(e,c)
 	if c==nil then return true end
 	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90001256.cfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+		and Duel.IsExistingMatchingCard(s.cfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end
 
 --stat boost
-function c90001256.atkcon(e,tp,eg,ep,ev,re,r,rp)
+function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	local phase=Duel.GetCurrentPhase()
 	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
 	local c=Duel.GetAttackTarget()
@@ -43,7 +44,7 @@ function c90001256.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
 		return c and c:IsSetCard(0x9d0) and c:IsRelateToBattle()
 end
-function c90001256.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
 	local a=Duel.GetAttacker()
 	local d=Duel.GetAttackTarget()
 	if not a:IsRelateToBattle() or a:IsFacedown() or not d:IsRelateToBattle() or d:IsFacedown() then return end

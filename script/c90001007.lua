@@ -1,13 +1,16 @@
 --Skystorm Mecha Fortress - Blue Typhoon
-function c90001007.initial_effect(c)
-	aux.AddLinkProcedure(c,c90001007.matfilter,2)
+local s,id=GetID()
+function s.initial_effect(c)
+	--materials
+	aux.AddLinkProcedure(c,s.matfilter,2)
+	c:EnableReviveLimit()
 	--self preservation
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e1:SetCode(EFFECT_CANNOT_BE_EFFCT_TARGET)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(c90001007.tgcon)
+	e1:SetCondition(s.tgcon)
 	e1:SetValue(aux.imval1)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
@@ -16,70 +19,70 @@ function c90001007.initial_effect(c)
 	c:RegisterEffect(e2)
 	--spsummon
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90001007,0))
+	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1)
-	e3:SetTarget(c90001007.target)
-	e3:SetOperation(c90001007.activate)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.activate)
 	c:RegisterEffect(e3)
 	--destroy
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90001007,1))
+	e4:SetDescription(aux.Stringid(id,1))
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetCategory(CATEGORY_DESTROY)
 	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetTarget(c90001007.destg)
-	e4:SetOperation(c90001007.desop)
+	e4:SetTarget(s.destg)
+	e4:SetOperation(s.desop)
 	c:RegisterEffect(e4)
 end
 --mat filter
-function c90001007.matfilter(c,scard,sumtype,tp)
+function s.matfilter(c,scard,sumtype,tp)
 	return c:IsRace(RACE_MACHINE,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_WIND,scard,sumtype,tp)
 end
 
 --proc
-function c90001007.indesfil(c)
+function s.indesfil(c)
 	return c:IsFaceup()
 end
-function c90001007.tgcon(e)
-	return e:GetHandler():GetLinkedGroup():IsExists(c90001007.indesfil,1,nil)
+function s.tgcon(e)
+	return e:GetHandler():GetLinkedGroup():IsExists(s.indesfil,1,nil)
 end
 
 --special summon WIND machines!
-function c90001007.filter(c)
+function s.filter(c)
 	return c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsType(TYPE_MONSTER)
 end
-function c90001007.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90001007.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 end
-function c90001007.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90001007.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 
 --blow up stuff
-function c90001007.filter2(c)
+function s.filter2(c)
 	return c:IsFaceup() and c:IsRace(RACE_MACHINE) and c:IsAttribute(ATTRIBUTE_WIND) and c:IsType(TYPE_MONSTER)
 end
-function c90001007.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) end
-	if chk==0 then return Duel.IsExistingMatchingCard(c90001007.filter2,tp,LOCATION_MZONE,0,1,e:GetHandler())
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_MZONE,0,1,e:GetHandler())
 		and Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
-	local ct=Duel.GetMatchingGroupCount(c90001007.filter2,tp,LOCATION_MZONE,0,e:GetHandler())
+	local ct=Duel.GetMatchingGroupCount(s.filter2,tp,LOCATION_MZONE,0,e:GetHandler())
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,ct,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
 end
-function c90001007.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
 	local g=tg:Filter(Card.IsRelateToEffect,nil,e)
 	if g:GetCount()>0 then

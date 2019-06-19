@@ -1,39 +1,40 @@
 --Donner the Snowstorm Reindeer Ninja
-function c90001258.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--draw
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001258,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
-	e1:SetTarget(c90001258.drtg)
-	e1:SetOperation(c90001258.drop)
+	e1:SetTarget(s.drtg)
+	e1:SetOperation(s.drop)
 	c:RegisterEffect(e1)
 	--burn damage (needs fixing)
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(90001258,1))
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_DAMAGE)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1)
-	e2:SetCondition(c90001258.condition)
-	e2:SetTarget(c90001258.target)
-	e2:SetOperation(c90001258.activate)
+	e2:SetCondition(s.condition)
+	e2:SetTarget(s.target)
+	e2:SetOperation(s.activate)
 	c:RegisterEffect(e2)
 end
 
 --burn
-function c90001258.condition(e,tp,eg,ep,ev,re,r,rp)
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	local bc=tc:GetBattleTarget()
 	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x9d0)
 		and bc:IsReason(REASON_BATTLE)
 end
-function c90001258.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetTargetPlayer(1-tp)
 	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
@@ -41,26 +42,26 @@ function c90001258.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetTargetParam(atk)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,atk)
 end
-function c90001258.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
 end
 
 --recycle draw
-function c90001258.tdfilter(c)
+function s.tdfilter(c)
 	return c:IsSetCard(0x9d0) and c:IsAbleToDeck()
 end
-function c90001258.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_GRAVE) or chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and c90001258.tdfilter(chkc) end
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_GRAVE) or chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and s.tdfilter(chkc) end
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,2)
-		and Duel.IsExistingTarget(c90001258.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,nil) end
+		and Duel.IsExistingTarget(s.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,nil) end
 	Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectTarget(tp,c90001258.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,5,nil)
+	local g=Duel.SelectTarget(tp,s.tdfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,5,5,nil)
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,g:GetCount(),0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
-function c90001258.drop(e,tp,eg,ep,ev,re,r,rp)
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(Card.IsRelateToEffect,nil,e)
 	if tg:GetCount()<=0 then return end

@@ -1,14 +1,15 @@
 --Dasher the Snowstorm Reindeer Ninja
-function c90001252.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--send to grave
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001252,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOGRAVE)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetTarget(c90001252.target)
-	e1:SetOperation(c90001252.operation)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
@@ -22,43 +23,43 @@ function c90001252.initial_effect(c)
 	e4:SetCode(EFFECT_DIRECT_ATTACK)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetTargetRange(LOCATION_MZONE,0)
-	e4:SetTarget(c90001252.datg)
+	e4:SetTarget(s.datg)
 	c:RegisterEffect(e4)
 	--damage reduce
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
 	e5:SetRange(LOCATION_MZONE)
 	e5:SetCode(EVENT_PRE_BATTLE_DAMAGE)
-	e5:SetCondition(c90001252.rdcon)
-	e5:SetOperation(c90001252.rdop)
+	e5:SetCondition(s.rdcon)
+	e5:SetOperation(s.rdop)
 	c:RegisterEffect(e5)
 end
 
 --foolish
-function c90001252.tgfilter(c)
+function s.tgfilter(c)
 	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x9d0) and c:IsAbleToGrave()
 end
-function c90001252.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90001252.tgfilter,tp,LOCATION_DECK,0,1,nil) end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK)
 end
-function c90001252.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local g=Duel.SelectMatchingCard(tp,c90001252.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
 	if g:GetCount()>0 then
 		Duel.SendtoGrave(g,REASON_EFFECT)
 	end
 end
 
 --direct shot
-function c90001252.datg(e,c)
+function s.datg(e,c)
 	return c:IsSetCard(0x9d0)
 end
-function c90001252.rdcon(e,tp,eg,ep,ev,re,r,rp)
+function s.rdcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return ep~=tp and c==Duel.GetAttacker() and Duel.GetAttackTarget()==nil
 		and c:GetEffectCount(EFFECT_DIRECT_ATTACK)<2 and Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)>0
 end
-function c90001252.rdop(e,tp,eg,ep,ev,re,r,rp)
+function s.rdop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev/2)
 end

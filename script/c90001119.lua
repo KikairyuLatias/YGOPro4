@@ -16,7 +16,7 @@ function s.initial_effect(c)
 	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
-	e3:SetValue(cid.val2)
+	e3:SetValue(s.val2)
 	c:RegisterEffect(e3)
 	--special summoning
 	local e4=Effect.CreateEffect(c)

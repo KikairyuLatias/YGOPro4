@@ -1,13 +1,11 @@
---Fallen Pegasus Omicron
-function c90000682.initial_effect(c)
-	--xyz summon
-	aux.AddXyzProcedure(c,nil,5,2,c90000682.ovfilter,aux.Stringid(90000682,0))
-	c:EnableReviveLimit()
-	--protection
-end
-
---xyz filter
-function c90000619.ovfilter(c)
-	local rk=c:GetRank()
-	return c:IsFaceup() and (rk==5 or rk==6) and c:IsRace(RACE_BEAST)
+--Scuba Pony Shira
+local s,id=GetID()
+function s.initial_effect(c)
+	--pendulum summon
+	aux.EnablePendulumAttribute(c,false)
+	--Activate
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_ACTIVATE)
+	e0:SetCode(EVENT_FREE_CHAIN)
+	c:RegisterEffect(e0)
 end

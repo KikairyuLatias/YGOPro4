@@ -1,5 +1,6 @@
---Scuba Diving Pony Shirâ
-function c90000605.initial_effect(c)
+--Scuba Pony Shirâ
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate

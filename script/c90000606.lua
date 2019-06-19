@@ -1,5 +1,6 @@
---Scuba Diving Pony Akari
-function c90000606.initial_effect(c)
+--Scuba Pony Akari
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate

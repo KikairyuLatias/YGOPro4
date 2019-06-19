@@ -1,5 +1,6 @@
 -- Superstar Pony Enabler
-function c90000611.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate
@@ -13,19 +14,19 @@ function c90000611.initial_effect(c)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e3:SetCountLimit(1)
-	e3:SetTarget(c90000611.target)
-	e3:SetOperation(c90000611.operation)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
 end
 --level change
-function c90000611.filter(c)
+function s.filter(c)
 	return c:IsFaceup() and c:GetLevel()>0 and (c:IsSetCard(0x439) or c:IsSetCard(0x1439))
 end
-function c90000611.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and c90000611.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(c90000611.filter,tp,LOCATION_MZONE,0,1,nil) end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_MZONE,0,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	local g=Duel.SelectTarget(tp,c90000611.filter,tp,LOCATION_MZONE,0,1,2,nil)
+	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_MZONE,0,1,2,nil)
 	local t={}
 	local p=1
 	local lv1=g:GetFirst():GetLevel()
@@ -39,11 +40,11 @@ function c90000611.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local lv=Duel.AnnounceNumber(tp,table.unpack(t))
 	e:SetLabel(lv)
 end
-function c90000611.lvfilter(c,e)
+function s.lvfilter(c,e)
 	return c:IsFaceup() and c:IsRelateToEffect(e)
 end
-function c90000611.operation(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(c90000611.lvfilter,nil,e)
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS):Filter(s.lvfilter,nil,e)
 	local tc=g:GetFirst()
 	while tc do
 		local e1=Effect.CreateEffect(e:GetHandler())
@@ -60,10 +61,10 @@ function c90000611.operation(e,tp,eg,ep,ev,re,r,rp)
 	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e1:SetTargetRange(1,0)
-	e1:SetTarget(c90000611.splimit)
+	e1:SetTarget(s.splimit)
 	e1:SetReset(RESET_PHASE+PHASE_END)
 	Duel.RegisterEffect(e1,tp)
 end
-function c90000611.splimit(e,c)
+function s.splimit(e,c)
 	return not (c:IsSetCard(0x439) or c:IsSetCard(0x1439))
 end

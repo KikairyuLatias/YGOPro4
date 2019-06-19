@@ -1,5 +1,6 @@
 --Superstar Pony Duelist Akané
-function c90000601.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate
