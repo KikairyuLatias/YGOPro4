@@ -1,7 +1,8 @@
 --Scuba Pony Akari GX
-function c90000671.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,nil,c90000671.lcheck)
+	aux.AddLinkProcedure(c,nil,2,nil,s.lcheck)
 	c:EnableReviveLimit()
 	--cannot activate
 	local e2=Effect.CreateEffect(c)
@@ -10,43 +11,43 @@ function c90000671.initial_effect(c)
 	e2:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(0,LOCATION_MZONE)
-	e2:SetValue(c90000671.aclimit)
+	e2:SetValue(s.aclimit)
 	c:RegisterEffect(e2)
 	--special summon
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000671,0))
+	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1)
-	e3:SetTarget(c90000671.target)
-	e3:SetOperation(c90000671.operation)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
 end
 --condition
-function c90000671.lcheck(g,lc)
+function s.lcheck(g,lc)
 	return g:GetClassCount(Card.GetCode)==g:GetCount()
 end
 
 --negate
-function c90000671.aclimit(e,re,tp)
+function s.aclimit(e,re,tp)
 	local loc=re:GetActivateLocation()
 	return loc==LOCATION_MZONE and re:IsActiveType(TYPE_MONSTER) and re:GetHandler():GetAttack()>e:GetHandler():GetBaseAttack()or re:GetHandler():GetAttack()==e:GetHandler():GetBaseAttack()
 end
 
 --special summon
-function c90000671.filter(c,e,tp,zone)
+function s.filter(c,e,tp,zone)
 	return c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
-function c90000671.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
-	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_HAND+LOCATION_GRAVE) and c90000671.filter(chkc,e,tp,zone) end
-	if chk==0 then return Duel.IsExistingTarget(c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone) end
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_HAND+LOCATION_GRAVE) and s.filter(chkc,e,tp,zone) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,e,tp,zone) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectTarget(tp,c90000671.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
+	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil,e,tp,zone)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
 end
-function c90000671.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
 	if tc:IsRelateToEffect(e) and zone~=0  then

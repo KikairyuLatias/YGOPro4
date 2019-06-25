@@ -1,5 +1,6 @@
 --Enhanced Scuba Pony Tenma
-function c90000655.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate

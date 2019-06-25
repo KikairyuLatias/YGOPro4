@@ -1,5 +1,6 @@
 --Advanced Superstar Pony Duelist Makani
-function c90000630.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,90000603),1,1)
 	c:EnableReviveLimit()
@@ -12,8 +13,8 @@ function c90000630.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE)
 	e1:SetRange(LOCATION_PZONE)
 	e1:SetTargetRange(1,0)
-	e1:SetCondition(c90000630.splimcon)
-	e1:SetTarget(c90000630.splimit)
+	e1:SetCondition(s.splimcon)
+	e1:SetTarget(s.splimit)
 	c:RegisterEffect(e1)
 	--spell indestruction
 	local e2=Effect.CreateEffect(c)
@@ -21,7 +22,7 @@ function c90000630.initial_effect(c)
 	e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
-	e2:SetTarget(c90000630.indtg)
+	e2:SetTarget(s.indtg)
 	e2:SetValue(1)
 	c:RegisterEffect(e2)
 	--destroy
@@ -30,23 +31,23 @@ function c90000630.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_DESTROYED)
 	e4:SetProperty(EFFECT_FLAG_DELAY)
-	e4:SetCondition(c90000630.pencon)
-	e4:SetTarget(c90000630.pentg)
-	e4:SetOperation(c90000630.penop)
+	e4:SetCondition(s.pencon)
+	e4:SetTarget(s.pentg)
+	e4:SetOperation(s.penop)
 	c:RegisterEffect(e4)
 end
 
 --ToPendulum
-function c90000630.pencon(e,tp,eg,ep,ev,re,r,rp)
+function s.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return bit.band(r,REASON_EFFECT+REASON_BATTLE)~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
 end
-function c90000630.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_PZONE,0)>0 end
 	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
 end
-function c90000630.penop(e,tp,eg,ep,ev,re,r,rp)
+function s.penop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
 	if Duel.Destroy(g,REASON_EFFECT)~=0 and e:GetHandler():IsRelateToEffect(e) then
 		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_PZONE,POS_FACEUP,true)
@@ -54,12 +55,12 @@ function c90000630.penop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --limiters
-function c90000630.splimcon(e)
+function s.splimcon(e)
 	return not e:GetHandler():IsForbidden()
 end
-function c90000630.splimit(e,c)
+function s.splimit(e,c)
 	return not c:IsSetCard(0x439)
 end
-function c90000630.indtg(e,c)
+function s.indtg(e,c)
 	return c:IsSetCard(0x439) and c~=e:GetHandler()
 end

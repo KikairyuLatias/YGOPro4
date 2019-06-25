@@ -1,5 +1,6 @@
 --Pony Assault Soldier
-function c90000650.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--fusion material
@@ -10,7 +11,7 @@ function c90000650.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e1:SetValue(c90000650.splimit)
+	e1:SetValue(s.splimit)
 	c:RegisterEffect(e1)
 	--cannot be targeted by card effects
 	local e2=Effect.CreateEffect(c)
@@ -22,25 +23,25 @@ function c90000650.initial_effect(c)
 	c:RegisterEffect(e2)
 	--draw for ponies
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000650,0))
+	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_DRAW)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e3:SetCode(EVENT_BATTLE_DESTROYING)
 	e3:SetCountLimit(1)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetCondition(c90000650.drcon)
-	e3:SetTarget(c90000650.drtg)
-	e3:SetOperation(c90000650.drop)
+	e3:SetCondition(s.drcon)
+	e3:SetTarget(s.drtg)
+	e3:SetOperation(s.drop)
 	c:RegisterEffect(e3)
 	local e4=Effect.CreateEffect(c)
 	e4:SetCategory(CATEGORY_DESTROY)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_DESTROYED)
 	e4:SetProperty(EFFECT_FLAG_DELAY)
-	e4:SetCondition(c90000650.pencon)
-	e4:SetTarget(c90000650.pentg)
-	e4:SetOperation(c90000650.penop)
+	e4:SetCondition(s.pencon)
+	e4:SetTarget(s.pentg)
+	e4:SetOperation(s.penop)
 	c:RegisterEffect(e4)
 	--pendulum draw
 	local e5=Effect.CreateEffect(c)
@@ -49,91 +50,91 @@ function c90000650.initial_effect(c)
 	e5:SetCode(EVENT_FREE_CHAIN)
 	e5:SetRange(LOCATION_PZONE)
 	e5:SetCountLimit(1)
-	e5:SetTarget(c90000650.target)
-	e5:SetOperation(c90000650.activate)
+	e5:SetTarget(s.target)
+	e5:SetOperation(s.activate)
 	c:RegisterEffect(e5)
 	--double
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
 	e6:SetRange(0,LOCATION_PZONE)
 	e6:SetCode(EVENT_PRE_BATTLE_DAMAGE)
-	e6:SetCondition(c90000650.dcon)
-	e6:SetOperation(c90000650.dop)
+	e6:SetCondition(s.dcon)
+	e6:SetOperation(s.dop)
 	c:RegisterEffect(e6)
 end
 
 --no target
-function c90000650.indval(e,re,tp)
+function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 --fusion restriction
-function c90000650.splimit(e,se,sp,st)
+function s.splimit(e,se,sp,st)
 return not e:GetHandler():IsLocation(LOCATION_EXTRA) or bit.band(st,SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
 
 end
 
 --ToPendulum
-function c90000650.pencon(e,tp,eg,ep,ev,re,r,rp)
+function s.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return bit.band(r,REASON_EFFECT+REASON_BATTLE)~=0 and c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
 end
-function c90000650.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_PZONE,0)>0 end
 	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
 end
-function c90000650.penop(e,tp,eg,ep,ev,re,r,rp)
+function s.penop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,LOCATION_PZONE,0)
 	if Duel.Destroy(g,REASON_EFFECT)~=0 and e:GetHandler():IsRelateToEffect(e) then
 		Duel.MoveToField(e:GetHandler(),tp,tp,LOCATION_PZONE,POS_FACEUP,true)
 	end
 end
 --draw
-function c90000650.drcon(e,tp,eg,ep,ev,re,r,rp)
+function s.drcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=eg:GetFirst()
 	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
 		and rc:IsFaceup() and rc:IsSetCard(0x439) and rc:IsControler(tp)
 end
 
-function c90000650.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,1) end
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(1)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
-function c90000650.drop(e,tp,eg,ep,ev,re,r,rp)
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Draw(p,d,REASON_EFFECT)
 end
 
 --pot of desires thing
-function c90000650.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetCustomActivityCount(90000650,tp,ACTIVITY_SPSUMMON)==0 end
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
 	local e5=Effect.CreateEffect(e:GetHandler())
 	e5:SetType(EFFECT_TYPE_FIELD)
 	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_OATH)
 	e5:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
 	e5:SetReset(RESET_PHASE+PHASE_END)
 	e5:SetTargetRange(1,0)
-	e5:SetTarget(c90000650.splimit)
+	e5:SetTarget(s.splimit)
 	Duel.RegisterEffect(e5,tp)
 end
-function c90000650.splimit(e,c,sump,sumtype,sumpos,targetp,se)
+function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
 	return bit.band(sumtype,SUMMON_TYPE_PENDULUM)~=SUMMON_TYPE_PENDULUM
 end
-function c90000650.filter(c)
+function s.filter(c)
 	return c:IsSetCard(0x439) and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup()) and c:IsAbleToDeck()
 end
-function c90000650.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,2)
-		and Duel.IsExistingMatchingCard(c90000650.filter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,3,nil) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,3,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,nil,3,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,2)
 end
-function c90000650.activate(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(aux.NecroValleyFilter(c90000650.filter),tp,LOCATION_EXTRA+LOCATION_GRAVE,0,nil)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(aux.NecroValleyFilter(s.filter),tp,LOCATION_EXTRA+LOCATION_GRAVE,0,nil)
 	if g:GetCount()<3 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
 	local sg=g:Select(tp,3,3,nil)
@@ -148,10 +149,10 @@ function c90000650.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --2x damage
-function c90000650.dcon(e,tp,eg,ep,ev,re,r,rp)
+function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	return ep~=tp and tc:IsSetCard(0x439) and tc:GetBattleTarget()~=nil
 end
-function c90000650.dop(e,tp,eg,ep,ev,re,r,rp)
+function s.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)
 end

@@ -1,5 +1,6 @@
 --Scuba Enhanced Pony Shira
-function c90000617.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate
