@@ -1,39 +1,77 @@
---Crimson Galactic Pegasus Alphacentauris
-function c90000684.initial_effect(c)
+--Number 137: Champion Rider - Pony Kizuna
+local s,id=GetID()
+function s.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,nil,8,2)
+	aux.AddXyzProcedure(c,nil,4,2)
 	c:EnableReviveLimit()
-	--destroy
+	--stat boost
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90000684,0))
-	e1:SetCategory(CATEGORY_DESTROY)
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetCost(c90000684.cost)
-	e1:SetTarget(c90000684.target)
-	e1:SetOperation(c90000684.operation)
+	e1:SetTargetRange(LOCATION_MZONE,0)
+	e1:SetValue(s.val)
 	c:RegisterEffect(e1)
+	local e2=e1:Clone()
+	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	c:RegisterEffect(e2)
+	--attaching
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,2))
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetCode(EVENT_BATTLE_DESTROYING)
+	e3:SetCondition(aux.bdocon)
+	e3:SetTarget(s.atchtg)
+	e3:SetOperation(s.atchop)
+	c:RegisterEffect(e3)
+	--protect
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e4:SetCode(EFFECT_DESTROY_REPLACE)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetTarget(s.reptg)
+	e4:SetValue(s.repval)
+	c:RegisterEffect(e4)
 end
-function c90000684.cfilter(c)
-	return c:IsRace(RACE_BEAST) and c:IsAbleToGraveAsCost()
+s.xyz_number=137
+
+--boost
+function s.val(e,c)
+	return c:GetOverlayCount()*100
 end
-function c90000684.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(c90000684.cfilter,tp,LOCATION_HAND,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local cg=Duel.SelectMatchingCard(tp,c90000684.cfilter,tp,LOCATION_HAND,0,1,1,nil)
-	Duel.SendtoGrave(cg,REASON_COST)
+--attach
+function s.atchtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	local bc=e:GetHandler():GetBattleTarget()
+	if chk==0 then return e:GetHandler():IsType(TYPE_XYZ) and not bc:IsType(TYPE_TOKEN) end
+	Duel.SetTargetCard(bc)
+	Duel.SetOperationInfo(0,CATEGORY_LEAVE_GRAVE,bc,1,0,0)
 end
-function c90000684.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and chkc:IsDestructable() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsDestructable,tp,0,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,Card.IsDestructable,tp,0,LOCATION_MZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
-end
-function c90000684.operation(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.atchop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
 	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then 
-		Duel.Destroy(tc,REASON_EFFECT)
+	if c:IsRelateToEffect(e) and c:IsFaceup() and tc and tc:IsRelateToEffect(e) and not tc:IsLocation(LOCATION_DECK) then
+		local og=tc:GetOverlayGroup()
+		if #og>0 then
+			Duel.SendtoGrave(og,REASON_RULE)
+		end
+		Duel.Overlay(c,Group.FromCards(tc))
 	end
+end
+
+--replace
+function s.repfilter(c,tp)
+	return c:IsControler(tp) and c:IsLocation(LOCATION_ONFIELD)
+		and c:IsReason(REASON_BATTLE+REASON_EFFECT) and not c:IsReason(REASON_REPLACE)
+end
+function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	local g=c:GetLinkedGroup()
+	if chk==0 then return eg:IsExists(s.repfilter,1,nil,tp) and c:CheckRemoveOverlayCard(tp,1,REASON_EFFECT) end
+	if Duel.SelectEffectYesNo(tp,c,96) then
+		c:RemoveOverlayCard(tp,1,1,REASON_EFFECT)
+		return true
+	else return false end
+end
+function s.repval(e,c)
+	return s.repfilter(c,e:GetHandlerPlayer())
 end

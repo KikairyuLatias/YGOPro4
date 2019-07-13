@@ -1,15 +1,16 @@
 --Psychic Dragon Force Break
-function c90000232.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCondition(c90000232.condition)
-	e1:SetTarget(c90000232.target)
-	e1:SetOperation(c90000232.activate)
-	e1:SetCountLimit(1,90000232+EFFECT_COUNT_CODE_OATH)
+	e1:SetCondition(s.condition)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
+	e1:SetCountLimit(1,id+EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
 	--trigger
 	local e3=Effect.CreateEffect(c)
@@ -21,13 +22,13 @@ function c90000232.initial_effect(c)
 	e3:SetTarget(aux.PersistentTargetFilter)
 	c:RegisterEffect(e3)
 end
-function c90000232.cfilter(c)
+function s.cfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x5f1)
 end
-function c90000232.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(c90000232.cfilter,tp,LOCATION_MZONE,0,1,nil)
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
 end
-function c90000232.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsOnField() and chkc~=e:GetHandler() end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,e:GetHandler()) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
@@ -37,7 +38,7 @@ function c90000232.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 		Duel.SetChainLimit(aux.FALSE)
 	end
 end
-function c90000232.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) then
 		Duel.Destroy(tc,REASON_EFFECT)

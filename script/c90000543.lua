@@ -1,9 +1,9 @@
 --SG Sports Racer
 local s,id=GetID()
 function s.initial_effect(c)
-	--link summon
+	 --link summon
+	aux.AddLinkProcedure(c,nil,2,2,s.lcheck)
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,s.matfilter,1,1)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -28,8 +28,11 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 --material req
-function s.matfilter(c)
-	return c:IsLinkSetCard(0x7d5) and not c:IsType(TYPE_LINK)
+function s.lcheck(g,lc)
+	return g:IsExists(s.mzfilter,1,nil)
+end
+function s.mzfilter(c)
+	return c:IsSetCard(0x7d5)
 end
 --special summon
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)

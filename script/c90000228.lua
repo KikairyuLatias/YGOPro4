@@ -1,5 +1,6 @@
 --Psychic Dragon Star Tendo
-function c90000228.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
 	--Activate
@@ -15,14 +16,14 @@ function c90000228.initial_effect(c)
 	e2:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(0,1)
-	e2:SetValue(c90000228.aclimit)
-	e2:SetCondition(c90000228.condition)
+	e2:SetValue(s.aclimit)
+	e2:SetCondition(s.condition)
 	c:RegisterEffect(e2)
 end
 --armades
-function c90000228.indcon(e)
-	return Duel.GetAttacker()==e:GetHandler() and Duel.IsExistingMatchingCard(c90000228.indfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+function s.indcon(e)
+	return Duel.GetAttacker()==e:GetHandler() and Duel.IsExistingMatchingCard(s.indfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end
-function c90000228.aclimit(e,re,tp)
+function s.aclimit(e,re,tp)
 	return not re:GetHandler():IsImmuneToEffect(e)
 end

@@ -1,37 +1,38 @@
 --Hazmanimal Indigo Burn Hedgehog
-function c90001162.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--to hand
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(90001162,0))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
-	e1:SetCountLimit(1,90001162)
-	e1:SetTarget(c90001162.thtg)
-	e1:SetOperation(c90001162.thop)
+	e1:SetCountLimit(1,id)
+	e1:SetTarget(s.thtg)
+	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
 	--effect gain
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
 	e2:SetCode(EVENT_BE_MATERIAL)
-	e2:SetCondition(c90001162.efcon)
-	e2:SetOperation(c90001162.efop)
+	e2:SetCondition(s.efcon)
+	e2:SetOperation(s.efop)
 	c:RegisterEffect(e2)
 end
 --searching
-function c90001162.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>2 end
 end
-function c90001162.thfilter(c)
+function s.thfilter(c)
 	return c:IsSetCard(0x43a) and c:IsAbleToHand()
 end
-function c90001162.thop(e,tp,eg,ep,ev,re,r,rp)
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<3 then return end
 	Duel.ConfirmDecktop(tp,3)
 	local g=Duel.GetDecktopGroup(tp,3)
-	if g:IsExists(c90001162.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(90001162,0)) then
+	if g:IsExists(s.thfilter,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local sg=g:FilterSelect(tp,c90001162.thfilter,1,1,nil)
+		local sg=g:FilterSelect(tp,s.thfilter,1,1,nil)
 		Duel.SendtoHand(sg,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,sg)
 		Duel.ShuffleHand(tp)
@@ -39,10 +40,10 @@ function c90001162.thop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ShuffleDeck(tp)
 end
 --burn when killing
-function c90001162.efcon(e,tp,eg,ep,ev,re,r,rp)
+function s.efcon(e,tp,eg,ep,ev,re,r,rp)
 	return r==REASON_LINK and re:IsSetCard(0x43a)
 end
-function c90001162.efop(e,tp,eg,ep,ev,re,r,rp)
+function s.efop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=c:GetReasonCard()
 	local e3=Effect.CreateEffect(c)
@@ -50,18 +51,18 @@ function c90001162.efop(e,tp,eg,ep,ev,re,r,rp)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e3:SetCode(EVENT_BATTLE_DESTROYING)
-	e3:SetCondition(c90001162.damcon)
-	e3:SetTarget(c90001162.damtg)
-	e3:SetOperation(c90001162.damop)
+	e3:SetCondition(s.damcon)
+	e3:SetTarget(s.damtg)
+	e3:SetOperation(s.damop)
 	c:RegisterEffect(e3,true)
 end
-function c90001162.damcon(e,tp,eg,ep,ev,re,r,rp)
+function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local bc=c:GetBattleTarget()
 	return c:IsRelateToBattle() and bc:IsType(TYPE_MONSTER)
 end
 
-function c90001162.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	local c=e:GetHandler()
 	local bc=c:GetBattleTarget()
@@ -71,7 +72,7 @@ function c90001162.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetTargetParam(dam)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
 end
-function c90001162.damop(e,tp,eg,ep,ev,re,r,rp)
+function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Damage(p,d,REASON_EFFECT)
 end

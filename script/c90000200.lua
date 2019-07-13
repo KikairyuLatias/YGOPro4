@@ -1,5 +1,6 @@
 --Sanctuary of the Eon Dragon
-function c90000200.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -11,8 +12,8 @@ function c90000200.initial_effect(c)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
 	e2:SetRange(LOCATION_FZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
-	e2:SetTarget(c90000200.tg)
-	e2:SetValue(c90000200.val)
+	e2:SetTarget(s.tg)
+	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
 	--def boost
 	local e3=e2:Clone()
@@ -23,23 +24,23 @@ function c90000200.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_FZONE)
 	e4:SetCountLimit(1)
-	e4:SetTarget(c90000200.target)
-	e4:SetOperation(c90000200.activate)
+	e4:SetTarget(s.target)
+	e4:SetOperation(s.activate)
 	c:RegisterEffect(e4)
 	--restrict from chaining to Psychic Dragons
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e5:SetCode(EVENT_CHAINING)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetOperation(c90000200.chainop)
+	e5:SetOperation(s.chainop)
 	c:RegisterEffect(e5)
 	--act limit
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e6:SetCode(EVENT_SUMMON_SUCCESS)
 	e6:SetRange(LOCATION_MZONE)
-	e6:SetCondition(c90000200.limcon)
-	e6:SetOperation(c90000200.limop)
+	e6:SetCondition(s.limcon)
+	e6:SetOperation(s.limop)
 	c:RegisterEffect(e6)
 	local e7=e6:Clone()
 	e7:SetCode(EVENT_SPSUMMON_SUCCESS)
@@ -51,70 +52,70 @@ function c90000200.initial_effect(c)
 	e9:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e9:SetRange(LOCATION_MZONE)
 	e9:SetCode(EVENT_CHAIN_END)
-	e9:SetOperation(c90000200.limop2)
+	e9:SetOperation(s.limop2)
 	c:RegisterEffect(e9)
 end
 
 --Psychic Dragon power up
-function c90000200.tg(e,c)
+function s.tg(e,c)
 	return c:IsSetCard(0x5f1) and c:IsType(TYPE_MONSTER)
 end
-function c90000200.filter(c)
+function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x5f1)
 end
-function c90000200.val(e,c)
-	return Duel.GetMatchingGroupCount(c90000200.filter,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*200
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*200
 end
 
 -- spsummon
-function c90000200.filter2(c)
+function s.filter2(c)
 	return c:IsSetCard(0x5f1) and c:IsType(TYPE_MONSTER)
 end
-function c90000200.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(c90000200.filter2,tp,LOCATION_HAND+LOCATION_DECK+LOCATION_REMOVED,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_HAND+LOCATION_DECK+LOCATION_REMOVED,0,1,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND+LOCATION_DECK+LOCATION_REMOVED)
 end
-function c90000200.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,c90000200.filter2,tp,LOCATION_HAND+LOCATION_DECK+LOCATION_REMOVED,0,1,1,nil,e,tp)
+	local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_HAND+LOCATION_DECK+LOCATION_REMOVED,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 
 --stop chaining
-function c90000200.indval(e,re,rp)
+function s.indval(e,re,rp)
 	return rp~=e:GetHandlerPlayer()
 end
-function c90000200.chainop(e,tp,eg,ep,ev,re,r,rp)
+function s.chainop(e,tp,eg,ep,ev,re,r,rp)
 	if re:GetHandler():IsSetCard(0x5f1) then
-		Duel.SetChainLimit(c90000200.chainlm)
+		Duel.SetChainLimit(s.chainlm)
 	end
 end
-function c90000200.chainlm(e,rp,tp)
+function s.chainlm(e,rp,tp)
 	return tp==rp
 end
-function c90000200.limfilter(c,tp)
+function s.limfilter(c,tp)
 	return c:GetSummonPlayer()==tp
 end
-function c90000200.limcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(c90000200.limfilter,1,nil,tp) and re:IsSetCard(0x5f1)
+function s.limcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.limfilter,1,nil,tp) and re:IsSetCard(0x5f1)
 end
-function c90000200.limop(e,tp,eg,ep,ev,re,r,rp)
+function s.limop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetCurrentChain()==0 then
-		Duel.SetChainLimitTillChainEnd(c90000200.chainlm)
+		Duel.SetChainLimitTillChainEnd(s.chainlm)
 	elseif Duel.GetCurrentChain()==1 then
-		e:GetHandler():RegisterFlagEffect(90000200,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1)
+		e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1)
 	end
 end
-function c90000200.limop2(e,tp,eg,ep,ev,re,r,rp)
-	if e:GetHandler():GetOverlayCount()>0 and e:GetHandler():GetFlagEffect(90000200)~=0 then
-		Duel.SetChainLimitTillChainEnd(c90000200.chainlm)
+function s.limop2(e,tp,eg,ep,ev,re,r,rp)
+	if e:GetHandler():GetOverlayCount()>0 and e:GetHandler():GetFlagEffect(id)~=0 then
+		Duel.SetChainLimitTillChainEnd(s.chainlm)
 	end
-	e:GetHandler():ResetFlagEffect(90000200)
+	e:GetHandler():ResetFlagEffect(id)
 end
-function c90000200.chainlm(e,rp,tp)
+function s.chainlm(e,rp,tp)
 	return tp==rp
 end

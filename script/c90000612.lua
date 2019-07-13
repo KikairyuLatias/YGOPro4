@@ -12,15 +12,6 @@ function s.initial_effect(c)
 	e1:SetCondition(s.dcon)
 	e1:SetOperation(s.dop)
 	c:RegisterEffect(e1)
-	--cannot be targeted by card effects
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetValue(aux.tgoval)
-	e2:SetCondition(s.dscon)
-	c:RegisterEffect(e2)
 	--destroy shit
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
@@ -73,15 +64,6 @@ function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)
-end
-
--- protecting my ass, boi
-function s.indval(e,re,tp)
-	return tp~=e:GetHandlerPlayer()
-end
-
-function s.dscon(e)
-	return e:GetHandler():GetOverlayCount()~=0
 end
 
 --destruction for horses

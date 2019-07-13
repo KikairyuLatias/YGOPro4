@@ -1,5 +1,6 @@
 --Psychic Dragon Delta Eon Latias
-function c90000253.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,90000251),1,1)
 	c:EnableReviveLimit()
@@ -32,7 +33,7 @@ function c90000253.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetValue(c90000253.indval)
+	e3:SetValue(s.indval)
 	c:RegisterEffect(e3)
 	--dual strike
 	local e4=Effect.CreateEffect(c)
@@ -42,40 +43,41 @@ function c90000253.initial_effect(c)
 	c:RegisterEffect(e4)
 	--make stuff zero
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(90000253,1))
+	e5:SetDescription(aux.Stringid(id,1))
 	e5:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e5:SetCode(EVENT_BATTLE_DESTROYING)
 	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e5:SetCondition(c90000253.descon)
-	e5:SetTarget(c90000253.destg)
-	e5:SetOperation(c90000253.desop)
+	e5:SetCondition(s.descon)
+	e5:SetTarget(s.destg)
+	e5:SetOperation(s.desop)
 	c:RegisterEffect(e5)
 	--negation
 	local e6=Effect.CreateEffect(c)
 	e6:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
 	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
+	e6:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e6:SetCode(EVENT_CHAINING)
 	e6:SetCountLimit(1)
 	e6:SetRange(LOCATION_MZONE)
-	e6:SetCondition(c90000253.condition2)
-	e6:SetTarget(c90000253.target2)
-	e6:SetOperation(c90000253.activate2)
+	e6:SetCondition(s.condition2)
+	e6:SetTarget(s.target2)
+	e6:SetOperation(s.activate2)
 	c:RegisterEffect(e6)  
 end
 --make zero
-function c90000253.descon(e,tp,eg,ep,ev,re,r,rp)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local bc=c:GetBattleTarget()
 	return c:IsRelateToBattle() and bc:IsReason(REASON_BATTLE)
 end
-function c90000253.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end
 	if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,0,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
 	Duel.SelectTarget(tp,Card.IsFaceup,tp,0,LOCATION_MZONE,1,1,nil)
 end
-function c90000253.desop(e,tp,eg,ep,ev,re,r,rp)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) and tc:IsFaceup() then
 		local e1=Effect.CreateEffect(e:GetHandler())
@@ -94,22 +96,22 @@ function c90000253.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --negation
-function c90000253.condition2(e,tp,eg,ep,ev,re,r,rp)
+function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 	return re:IsActiveType(TYPE_MONSTER) or re:IsActiveType(TYPE_SPELL) or re:IsActiveType(TYPE_TRAP) and Duel.IsChainNegatable(ev)
 end
-function c90000253.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
 	if re:GetHandler():IsAbleToRemove() and re:GetHandler():IsRelateToEffect(re) then
 		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
 	end
 end
-function c90000253.activate2(e,tp,eg,ep,ev,re,r,rp)
+function s.activate2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateActivation(ev)
 	if re:GetHandler():IsRelateToEffect(re) then
 		Duel.Remove(eg,POS_FACEUP,REASON_EFFECT)
 	end
 end
-function c90000253.indval(e,re,tp)
+function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end

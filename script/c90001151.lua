@@ -1,5 +1,6 @@
 --Hazmanimal White Horse Flame
-function c90001151.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),3)
 	c:EnableReviveLimit()
@@ -17,8 +18,8 @@ function c90001151.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetCode(EVENT_PRE_BATTLE_DAMAGE)
-	e2:SetCondition(c90001151.dcon)
-	e2:SetOperation(c90001151.dop)
+	e2:SetCondition(s.dcon)
+	e2:SetOperation(s.dop)
 	c:RegisterEffect(e2)
 	--pierce
 	local e3=Effect.CreateEffect(c)
@@ -26,7 +27,7 @@ function c90001151.initial_effect(c)
 	e3:SetCode(EFFECT_PIERCE)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetTargetRange(LOCATION_MZONE,0)
-	e3:SetTarget(c90001151.target)
+	e3:SetTarget(s.target)
 	c:RegisterEffect(e3)
 	--spsummon
 	local e4=Effect.CreateEffect(c)
@@ -34,38 +35,39 @@ function c90001151.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_TO_GRAVE)
 	e4:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
-	e4:SetCondition(c90001151.spcon)
-	e4:SetTarget(c90001151.sptg)
-	e4:SetOperation(c90001151.spop)
+	e4:SetCountLimit(1,id)
+	e4:SetCondition(s.spcon)
+	e4:SetTarget(s.sptg)
+	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
 end
 
 --double damage
-function c90001151.dcon(e,tp,eg,ep,ev,re,r,rp)
+function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	return ep~=tp and tc:IsSetCard(0x43a) and tc:GetBattleTarget()~=nil
 end
-function c90001151.dop(e,tp,eg,ep,ev,re,r,rp)
+function s.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*3)
 end
 
 --piercing
-function c90001151.target(e,c)
+function s.target(e,c)
 	return c:IsSetCard(0x43a)
 end
 
 --revival
-function c90001151.spcon(e,tp,eg,ep,ev,re,r,rp)
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return c:IsPreviousLocation(LOCATION_MZONE) and rp~=tp and c:GetPreviousControler()==tp
 end
-function c90001151.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
 end
-function c90001151.spop(e,tp,eg,ep,ev,re,r,rp)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) then
 		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)

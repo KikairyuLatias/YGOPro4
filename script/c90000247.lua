@@ -1,5 +1,6 @@
---Number 26: Psychic Dragon Supreme Emperor Ryukyu
-function c90000247.initial_effect(c)
+--Number 128: Psychic Dragon Supreme Emperor Ryukyu
+local s,id=GetID()
+function s.initial_effect(c)
 	--xyz
 	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),8,2)
 	c:EnableReviveLimit()
@@ -13,4 +14,4 @@ function c90000247.initial_effect(c)
 	--burn and boost
 	--revive and banish the opponent GY
 end
-c90000247.xyz_number=128
+s.xyz_number=128
