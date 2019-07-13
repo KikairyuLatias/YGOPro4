@@ -5,7 +5,7 @@ function s.initial_effect(c)
 	aux.EnablePendulumAttribute(c,false)
 	--fusion material
 	c:EnableReviveLimit()
-	aux.AddFusionProcFunRep(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),3,false)
+	aux.AddFusionProcMixN(c,true,true,s.ffilter,2)
 	--spsummon condition
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -66,11 +66,19 @@ function s.initial_effect(c)
 	e7:SetValue(s.val)
 	c:RegisterEffect(e7)
 end
-
-function s.splimit(e,se,sp,st)
-return not e:GetHandler():IsLocation(LOCATION_EXTRA) or bit.band(st,SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
-
+--fusion materials
+s.material_setcode=0x439
+function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
+	return c:IsFusionSetCard(0x439) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetFusionCode()))
 end
+function s.fusfilter(c,code)
+	return c:IsFusionCode(code) and not c:IsHasEffect(511002961)
+end
+--must fusion summon me first
+function s.splimit(e,se,sp,st)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or bit.band(st,SUMMON_TYPE_FUSION)==SUMMON_TYPE_FUSION
+end
+--direct strike (need to fix)
 function s.rdcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return ep~=tp and c==Duel.GetAttacker() and Duel.GetAttackTarget()==nil

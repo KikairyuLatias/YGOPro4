@@ -6,15 +6,6 @@ function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--pendulum summon
 	aux.EnablePendulumAttribute(c,false)
-	--protection
-		--cannot target
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-		e1:SetRange(LOCATION_MZONE)
-		e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-		e1:SetValue(aux.tgoval)
-		c:RegisterEffect(e1)
 	--multiple attack
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
@@ -102,8 +93,8 @@ function s.chk(c,sg)
 	return s.cfilter1(c) and sg:IsExists(s.cfilter2,1,c)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	local g1=Duel.GetMatchingGroup(s.cfilter1,tp,LOCATION_MZONE,0,nil)
-	local g2=Duel.GetMatchingGroup(s.cfilter2,tp,LOCATION_MZONE,0,nil)
+	local g1=Duel.GetMatchingGroup(s.cfilter1,tp,LOCATION_DECK,0,nil)
+	local g2=Duel.GetMatchingGroup(s.cfilter2,tp,LOCATION_DECK,0,nil)
 	local g=g1:Clone()
 	g:Merge(g2)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>-2 and g1:GetCount()>0 and g2:GetCount()>0 
