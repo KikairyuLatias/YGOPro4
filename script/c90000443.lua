@@ -13,7 +13,7 @@ function c90000443.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 
---stuff
+--stuffz
 function c90000443.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentPhase()~=PHASE_DAMAGE or not Duel.IsDamageCalculated()
 end

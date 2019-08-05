@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e2:SetRange(LOCATION_SZONE)
-	e2:SetTargetRange(0,LOCATION_MZONE)
+	e2:SetTargetRange(0,1)
 	e2:SetTarget(s.target)
 	c:RegisterEffect(e2)
 	--retrieve self

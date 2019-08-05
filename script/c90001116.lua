@@ -16,19 +16,21 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-	--negation
+	--negate
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DISABLE+CATEGORY_REMOVE)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
+	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_REMOVE)
+	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
 	e2:SetCode(EVENT_CHAINING)
-	e2:SetCountLimit(1,id)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCondition(s.discon)
-	e2:SetTarget(s.distg)
-	e2:SetOperation(s.disop)
+	e2:SetCountLimit(1,id)
+	e2:SetCondition(s.negcon)
+	e2:SetCost(s.negcost)
+	e2:SetTarget(s.negtg)
+	e2:SetOperation(s.negop)
 	c:RegisterEffect(e2)
-	end
+end
 --shuffle and replace
 function s.cfilter(c)
 	return c:IsSetCard(0x4af) and c:IsAbleToDeckAsCost()
@@ -52,19 +54,23 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --negate
-function s.discon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
+function s.negcon(e,tp,eg,ep,ev,re,r,rp)
+	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
+		and ep~=tp and Duel.IsChainNegatable(ev)
 end
-function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.cfilter2(c)
+	return c:IsRace(RACE_BEASTWARRIOR) and c:IsDiscardable()
+end
+function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter2,tp,LOCATION_HAND,0,1,nil) end
+	Duel.DiscardHand(tp,s.cfilter2,1,1,REASON_COST+REASON_DISCARD,nil)
+end
+function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
-	if re:GetHandler():IsRemovable() and re:GetHandler():IsRelateToEffect(re) then
-		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
-	end
 end
-function s.disop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.NegateActivation(ev)
-	if re:GetHandler():IsRelateToEffect(re) then
+function s.negop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.NegateActivation(ev) and re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:GetHandler():IsRelateToEffect(re) then
 		Duel.Remove(eg,POS_FACEUP,REASON_EFFECT)
 	end
 end

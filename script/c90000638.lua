@@ -69,7 +69,7 @@ end
 --fusion materials
 s.material_setcode=0x439
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsFusionSetCard(0x439) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetFusionCode()))
+	return c:IsFusionSetCard(0x439) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetFusionCode())) and c:IsType(TYPE_MONSTER)
 end
 function s.fusfilter(c,code)
 	return c:IsFusionCode(code) and not c:IsHasEffect(511002961)

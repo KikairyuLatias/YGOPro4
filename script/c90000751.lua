@@ -1,72 +1,93 @@
 --Fantasy Angel Bunny
-function c90000751.initial_effect(c)
+local s,id=GetID()
+function s.initial_effect(c)
 	--link summon
 	aux.AddLinkProcedure(c,nil,2)
 	c:EnableReviveLimit()
-	--summon/drop (make it stat drop later)
+	--atk down
 	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_REMOVE)
+	e1:SetCategory(CATEGORY_ATKCHANGE+CATEGORY_DEFCHANGE)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetTarget(c90000751.remtg)
-	e1:SetOperation(c90000751.remop)
+	e1:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_CARD_TARGET)
+	e1:SetTarget(s.atktg)
+	e1:SetOperation(s.atkop)
 	c:RegisterEffect(e1)
 	--protection
-	local e2=Effect.CreateEffect(c)
-	e2:SetProperty(EFFECT_FLAG_SET_AVAILABLE)
-	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e2:SetTarget(c90000914.indtg)
-	e2:SetValue(1)
-	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e3:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	local e3=Effect.CreateEffect(c)
+	e3:SetProperty(EFFECT_FLAG_SET_AVAILABLE)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
+	e3:SetTarget(s.indtg)
+	e3:SetValue(1)
 	c:RegisterEffect(e3)
-	--negate for rest of the duel
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(90000751,1))
-	e4:SetCategory(CATEGORY_DISABLE+CATEGORY_TODECK)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
-	e4:SetCode(EVENT_CHAINING)
-	e4:SetCountLimit(1,90000751)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCondition(c90000751.discon)
-	e4:SetTarget(c90000751.distg)
-	e4:SetOperation(c90000751.disop)
+	local e4=e3:Clone()
+	e4:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e4:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
 	c:RegisterEffect(e4)
+	--negate for rest of the duel
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,1))
+	e5:SetCategory(CATEGORY_DISABLE+CATEGORY_TODECK)
+	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
+	e5:SetCode(EVENT_CHAINING)
+	e5:SetCountLimit(1,id)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetCondition(s.discon)
+	e5:SetTarget(s.distg)
+	e5:SetOperation(s.disop)
+	c:RegisterEffect(e5)
 end
 
---summon/drop
-function c90000751.remtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsAbleToDeck() end
-	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectTarget(tp,Card.IsAbleToDeck,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
+--drop
+function s.atkfilter(c)
+	return c:GetAttack()>0 and c:IsFaceup()
 end
-function c90000751.remop(e,tp,eg,ep,ev,re,r,rp)
+function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.atkfilter(chkc) end
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFaceup,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil)
+		and Duel.IsExistingTarget(s.atkfilter,tp,LOCATION_MZONE,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+	Duel.SelectTarget(tp,s.atkfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,1,nil)
+end
+function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	if tc and tc:IsRelateToEffect(e) then
-		Duel.ToDeck(tc,nil,REASON_EFFECT)
+	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil)
+	if tc:IsRelateToEffect(e) and #g>0 then
+		local atk=tc:GetAttack()
+		local def=tc:GetAttack()
+		g:ForEach(s.op,e:GetHandler(),atk)
+		g:ForEach(s.op2,e:GetHandler(),def)
 	end
 end
-
+function s.op(tc,c,atk)
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_UPDATE_ATTACK)
+	e1:SetValue(-atk)
+	tc:RegisterEffect(e1)
+end
+function s.op2(tc,c,def)
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_SINGLE)
+	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	e2:SetValue(-def)
+	tc:RegisterEffect(e2)
+end
 --negate
-function c90000751.discon(e,tp,eg,ep,ev,re,r,rp)
+function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev) and e:GetHandler():GetLinkedGroupCount()>0
 end
-function c90000751.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
 	if re:GetHandler():IsRemovable() and re:GetHandler():IsRelateToEffect(re) then
 		Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,1,0,0)
 	end
 end
-function c90000751.disop(e,tp,eg,ep,ev,re,r,rp)
+function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateActivation(ev)
 	if re:GetHandler():IsRelateToEffect(re) then
 		Duel.Remove(eg,REASON_EFFECT)
@@ -76,10 +97,10 @@ local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e1:SetTargetRange(0,1)
-	e1:SetValue(c90000751.aclimit)
+	e1:SetValue(s.aclimit)
 	e1:SetLabel(re:GetHandler():GetCode())
 	Duel.RegisterEffect(e1,tp)
 end
-function c90000751.aclimit(e,re,tp)
+function s.aclimit(e,re,tp)
 	return re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:GetHandler():IsCode(e:GetLabel())
 end

@@ -99,7 +99,7 @@ end
 function c90000719.activate2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateActivation(ev)
 	if re:GetHandler():IsRelateToEffect(re) then
-		Duel.Destroy(eg,REASON_EFFECT)
+		Duel.Remove(eg,POS_FACEUP,REASON_EFFECT)
 	end
 end
 function c90000719.indval(e,re,tp)

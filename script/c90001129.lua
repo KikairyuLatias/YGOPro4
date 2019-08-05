@@ -48,7 +48,7 @@ end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.IsPlayerAffectedByEffect(tp,59822133) then return end
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>1
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,90001141,0,0x4011,1000,1000,3,RACE_BEAST_WARRIOR,ATTRIBUTE_WATER) then
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,90001140,0,0x4011,1000,1000,3,RACE_BEAST_WARRIOR,ATTRIBUTE_WATER) then
 		for i=1,2 do
 			local token=Duel.CreateToken(tp,id+i)
 			Duel.SpecialSummonStep(token,0,tp,tp,false,false,POS_FACEUP_DEFENSE)

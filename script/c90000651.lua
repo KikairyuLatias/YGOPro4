@@ -12,10 +12,10 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 function s.filter0(c)
-	return c:IsCanBeFusionMaterial() and c:IsAbleToGrave()
+	return c:IsCanBeFusionMaterial() and c:IsAbleToGrave() and c:IsType(TYPE_MONSTER)
 end
 function s.filter1(c,e)
-	return c:IsCanBeFusionMaterial() and c:IsAbleToGrave() and not c:IsImmuneToEffect(e)
+	return c:IsCanBeFusionMaterial() and c:IsAbleToGrave() and c:IsType(TYPE_MONSTER) and not c:IsImmuneToEffect(e)
 end
 function s.filter2(c,e,tp,m,f,chkf)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x439) and (not f or f(c))
