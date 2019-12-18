@@ -3,3 +3,9 @@
 Moved the old coding to "Back code". (Please realize that I won't update those, but they are there in case there exists any discrepancies)
 Updated the Set ID
 Cards in their new locations have been uploaded.
+
+12/18/2019
+
+All cards have been moved to the new 233xxxxxx code
+Baofeng Dragon needs to be coded now, but everything else is there.
+May need to correct some old code in case they call specific card names that were shifted...
