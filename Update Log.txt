@@ -1,3 +1,5 @@
-1/9/2019
+12/17/2019
 
-Initial uploading.
+Moved the old coding to "Back code". (Please realize that I won't update those, but they are there in case there exists any discrepancies)
+Updated the Set ID
+Cards in their new locations have been uploaded.
