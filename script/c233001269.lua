@@ -12,7 +12,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--kamui (work on later)
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90001269,0))
+	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_REMOVE)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_GRAVE)
@@ -25,7 +25,7 @@ end
 
 --negation time
 function s.cfilter(c)
-	return c:IsFaceup() and (c:IsCode(90001260) or c:IsCode(90001262))
+	return c:IsFaceup() and (c:IsCode(233001260) or c:IsCode(233001262))
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local ph=Duel.GetCurrentPhase()

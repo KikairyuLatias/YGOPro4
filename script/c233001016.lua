@@ -14,6 +14,20 @@ function s.initial_effect(c)
 	local e2=e1:Clone()
 	e2:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e2)
-	--synchro dreamlight
 	--special summon self if you have dreamlight out
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_SPSUMMON_PROC)
+	e3:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e3:SetRange(LOCATION_GRAVE)
+	e3:SetCondition(s.spcon)
+	c:RegisterEffect(e3)
+end
+--ss
+function s.filter2(c)
+	return c:IsFaceup() and c:IsCode(233001001)
+end
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
+	return g:GetClassCount(Card.GetCode)>=1
 end

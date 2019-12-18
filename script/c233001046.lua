@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
 	c:EnableReviveLimit()
-	aux.AddSynchroProcedure(c,nil,2,2,aux.NonTuner(Card.IsCode,90000401),1,1)
+	aux.AddSynchroProcedure(c,nil,2,2,aux.NonTuner(Card.IsCode,233001001),1,1)
 	--cannot negate my synchro summon
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
