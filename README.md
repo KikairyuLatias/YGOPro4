@@ -1,7 +1,17 @@
 # YGOPro4
-Welcome to my YGOPro Github with all of my stuff.
+UPDATED: 12/17/2019
+
+Welcome to my YGOPro Github.
 
 Please be warned that these are written with YGOPro 1.034 in mind. Some MAY work on previous versions with exceptions.
+
+# ANNOUNCEMENT
+
+As of 12/17, I am currently in the process of moving my cards over to 9-digit passcodes in an attempt to avoid having collisions with Konami IDs. They will be listed as 233xxxxxx (which should generally be fine). The following is also true.
+- Archetypes will be shifted around a bit to group similar archetypes together (least in the sense of where their origins lie)
+- Cards that have not been coded will be stricken from the roster in the new additions, so you may see less cards altogether.
+
+I will keep the original files as archival if required.
 
 # Disclaimer
 
@@ -12,7 +22,7 @@ I am fully aware that a lot of the cards here are one or more of the following o
 3. Code does not match up with the actual effects on card due to difficulties/issues with the core at this time. (Remember, I am not a developer for the game, so I do not know what is going on.)
 4. Cards do not have coding at all, either due to my own inability to write the code or the YGOPro core at present does not support something of the sort.
 
-Please see "Card Bug Log.xlsx" for the complete list of cards with coding that needs addressing.
+In line with the updates, I am removing cards from the .cdb which do not have code as to avoid having "blanks" that you cannot use. They will eventually be added back over time.
 
 # General stuff
 - If anything is amiss (code is broken, pictures need fixing, etc), message me on Discord @Sakura#2014
@@ -22,9 +32,3 @@ Please see "Card Bug Log.xlsx" for the complete list of cards with coding that n
 # Archetypes and Codes
 
 See "Set ID.xlsx" for the list. Please note that I may not update it as periodically as I do with the card files.
-
-My cards are indexed as 9000xxxx for the most part, however many of them are hard coded. I am currently editing the codes to be softer and able to move around if I need to make modifications (i.e. Konami makes a card that falls into this range).
-
-If I need to move cards around to 9-digit passcodes (which may be likely), they will be uploaded as such. The older files may still remain, but please delete them as you download the newest versions.
-
-(I apologize for the inconvenience in not deleting the older files, however this becomes a legitimate headache to do on browser)
