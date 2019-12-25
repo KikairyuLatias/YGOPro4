@@ -9,3 +9,11 @@ Cards in their new locations have been uploaded.
 All cards have been moved to the new 233xxxxxx code
 Baofeng Dragon needs to be coded now, but everything else is there.
 May need to correct some old code in case they call specific card names that were shifted...
+
+12/25/2019
+
+Merry Christmas everyone!
+
+Modified the code for Dreamlight Speedstar and Pony Apprentice so they can render 2 different Levels if used to Synchro Summon.
+Added coding for Baofeng Dragon - Honghua (will do rest later)
+Added a new code to the spreadsheet (Flash Blossom Reindeer / 1224 / 4c8), though I will get to coding them after Baofeng.

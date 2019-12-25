@@ -28,14 +28,11 @@ function s.spcon(e,c)
 		Duel.IsExistingMatchingCard(s.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end
 
---level 4
+--level coding
 function s.slevel(e,c)
-	local lv=e:GetHandler():GetLevel()
-	return 4*65536+lv or 2*65536+lv
-end
-
---level 2
-function s.slevel2(e,c)
-	local lv=e:GetHandler():GetLevel()
-	return 2*65536+lv
+	if rc:IsSetCard(0x5f7) or rc:IsSetCard(0x5f8) then
+		return 4,2,e:GetHandler():GetLevel()
+	else
+		return e:GetHandler():GetLevel()
+	end
 end
