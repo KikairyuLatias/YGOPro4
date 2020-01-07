@@ -178,7 +178,7 @@ end
 function s.filter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c9) or c:IsCode(233001215)
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+function s.spencon(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
 	return g:GetClassCount(Card.GetCode)>=2
 end

@@ -28,7 +28,7 @@ end
 
 --shuffle and replace
 function s.cfilter(c)
-	return c:IsSetCard(0x5f1) or c:IsCode(90000230) and c:IsAbleToDeckAsCost()
+	return c:IsSetCard(0x5f1) or c:IsCode(233000230) and c:IsAbleToDeckAsCost()
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) end

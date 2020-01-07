@@ -26,7 +26,7 @@ end
 
 --summon my other reindeer form and then unlock my Mangekyo Sharingan to protect friends
 function s.filter(c,e,tp)
-	return c:IsCode(90001260) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsCode(233001260) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
