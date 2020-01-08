@@ -15,7 +15,7 @@ function s.initial_effect(c)
 end
 --destroy
 function s.desfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x641)
+	return c:IsFaceup() and c:IsSetCard(0x652)
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end

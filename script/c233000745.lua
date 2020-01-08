@@ -30,7 +30,7 @@ function s.initial_effect(c)
 end
 --ss
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x641)
+	return c:IsFaceup() and c:IsSetCard(0x652)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)

@@ -43,7 +43,7 @@ function s.initial_effect(c)
 end
 --cond
 function s.ntfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x641)
+	return c:IsFaceup() and c:IsSetCard(0x652)
 end
 function s.ntcon(e,c,minc)
 	if c==nil then return true end
@@ -75,7 +75,7 @@ end
 
 --revival
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0x641) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
+	return c:IsSetCard(0x652) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

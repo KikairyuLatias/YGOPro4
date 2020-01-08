@@ -15,7 +15,7 @@ end
 --replacement
 function s.filter(c,tp)
 	return c:IsFaceup() and c:IsControler(tp) and c:IsLocation(LOCATION_MZONE)
-		and c:IsSetCard(0x641) and not c:IsReason(REASON_REPLACE)
+		and c:IsSetCard(0x652) and not c:IsReason(REASON_REPLACE)
 end
 function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return eg:IsExists(s.filter,1,nil,tp) and eg:IsReason(REASON_EFFECT) and not e:GetHandler():IsStatus(STATUS_DESTROY_CONFIRMED) end

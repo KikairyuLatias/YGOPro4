@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x641),4,2,nil,nil,7)
+	aux.AddXyzProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x652),4,2,nil,nil,7)
 	c:EnableReviveLimit()
 	--destroy then detach
 	--burn (level only)
@@ -43,7 +43,7 @@ end
 
 --burn 1
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
-	return not eg:IsContains(e:GetHandler()) and not eg:IsType(TYPE_XYZ+TYPE_LINK) and eg:FilterCount(Card.IsSetCard,nil,0x641)>0
+	return not eg:IsContains(e:GetHandler()) and not eg:IsType(TYPE_XYZ+TYPE_LINK) and eg:FilterCount(Card.IsSetCard,nil,0x652)>0
 end
 	--for level
 	function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -61,7 +61,7 @@ end
 
 --burn 2
 function s.condition2a(e,tp,eg,ep,ev,re,r,rp)
-	return not eg:IsContains(e:GetHandler()) and not eg:IsType(TYPE_LINK) and eg:IsType(TYPE_XYZ) and eg:FilterCount(Card.IsSetCard,nil,0x641)>0
+	return not eg:IsContains(e:GetHandler()) and not eg:IsType(TYPE_LINK) and eg:IsType(TYPE_XYZ) and eg:FilterCount(Card.IsSetCard,nil,0x652)>0
 end
 	--for xyz
 	function s.target2a(e,tp,eg,ep,ev,re,r,rp,chk)

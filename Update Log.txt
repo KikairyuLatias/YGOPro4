@@ -17,3 +17,14 @@ Merry Christmas everyone!
 Modified the code for Dreamlight Speedstar and Pony Apprentice so they can render 2 different Levels if used to Synchro Summon.
 Added coding for Baofeng Dragon - Honghua (will do rest later)
 Added a new code to the spreadsheet (Flash Blossom Reindeer / 1224 / 4c8), though I will get to coding them after Baofeng.
+
+1/6/2020
+
+Updated some of the scripts that required specific cards by name (as I forgot to double check that they ran the new codes and not the old ones). Luckily those were in the sets that didn't get their positioning moved. (Ergo, Psychic Dragon Delta Latias, some of the Flyer stuff, etc)
+
+1/8/2020
+
+Moved "Phoenix Guardian" to code "652" so it can be properly marked as a sub-arch of "Guardian" (like that'll ever do much)
+Added new versions of the (RELEASE) files that show all the cards in an archetype/series.
+Updated pic for Psychic Dragon Eon Princess Latias EX (though it's just fixing the subtype line)
+"Baofeng Dragon" monsters should be scripted

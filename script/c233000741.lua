@@ -23,9 +23,9 @@ function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*100
 end
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x641)
+	return c:IsFaceup() and c:IsSetCard(0x652)
 end
 --piercing
 function s.target(e,c)
-	return c:IsSetCard(0x641)
+	return c:IsSetCard(0x652)
 end
