@@ -59,8 +59,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 --don`t bother chaining
 function s.chainop(e,tp,eg,ep,ev,re,r,rp)
-	local rc=re:GetHandler()
-	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x7d7) then
+	if re:GetHandler():IsSetCard(0x7d7) then
 		Duel.SetChainLimit(s.chainlm)
 	end
 end
