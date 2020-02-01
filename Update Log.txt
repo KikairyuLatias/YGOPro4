@@ -33,3 +33,11 @@ Updated pic for Psychic Dragon Eon Princess Latias EX (though it's just fixing t
 
 "Blazefur Athlete Fighting Aura" added and coded.
 Some of the Diver Equine cards had their scripts modified b/c old effects and stuff, also fixed in the CDB (or should be)
+
+2/1/2020
+
+Added the Flash Blossom Reindeer cards
+Fixed some older cards with outdated texts
+Fixed some of the old code for Hazmat Animal
+
+Please note that the game won't render out the prompts in CDB; likely due to the 9 digit thing. You may wish to have it open on the side or take notes. They should generally be ordered in the same places they appear on text.

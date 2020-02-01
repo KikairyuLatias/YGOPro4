@@ -47,7 +47,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 function s.thfilter(c,tp)
-	return c:IsCode(90001161)
+	return c:IsCode(233000567)
 		and (c:IsAbleToHand() or (c:GetActivateEffect():IsActivatable(tp) and Duel.GetLocationCount(tp,LOCATION_FZONE)>0))
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)

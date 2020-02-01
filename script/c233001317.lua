@@ -27,7 +27,7 @@ function s.initial_effect(c)
 end
 --bounce something
 function s.thfilter(c)
-	return c:IsFacedown() and c:IsAbleToHand() and not c:GetHandler()
+	return c:IsFacedown() and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and s.thfilter(chkc) end
