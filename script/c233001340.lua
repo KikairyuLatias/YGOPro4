@@ -57,5 +57,5 @@ function s.handcon(e)
 	return Duel.IsExistingMatchingCard(s.cfilter2,tp,LOCATION_MZONE,0,1,nil)
 end
 function s.cfilter2(c)
-	return c:IsFaceup() and c:IsSetCard(0x4c8) and c:GetBaseAttack(2300) or c:GetBaseAttack(2700)
+	return c:IsFaceup() and c:IsSetCard(0x4c8) and c:GetBaseAttack()>=2000
 end

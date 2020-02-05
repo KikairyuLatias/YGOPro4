@@ -47,7 +47,7 @@ function s.mfilter(c)
 	return c:IsRace(RACE_BEAST_WARRIOR) and c:IsAttribute(ATTRIBUTE_WIND)
 end
 function s.ovfilter(c)
-	return c:IsFaceup() and c:IsCode(90000101)
+	return c:IsFaceup() and c:IsCode(233000101)
 end
 function s.xyzop(e,tp,chk)
 	if chk==0 then return Duel.GetFlagEffect(tp,id)==0 end
@@ -57,7 +57,7 @@ end
 
 --need base form
 function s.basecon(e,tp,eg,ep,ev,re,r,rp)
-	return ep~=tp and not e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,90000101)
+	return ep~=tp and not e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,233000101)
 end
 
 function s.baseop(e,tp,eg,ep,ev,re,r,rp)

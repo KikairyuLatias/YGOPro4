@@ -2,6 +2,15 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableCounterPermit(0x43a)
+	--act limit
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_FIELD)
+	e0:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e0:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e0:SetRange(LOCATION_SZONE)
+	e0:SetTargetRange(1,0)
+	e0:SetValue(s.aclimit)
+	c:RegisterEffect(e0)
 	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -21,6 +30,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--add counter
 	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,0))
 	e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
 	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
 	e4:SetCode(EVENT_CHAINING)
@@ -58,15 +68,28 @@ function s.initial_effect(c)
 	e8:SetCode(EVENT_LEAVE_FIELD_P)
 	e8:SetOperation(s.damp)
 	c:RegisterEffect(e8)
+	--both players get hit
 	local e9=Effect.CreateEffect(c)
+	e9:SetDescription(aux.Stringid(id,1))
 	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e9:SetCategory(CATEGORY_DAMAGE)
 	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e9:SetCode(EVENT_DESTROY)
-	e9:SetTarget(s.damtg)
+	e9:SetCode(EVENT_LEAVE_FIELD_P)
+	e9:SetCondition(s.damcon)
 	e9:SetOperation(s.damop)
 	e9:SetLabelObject(e8)
 	c:RegisterEffect(e9)
+	--controller gets screwed
+	local e10=e9:Clone()
+	e10:SetDescription(aux.Stringid(id,2))
+	e10:SetCondition(s.damcon2)
+	e10:SetOperation(s.damop2)
+	c:RegisterEffect(e10)
+end
+
+--cannot activate new field to get rid of this without penalties
+function s.aclimit(e,re,tp)
+	return re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:IsActiveType(TYPE_SPELL) and re:IsActiveType(TYPE_FIELD)
 end
 
 --counter addition for summoning
@@ -96,25 +119,30 @@ function s.hztg(e,c)
 	return not c:IsSetCard(0x43a) and c:IsType(TYPE_MONSTER)
 end
 
+--conditions
+function s.damcon(e)
+	return e:GetHandler():GetCounter(0x43a)<10
+end
+function s.damcon2(e)
+	return e:GetHandler():GetCounter(0x43a)>=10
+end
+
 --damage
 function s.damp(e,tp,eg,ep,ev,re,r,rp)
-	e:SetLabel(e:GetHandler():GetCounter(0x43a))
-end
-function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local ct=e:GetLabelObject():GetLabel()
-	if chk==0 then return ct~=0 end
-	local p=PLAYER_ALL
-	Duel.SetTargetPlayer(p)
-	Duel.SetTargetParam(ct*200)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,tp,ct*200)
+	local c=e:GetHandler()
+	local ct=c:GetCounter(0x43a)
+	e:SetLabel(ct)
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	if p==PLAYER_ALL then
-		Duel.Damage(1,d,REASON_EFFECT,true)
-		Duel.Damage(0,d,REASON_EFFECT,true)
-		Duel.RDComplete()
-	else
-		Duel.Damage(p,d,REASON_EFFECT)
+	local ct=e:GetLabelObject():GetLabel()
+	if ct>0 and ct<10 then
+		Duel.Damage(tp,ct*200,REASON_EFFECT)
+		Duel.Damage(1-tp,ct*200,REASON_EFFECT)
+	end
+end
+function s.damop2(e,tp,eg,ep,ev,re,r,rp)
+	local ct=e:GetLabelObject():GetLabel()
+	if ct>=10 then
+		Duel.SetLP(tp,Duel.GetLP(tp)-ct*500)
 	end
 end

@@ -28,7 +28,6 @@ function s.initial_effect(c)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	--float (do later)
 end
 --boost
 function s.tg(e,c)

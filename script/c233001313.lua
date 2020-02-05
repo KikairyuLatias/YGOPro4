@@ -36,7 +36,7 @@ end
 
 --requirement to shut down the opponent
 function s.acfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x7d7) and c:IsType(TYPE_MONSTER) and (c:GetBaseAttack(2400) or c:GetBaseAttack(2600) or c:GetBaseAttack(2700))
+	return c:IsFaceup() and c:IsSetCard(0x7d7) and c:IsType(TYPE_MONSTER) and c:GetBaseAttack()>=2400
 end
 function s.accon(e)
 	return Duel.IsExistingMatchingCard(s.banfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)

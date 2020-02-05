@@ -50,7 +50,7 @@ function s.mfilter(c)
 end
 
 function s.ovfilter(c)
-	return c:IsFaceup() and c:IsCode(90000102)
+	return c:IsFaceup() and c:IsCode(233000102)
 end
 
 function s.xyzop(e,tp,chk)
@@ -60,7 +60,7 @@ function s.xyzop(e,tp,chk)
 end
 --need base form
 function s.basecon(e,tp,eg,ep,ev,re,r,rp)
-	return ep~=tp and not e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,90000102)
+	return ep~=tp and not e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,233000102)
 end
 
 function s.baseop(e,tp,eg,ep,ev,re,r,rp)

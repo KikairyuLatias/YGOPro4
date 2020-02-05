@@ -1,6 +1,8 @@
 --Superstar Dimension Diver Equine Enríque
 local s,id=GetID()
 function s.initial_effect(c)
+	--pendulum summon
+	aux.EnablePendulumAttribute(c,false)
 	--xyz summon
 	aux.AddXyzProcedure(c,s.mfilter,6,2,nil,nil,2)
 	c:EnableReviveLimit()
@@ -35,6 +37,7 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_BATTLE_DESTROYING)
 	e3:SetCondition(aux.bdocon)
+	e3:SetCountLimit(1,id+99999)
 	e3:SetTarget(s.atchtg)
 	e3:SetOperation(s.atchop)
 	c:RegisterEffect(e3)

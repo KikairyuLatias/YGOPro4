@@ -77,7 +77,7 @@ end
 
 -- banishing
 function s.banfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4c8) and c:IsType(TYPE_MONSTER) and (c:GetBaseAttack(2000) or c:GetBaseAttack(2300) or c:GetBaseAttack(2700))
+	return c:IsFaceup() and c:IsSetCard(0x4c8) and c:IsType(TYPE_MONSTER) and c:GetBaseAttack()>=2000
 end
 function s.bancon(e)
 	return Duel.IsExistingMatchingCard(s.banfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
