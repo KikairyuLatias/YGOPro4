@@ -62,19 +62,18 @@ end
 function s.filter(c,atk)
 	return c:IsFaceup() and c:IsAttackBelow(atk)
 end
-
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack()) end
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),LOCATION_MZONE,0,1)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,0,LOCATION_MZONE,1,c,c:GetAttack()) end
+	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE,c,c:GetAttack())
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),0,0)
 	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,g:GetCount()*300)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) or c:IsFacedown() then return end
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,1,nil,c,c:GetAttack())
-	local ct=Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
+	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_MZONE,c,c:GetAttack())
+	local ct=Duel.Remove(g,nil,POS_FACEUP,REASON_EFFECT)
 	if ct>0 then
 		Duel.BreakEffect()
 		Duel.Damage(1-tp,ct*300,REASON_EFFECT)

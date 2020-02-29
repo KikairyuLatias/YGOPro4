@@ -69,12 +69,13 @@ function s.initial_effect(c)
 	--special summon
 	local e9=Effect.CreateEffect(c)
 	e9:SetDescription(aux.Stringid(id,3))
-	e9:SetType(EFFECT_TYPE_FIELD)
-	e9:SetCode(EFFECT_SPSUMMON_PROC)
-	e9:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e9:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e9:SetType(EFFECT_TYPE_IGNITION)
 	e9:SetRange(LOCATION_PZONE)
 	e9:SetCountLimit(1,id)
 	e9:SetCondition(s.spencon)
+	e9:SetTarget(s.spentg)
+	e9:SetOperation(s.spenop)
 	c:RegisterEffect(e9)
 end
 
@@ -151,6 +152,14 @@ function s.filter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c8)
 end
 function s.spencon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=1
+	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x4c8),tp,LOCATION_MZONE,0,1,nil)
+end
+function s.spentg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.spenop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end

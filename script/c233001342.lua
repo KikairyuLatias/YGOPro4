@@ -36,12 +36,13 @@ function s.initial_effect(c)
 	--special summon from p-zone
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetCode(EFFECT_SPSUMMON_PROC)
-	e4:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_PZONE)
 	e4:SetCountLimit(1,id)
 	e4:SetCondition(s.spencon)
+	e4:SetTarget(s.spentg)
+	e4:SetOperation(s.spenop)
 	c:RegisterEffect(e4)
 	--self protection
 		local e5=Effect.CreateEffect(c)
@@ -72,9 +73,9 @@ function s.initial_effect(c)
 	e7:SetTarget(s.distg)
 	e7:SetOperation(s.disop)
 	c:RegisterEffect(e7)
-	--go to Pe8
+	--go to P-Zone
 	local e8=Effect.CreateEffect(c)
-	e8:SetDescription(aux.Stringid(id,3))
+	e8:SetDescription(aux.Stringid(id,2))
 	e8:SetCategory(CATEGORY_DESTROY)
 	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e8:SetCode(EVENT_DESTROYED)
@@ -95,8 +96,16 @@ function s.filter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c8)
 end
 function s.spencon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=1
+	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x4c8),tp,LOCATION_MZONE,0,1,nil)
+end
+function s.spentg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.spenop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
 end
 
 --immunity
