@@ -18,14 +18,14 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 function s.aclimit(e,re,tp)
-	if not re:IsHasType(EFFECT_TYPE_ACTIVATE) or not re:IsActiveType(TYPE_SPELL) or not re:IsActiveType(TYPE_TRAP) then return false end
+	if not re:IsHasType(EFFECT_TYPE_ACTIVATE) or not re:IsActiveType(TYPE_SPELL) then return false end
 	local c=re:GetHandler()
 	return not c:IsLocation(LOCATION_SZONE) or c:GetFlagEffect(id)>0
 end
 function s.aclimset(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	while tc do
-		tc:RegisterFlagEffect(id,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END+RESET_OPPO_TURN,0,1)
+		tc:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END+RESET_OPPO_TURN,0,1)
 		tc=eg:GetNext()
 	end
 end

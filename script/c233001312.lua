@@ -20,7 +20,7 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
-	e2:SetRange(LOCATION_FZONE)
+	e2:SetRange(LOCATION_MZONE)
 	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
 	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x7d7))
 	e2:SetValue(s.indct)
@@ -54,7 +54,7 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
---protect mu team
+--protect my team
 function s.indct(e,re,r,rp)
 	if bit.band(r,REASON_BATTLE+REASON_EFFECT)~=0 then
 		return 1

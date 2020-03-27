@@ -60,18 +60,18 @@ function s.initial_effect(c)
 		e6:SetRange(LOCATION_MZONE)
 		e6:SetValue(s.indval)
 		c:RegisterEffect(e6)
-	--negation
+	--negate
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,1))
 	e7:SetCategory(CATEGORY_NEGATE+CATEGORY_TODECK)
 	e7:SetType(EFFECT_TYPE_QUICK_O)
-	e7:SetCode(EVENT_CHAINING)
-	e7:SetCountLimit(1)
 	e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e7:SetCode(EVENT_CHAINING)
 	e7:SetRange(LOCATION_MZONE)
-	e7:SetCondition(s.discon)
-	e7:SetTarget(s.distg)
-	e7:SetOperation(s.disop)
+	e7:SetCountLimit(1)
+	e7:SetCondition(s.negcon)
+	e7:SetTarget(s.negtg)
+	e7:SetOperation(s.negop)
 	c:RegisterEffect(e7)
 	--go to P-Zone
 	local e8=Effect.CreateEffect(c)
@@ -113,20 +113,23 @@ function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 
---negate
-function s.discon(e,tp,eg,ep,ev,re,r,rp)
-	return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
+--negation
+function s.negcon(e,tp,eg,ep,ev,re,r,rp)
+	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
+		and ep~=tp and Duel.IsChainNegatable(ev)
 end
-function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
-	if re:GetHandler():IsAbleToDeck() and re:GetHandler():IsRelateToEffect(re) then
+	if re:GetHandler():IsRelateToEffect(re) then
 		Duel.SetOperationInfo(0,CATEGORY_TODECK,eg,1,0,0)
 	end
 end
-function s.disop(e,tp,eg,ep,ev,re,r,rp)
+function s.negop(e,tp,eg,ep,ev,re,r,rp)
+	local ec=re:GetHandler()
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
-		Duel.SendtoDeck(eg,nil,2,REASON_EFFECT)
+		ec:CancelToGrave()
+		Duel.SendtoDeck(ec,nil,2,REASON_EFFECT)
 	end
 end
 

@@ -8,13 +8,13 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id+EFFECT_COUNT_CODE_OATH)
 	e1:SetCondition(s.actcon)
 	c:RegisterEffect(e1)
-	--cannot trigger
+	--disable
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e2:SetCode(EFFECT_CANNOT_TRIGGER)
 	e2:SetRange(LOCATION_SZONE)
 	e2:SetTargetRange(0,LOCATION_MZONE)
-	e2:SetTarget(s.target)
+	e2:SetTarget(s.locktg)
 	c:RegisterEffect(e2)
 	--retrieve self
 	local e4=Effect.CreateEffect(c)
@@ -35,7 +35,7 @@ function s.actcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
 end
 --lockdown
-function s.target(e,c)
+function s.locktg(e,c)
 	return c:IsStatus(STATUS_SUMMON_TURN+STATUS_FLIP_SUMMON_TURN+STATUS_SPSUMMON_TURN)
 end
 --retrieve

@@ -30,7 +30,7 @@ function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x43a)
 end
 function s.val(e,c)
-	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*200
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*100
 end
 
 --i make tokens

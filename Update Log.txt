@@ -61,3 +61,10 @@ Addition of ZP Delta
 Fixed some of the Flash Blossom stuff
 Some other misc fixes.
 Added Rush Duel imports
+
+3/27/2020
+
+Some minor script fixes
+Heavy modifications to the Hazmat Animal arch
+Modifications to the Diver Equine arch
+Other changes

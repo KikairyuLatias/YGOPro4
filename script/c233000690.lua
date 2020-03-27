@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	--detach, draw and shuffle
 end
 --proc
-function s.target(e,c)
+function s.battg(e,c)
 	return c:IsRace(RACE_BEAST)
 end
 function s.batcon(e)

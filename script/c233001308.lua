@@ -4,15 +4,14 @@ function s.initial_effect(c)
 	--synchro summon
 	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
-	--lockdown mode
+	--disable
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e2:SetCode(EFFECT_CANNOT_TRIGGER)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetTargetRange(0,1)
+	e2:SetTargetRange(0,LOCATION_MZONE)
 	e2:SetCondition(s.lockcon)
-	e2:SetValue(s.limval)
+	e2:SetTarget(s.locktg)
 	c:RegisterEffect(e2)
 	--ninja art: flyer hand sniping jutsu!
 	local e2=Effect.CreateEffect(c)
@@ -35,18 +34,17 @@ function s.initial_effect(c)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetTargetRange(0,1)
 	e3:SetTarget(s.actcon)
-	e3:SetValue(s.aclimit2)
+	e3:SetOperation(s.actop)
 	c:RegisterEffect(e3)
 end
 --lockdown
 function s.lockcon(e,tp,eg,ep,ev,re,r,rp,chk)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO)
 end
-function s.limval(e,re,rp)
-	local rc=re:GetHandler()
-	return rc:IsLocation(LOCATION_MZONE) and re:IsActiveType(TYPE_MONSTER)
-		and rc:IsStatus(STATUS_SUMMON_TURN+STATUS_FLIP_SUMMON_TURN+STATUS_SPSUMMON_TURN)
+function s.locktg(e,c)
+	return c:IsStatus(STATUS_SUMMON_TURN+STATUS_FLIP_SUMMON_TURN+STATUS_SPSUMMON_TURN)
 end
+
 --cut off hands
 function s.cfilter(c,tp)
 	return c:IsControler(tp) and (c:IsPreviousLocation(LOCATION_REMOVED) or c:IsPreviousLocation(LOCATION_ONFIELD) or c:IsPreviousLocation(LOCATION_DECK) or c:IsPreviousLocation(LOCATION_GRAVE))

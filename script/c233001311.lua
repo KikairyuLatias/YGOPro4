@@ -22,7 +22,7 @@ function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x7d7)
 end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil)
+	return ep~=tp and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil)
 		and Duel.GetCurrentChain()==0
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)

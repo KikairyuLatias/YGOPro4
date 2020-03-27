@@ -16,19 +16,19 @@ function s.initial_effect(c)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
 	--negate
-	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_TODECK)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
-	e2:SetCode(EVENT_CHAINING)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id+99999)
-	e2:SetCondition(s.negcon)
-	e2:SetCost(s.negcost)
-	e2:SetTarget(s.negtg)
-	e2:SetOperation(s.negop)
-	c:RegisterEffect(e2)
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,1))
+	e7:SetCategory(CATEGORY_NEGATE+CATEGORY_TODECK)
+	e7:SetType(EFFECT_TYPE_QUICK_O)
+	e7:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e7:SetCode(EVENT_CHAINING)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetCountLimit(1,id+99999)
+	e7:SetCondition(s.negcon)
+	e7:SetCost(s.negcost)
+	e7:SetTarget(s.negtg)
+	e7:SetOperation(s.negop)
+	c:RegisterEffect(e7)
 end
 -- lock and fire
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -42,11 +42,8 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000,0,1)
 	Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
 end
+
 --negation
-function s.negcon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
-		and ep~=tp and Duel.IsChainNegatable(ev)
-end
 function s.cfilter(c)
 	return c:IsDiscardable()
 end
@@ -54,12 +51,21 @@ function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) end
 	Duel.DiscardHand(tp,s.cfilter,1,1,REASON_COST+REASON_DISCARD,nil)
 end
+function s.negcon(e,tp,eg,ep,ev,re,r,rp)
+	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
+		and ep~=tp and Duel.IsChainNegatable(ev)
+end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
+	if re:GetHandler():IsRelateToEffect(re) then
+		Duel.SetOperationInfo(0,CATEGORY_TODECK,eg,1,0,0)
+	end
 end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.NegateActivation(ev) and re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:GetHandler():IsRelateToEffect(re) then
+	local ec=re:GetHandler()
+	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
+		ec:CancelToGrave()
 		Duel.SendtoDeck(ec,nil,2,REASON_EFFECT)
 	end
 end

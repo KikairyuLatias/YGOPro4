@@ -8,16 +8,20 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e1:SetCountLimit(1)
+	e1:SetCountLimit(1,id+99919)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
-	--effect gain
+	--recover
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_BE_MATERIAL)
-	e2:SetCondition(s.efcon)
-	e2:SetOperation(s.efop)
+	e2:SetCategory(CATEGORY_RECOVER+CATEGORY_SPECIAL_SUMMON)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e2:SetCountLimit(1,id)
+	e2:SetCondition(s.reccon)
+	e2:SetTarget(s.rectg)
+	e2:SetOperation(s.recop)
 	c:RegisterEffect(e2)
 end
 --special summon
@@ -38,26 +42,23 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
-function s.efcon(e,tp,eg,ep,ev,re,r,rp)
-	return r==REASON_LINK and e:GetHandler():GetReasonCard():IsSetCard(0x43a)
-end
-
-function s.efop(e,tp,eg,ep,ev,re,r,rp)
+--LP gain
+function s.reccon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=c:GetReasonCard()
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_FIELD)
-	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e3:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetTargetRange(0,1)
-	e3:SetValue(s.aclimit)
-	e3:SetCondition(s.actcon)
-	c:RegisterEffect(e3)
+	return c:IsLocation(LOCATION_GRAVE) and rc:IsSetCard(0x43a) and r & REASON_LINK ~=0
 end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.recfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x43a)
 end
-function s.actcon(e)
-	return Duel.GetAttacker()==e:GetHandler()
+function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local ct=Duel.GetMatchingGroupCount(s.recfilter,tp,LOCATION_MZONE,0,nil)
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(ct*300)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,ct*300)
+end
+function s.recop(e,tp,eg,ep,ev,re,r,rp)
+	local ct=Duel.GetMatchingGroupCount(s.recfilter,tp,LOCATION_MZONE,0,nil)
+	Duel.Recover(tp,ct*300,REASON_EFFECT)
 end

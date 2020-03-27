@@ -24,14 +24,6 @@ function s.initial_effect(c)
 	local e4=e2:Clone()
 	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e4)
-	--Hand stuff
-	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_SINGLE)
-	e5:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e5:SetCode(EFFECT_HAND_SYNCHRO)
-	e5:SetLabel(id)
-	e5:SetValue(s.synval)
-	c:RegisterEffect(e5)
 	--Accel Synchro desu wa!
 	local e6=Effect.CreateEffect(c)
 	e6:SetDescription(aux.Stringid(id,3))
@@ -62,37 +54,6 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK+LOCATION_REMOVED,0,1,1,nil,e,tp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-	end
-end
-
---hand Synchro
-function s.synval(e,c,sc)
-	if sc:IsSetCard(0x4ae) and --c:IsNotTuner() 
-		(not c:IsType(TYPE_TUNER) or c:IsHasEffect(EFFECT_NONTUNER)) and c:IsSetCard(0x4ae) and c:IsLocation(LOCATION_HAND) then
-		local e1=Effect.CreateEffect(e:GetHandler())
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK)
-		e1:SetLabel(id)
-		e1:SetTarget(s.synchktg)
-		c:RegisterEffect(e1)
-		return true
-	else return false end
-end
-function s.chk2(c)
-	if not c:IsHasEffect(EFFECT_HAND_SYNCHRO) or c:IsHasEffect(EFFECT_HAND_SYNCHRO+EFFECT_SYNCHRO_CHECK) then return false end
-	local te={c:GetCardEffect(EFFECT_HAND_SYNCHRO)}
-	for i=1,#te do
-		local e=te[i]
-		if e:GetLabel()==id then return true end
-	end
-	return false
-end
-function s.synchktg(e,c,sg,tg,ntg,tsg,ntsg)
-	if c then
-		local res=tg:IsExists(s.chk2,1,c) or ntg:IsExists(s.chk2,1,c) or sg:IsExists(s.chk2,1,c)
-		return res,Group.CreateGroup(),Group.CreateGroup()
-	else
-		return true
 	end
 end
 

@@ -1,4 +1,4 @@
---Hazmanimal B-Class Brown Inferno Cow
+--Hazmanimal B-Class - Brown Inferno Cow
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
@@ -26,19 +26,20 @@ function s.initial_effect(c)
 	e2:SetCondition(s.condition)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
-	--destroy all monsters
+	--special summon
 	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_TODECK)
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e3:SetCode(EVENT_TO_GRAVE)
-	e3:SetCountLimit(1,id+99999)
-	e3:SetCondition(s.tdcondition)
-	e3:SetTarget(s.tdtarget)
-	e3:SetOperation(s.tdoperation)
+	e3:SetCountLimit(1,id)
+	e3:SetCondition(s.condition)
+	e3:SetCost(s.cost)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
 end
+
 --buff
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local phase=Duel.GetCurrentPhase()
@@ -59,29 +60,35 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp,chk)
 	e2:SetValue(1000)
 	a:RegisterEffect(e2)
 end
+
 --effect negation damage
 function s.damval(e,re,val,r,rp,rc)
 	if r&REASON_EFFECT~=0 then return 0 end
 	return val
 end
 
---bounce
-function s.tdcondition(e,tp,eg,ep,ev,re,r,rp)
+--revival
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) and c:GetPreviousControler()==tp and rp~=tp
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:GetPreviousControler()==tp and rp~=tp
 end
-function s.tdtarget(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	local g=Duel.GetMatchingGroup(Card.IsDestructable,tp,0,LOCATION_MZONE,nil)
-	if g:GetCount()>0 then
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
-	end
+function s.costfilter(c,tp)
+	return c:IsSetCard(0x43a) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c,true) 
+		and (Duel.GetLocationCount(tp,LOCATION_MZONE)>0 or (c:IsLocation(LOCATION_MZONE) and c:GetSequence()<5))
 end
-function s.tdoperation(e,tp,eg,ep,ev,re,r,rp)
-	 local g=Duel.GetMatchingGroup(Card.IsDestructable,tp,0,LOCATION_MZONE,nil)
-	if g:GetCount()>0 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-		local sg=g:Select(tp,1,2,nil)
-		Duel.Destroy(sg,REASON_EFFECT)
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.costfilter,tp,LOCATION_GRAVE,0,1,e:GetHandler(),tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,s.costfilter,tp,LOCATION_GRAVE,0,2,2,e:GetHandler(),tp)
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	if e:GetHandler():IsRelateToEffect(e) then
+		Duel.SpecialSummon(e:GetHandler(),0,tp,tp,false,false,POS_FACEUP)
 	end
 end

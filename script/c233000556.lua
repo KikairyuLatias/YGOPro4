@@ -1,9 +1,18 @@
---Hazmanimal Pink Flare Deer
+--Hazmat Animal B-Class - Pink Flare Deer
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,3,s.lcheck)
+	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2)
 	c:EnableReviveLimit()
+	--cannot be targeted by opponent card effects
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e0:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e0:SetRange(LOCATION_MZONE)
+	e0:SetCondition(s.tgcon)
+	e0:SetValue(aux.tgoval)
+	c:RegisterEffect(e0)
 	--moving
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -25,25 +34,24 @@ function s.initial_effect(c)
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2)
-	--shuffle 1 card on field to deck
+	--special summon
 	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_TODECK)
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetDescription(aux.Stringid(id,2))
-	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e3:SetCode(EVENT_TO_GRAVE)
 	e3:SetCountLimit(1,id)
-	e3:SetCondition(s.tdcondition)
-	e3:SetTarget(s.tdtarget)
-	e3:SetOperation(s.tdoperation)
+	e3:SetCondition(s.condition)
+	e3:SetCost(s.cost)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
 end
 
---check if you are using a hazmanimal monster
-function s.lcheck(g,lc)
-	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
+--protection
+function s.tgcon(e)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
-
 --moving
 function s.seqfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x43a)
@@ -83,18 +91,28 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
---bounce
-function s.tdcondition(e,tp,eg,ep,ev,re,r,rp)
+--revival
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and e:GetHandler():IsSummonType(SUMMON_TYPE_LINK) and c:GetPreviousControler()==tp and rp~=tp
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:GetPreviousControler()==tp and rp~=tp
 end
-function s.tdtarget(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToDeck,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+function s.costfilter(c,tp)
+	return c:IsSetCard(0x43a) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c,true) 
+		and (Duel.GetLocationCount(tp,LOCATION_MZONE)>0 or (c:IsLocation(LOCATION_MZONE) and c:GetSequence()<5))
 end
-function s.tdoperation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectMatchingCard(tp,Card.IsAbleToDeck,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
-	if #g>0 then
-		Duel.SendtoDeck(g,nil,2,REASON_EFFECT)
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.costfilter,tp,LOCATION_GRAVE,0,1,e:GetHandler(),tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,s.costfilter,tp,LOCATION_GRAVE,0,2,2,e:GetHandler(),tp)
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	if e:GetHandler():IsRelateToEffect(e) then
+		Duel.SpecialSummon(e:GetHandler(),0,tp,tp,false,false,POS_FACEUP)
 	end
 end

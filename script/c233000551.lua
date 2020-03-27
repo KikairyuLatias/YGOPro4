@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetHintTiming(0,0x1e0)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1)
+	e2:SetCountLimit(1,id+99998)
 	e2:SetCondition(s.tdcon)
 	e2:SetCost(s.tdcost)
 	e2:SetTarget(s.tdtg)
@@ -75,7 +75,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --xyz that can be pendulum summoned
-s.pendulum_level = 6
+s.pendulum_level=6
 
 --material filter
 function s.mfilter(c,xyz,sumtype,tp)

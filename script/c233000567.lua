@@ -44,7 +44,7 @@ function s.initial_effect(c)
 	e5:SetRange(LOCATION_FZONE)
 	e5:SetOperation(s.ctop2)
 	c:RegisterEffect(e5)
-	--atk up
+	--atk down
 	local e6=Effect.CreateEffect(c)
 	e6:SetType(EFFECT_TYPE_FIELD)
 	e6:SetCode(EFFECT_UPDATE_ATTACK)
@@ -53,7 +53,7 @@ function s.initial_effect(c)
 	e6:SetValue(s.val)
 	e6:SetTarget(s.hztg)
 	c:RegisterEffect(e6)
-	--atk up
+	--def down
 	local e7=Effect.CreateEffect(c)
 	e7:SetType(EFFECT_TYPE_FIELD)
 	e7:SetCode(EFFECT_UPDATE_DEFENSE)
@@ -85,6 +85,15 @@ function s.initial_effect(c)
 	e10:SetCondition(s.damcon2)
 	e10:SetOperation(s.damop2)
 	c:RegisterEffect(e10)
+	--someone explain why my suit warranty ran out
+	local e11=Effect.CreateEffect(c)
+	e11:SetType(EFFECT_TYPE_FIELD)
+	e11:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
+	e11:SetRange(LOCATION_FZONE)
+	e11:SetTargetRange(LOCATION_MZONE,0)
+	e11:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x43a))
+	e11:SetValue(s.indct)
+	c:RegisterEffect(e11)
 end
 
 --cannot activate new field to get rid of this without penalties
@@ -121,10 +130,10 @@ end
 
 --conditions
 function s.damcon(e)
-	return e:GetHandler():GetCounter(0x43a)<10
+	return e:GetHandler():GetCounter(0x43a)<9
 end
 function s.damcon2(e)
-	return e:GetHandler():GetCounter(0x43a)>=10
+	return e:GetHandler():GetCounter(0x43a)>=9
 end
 
 --damage
@@ -135,14 +144,23 @@ function s.damp(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	local ct=e:GetLabelObject():GetLabel()
-	if ct>0 and ct<10 then
-		Duel.Damage(tp,ct*200,REASON_EFFECT)
-		Duel.Damage(1-tp,ct*200,REASON_EFFECT)
+	if ct>0 and ct<9 then
+		Duel.Damage(tp,ct*300,REASON_EFFECT)
+		Duel.Damage(1-tp,ct*300,REASON_EFFECT)
 	end
 end
 function s.damop2(e,tp,eg,ep,ev,re,r,rp)
 	local ct=e:GetLabelObject():GetLabel()
-	if ct>=10 then
-		Duel.SetLP(tp,Duel.GetLP(tp)-ct*500)
+	if ct>=9 then
+		Duel.SetLP(tp,Duel.GetLP(tp)-ct*600)
+	end
+end
+
+--renew suit warranty damn it
+function s.indct(e,re,r,rp)
+	if bit.band(r,REASON_EFFECT)~=0 then
+		return 1
+	else
+		return 0
 	end
 end
