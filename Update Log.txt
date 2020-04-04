@@ -68,3 +68,15 @@ Some minor script fixes
 Heavy modifications to the Hazmat Animal arch
 Modifications to the Diver Equine arch
 Other changes
+
+4/4/2020
+
+MASSIVE UPDATE
+- Moved ZP Delta to the 100-range behind ZPD/Magical Girl
+- Diver Deer range expanded to 544
+- Diver Equine range expanded to 20 cards (up to 564)
+- Hazmat Animal expanded to 20 cards (up to 584)
+- Remainder will be left as blanks
+- Rush Duel imports moved to Generic 1
+- 800 range will be for overflow archetypes
+- "Component Folder" inside "expansions" has the individual set files if you would like them.

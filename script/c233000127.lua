@@ -1,25 +1,12 @@
 --Furry Veteran Officer - Sakura
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz
+	--xyz summon
 	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),4,2)
 	c:EnableReviveLimit()
-	--lock on and shoot
-	local e0=Effect.CreateEffect(c)
-	e0:SetDescription(aux.Stringid(id,0))
-	e0:SetCategory(CATEGORY_REMOVE)
-	e0:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e0:SetType(EFFECT_TYPE_QUICK_O)
-	e0:SetRange(LOCATION_MZONE)
-	e0:SetCode(EVENT_FREE_CHAIN)
-	e0:SetCountLimit(1)
-	e0:SetCost(s.cost2)
-	e0:SetTarget(s.target2)
-	e0:SetOperation(s.operation2)
-	c:RegisterEffect(e0)
 	--shuffle and draw
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,1))
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCategory(CATEGORY_DRAW)
 	e1:SetType(EFFECT_TYPE_IGNITION)
@@ -29,27 +16,41 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-	--cannot target
+	--lock on and shoot
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_REMOVE)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
-	e2:SetValue(aux.tgoval)
+	e2:SetCountLimit(1)
+	e2:SetCost(s.cost2)
+	e2:SetTarget(s.target2)
+	e2:SetOperation(s.operation2)
 	c:RegisterEffect(e2)
-	--indes
+	--cannot target
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE)
 	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetValue(s.indval)
+	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e3:SetValue(aux.tgoval)
 	c:RegisterEffect(e3)
+	--indes
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE)
+	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e4:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetValue(s.indval)
+	c:RegisterEffect(e4)
 end
+
 --because I can get into places you can't
 function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
+
 --shuffle and replace
 function s.cfilter(c)
 	return c:IsRace(RACE_BEASTWARRIOR) and c:IsAbleToDeckAsCost()
@@ -84,7 +85,7 @@ function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,1,1,nil)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
 	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000,0,1)
 	Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
 end

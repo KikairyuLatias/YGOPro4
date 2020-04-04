@@ -30,7 +30,7 @@ end
 
 --level coding
 function s.slevel(e,c)
-	if rc:IsSetCard(0x5f7) or rc:IsSetCard(0x5f8) then
+	if c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) then
 		return 4,2,e:GetHandler():GetLevel()
 	else
 		return e:GetHandler():GetLevel()
