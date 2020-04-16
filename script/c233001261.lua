@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,233001251),1,1)
+	Synchro.AddProcedure(c,nil,1,1,aux.FilterSummonCode(233001251),1,1)
 	c:EnableReviveLimit()
 	--add Flyer stuff
 	local e1=Effect.CreateEffect(c)

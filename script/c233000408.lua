@@ -1,9 +1,9 @@
 --Skystorm Mecha Fighter Jet - X-Tornado
 local s,id=GetID()
 function s.initial_effect(c)
-	--summon reqs
-	aux.AddLinkProcedure(c,s.matfilter,2)
+	--summon conditions
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,s.matfilter,2)
 	--attack everything the opponent has
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

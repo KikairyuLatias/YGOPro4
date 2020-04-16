@@ -1,8 +1,8 @@
---Ｎｏ．７１エリート馬術スーパースター・ゴールドライダー
+--Ｎｏ．１７１エリート馬術スーパースター・ゴールドライダー
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz summon
-	aux.AddXyzProcedure(c,nil,4,2)
+   --xyz summon
+	Xyz.AddProcedure(c,nil,4,2)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)
@@ -34,7 +34,8 @@ function s.initial_effect(c)
 	e3:SetValue(aux.tgoval)
 	c:RegisterEffect(e3)
 end
-s.xyz_number=71
+s.xyz_number=171
+
 --ss
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end

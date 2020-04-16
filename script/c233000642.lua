@@ -2,10 +2,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,90000605),1,1)
+	Synchro.AddProcedure(c,nil,1,1,aux.FilterSummonCode(233000609),1,1)
 	c:EnableReviveLimit()
-	---pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	--pendulum summon
+	Pendulum.AddProcedure(c)
 	--negate
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

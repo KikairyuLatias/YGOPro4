@@ -2,10 +2,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,s.mfilter,4,2,aux.Stringid(id,0),2,s.xyzop)
+	Xyz.AddProcedure(c,s.mfilter,4,2,s.ovfilter,2,s.xyzop)
 	c:EnableReviveLimit()
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--tohand
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))

@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,s.mfilter,4,2,s.ovfilter,aux.Stringid(id,0),2,s.xyzop)
+	Xyz.AddProcedure(c,s.mfilter,4,2,s.ovfilter,aux.Stringid(id,0),2,s.xyzop)
 	c:EnableReviveLimit()
 	--shuffle and draw
 	local e1=Effect.CreateEffect(c)

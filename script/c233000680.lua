@@ -2,17 +2,17 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),1,1,aux.NonTuner(Card.IsSetCard,0x2439),1,99)
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x439),1,1,Synchro.NonTunerEx(Card.IsSetCard,0x2439),1,99)
 	c:EnableReviveLimit()
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--multiple attack
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetCountLimit(1)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCondition(id.mtcon)
+	e2:SetCondition(s.mtcon)
 	e2:SetOperation(s.mtop)
 	c:RegisterEffect(e2)
 	--become a scale

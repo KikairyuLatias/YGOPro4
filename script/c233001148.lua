@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,2,s.lcheck)
+	Link.AddProcedure(c,nil,2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--unaffected
 	local e1=Effect.CreateEffect(c)
@@ -30,7 +30,7 @@ end
 
 --condition
 function s.lcheck(g,lc)
-	return g:GetClassCount(Card.GetCode)==g:GetCount()
+	return g:GetClassCount(Card.GetCode)==#g
 end
 
 --protection

@@ -1,8 +1,8 @@
 --Bartender Bunny
 local s,id=GetID()
 function s.initial_effect(c)
-   --link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x7d0),2,2)
+	--link summon
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x7d0),2,2)
 	c:EnableReviveLimit()
 	--stat increase
 	local e1=Effect.CreateEffect(c)

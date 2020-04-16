@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,2,s.lcheck)
+	Link.AddProcedure(c,nil,2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--cannot be target/battle indestructable (fix to include Ice Barriers that are pointed to by ANY Link)
 	local e1=Effect.CreateEffect(c)
@@ -19,7 +19,6 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--search
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(90000530,0))
 	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_MZONE)
@@ -38,9 +37,9 @@ function s.initial_effect(c)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
 end
---check if you are using ice barrier monster
-function s.lcheck(g,lc)
-	return g:IsExists(Card.IsLinkSetCard,1,nil,0x2f)
+--check if you are using an ice barrier monster
+function s.lcheck(g,lc,tp)
+	return g:IsExists(Card.IsSetCard,1,nil,0x2f,lc,SUMMON_TYPE_LINK,tp)
 end
 ----Searching
 function s.filter1(c)

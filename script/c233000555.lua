@@ -2,9 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,s.mfilter,6,2,nil,nil,2)
+	Xyz.AddProcedure(c,s.mfilter,6,2,nil,nil,2)
 	c:EnableReviveLimit()
 	--special summon self from P-Zone
 	local e0=Effect.CreateEffect(c)

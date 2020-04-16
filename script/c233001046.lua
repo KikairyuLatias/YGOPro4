@@ -1,10 +1,8 @@
 --Solar Dreamstar Dragon
-	--aka `why sakura decided not to code this card...`
 local s,id=GetID()
 function s.initial_effect(c)
-	--synchro summon
+	Synchro.AddProcedure(c,nil,1,1,aux.FilterSummonCode(233001001),1,1)
 	c:EnableReviveLimit()
-	aux.AddSynchroProcedure(c,nil,2,2,aux.NonTuner(Card.IsCode,233001001),1,1)
 	--cannot negate my synchro summon
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)

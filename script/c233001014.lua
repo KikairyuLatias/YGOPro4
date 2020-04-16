@@ -49,7 +49,7 @@ end
 
 --lock the opponent
 function s.actlimit(e,te,tp)
-	te:IsHasType(EFFECT_TYPE_ACTIVATE) and te:IsActiveType(TYPE_SPELL) and te:IsActiveType(TYPE_TRAP)
+	return te:IsHasType(EFFECT_TYPE_ACTIVATE) and te:IsActiveType(TYPE_SPELL) and te:IsActiveType(TYPE_TRAP)
 end
 
 --negation

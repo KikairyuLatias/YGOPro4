@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,s.matfilter,2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4c9),2,2)
 	c:EnableReviveLimit()
 	--protection (modify only for Flyers)
 		--while I have Xyz, my friends are safe
@@ -35,10 +35,6 @@ function s.initial_effect(c)
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
 end
-
---material
-function s.matfilter(c,scard,sumtype,tp)
-	return c:IsSetCard(0x4c9,scard,sumtype,tp) or c:IsSetCard(0x14c9,scard,sumtype,tp) or c:IsSetCard(0x24c9,scard,sumtype,tp) end
 
 --protection from attack
 function s.atlimit(e,c)

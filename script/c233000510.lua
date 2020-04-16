@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),2)
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,s.matfilter,2)
 	--banish until end phase
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -26,6 +26,10 @@ function s.initial_effect(c)
 	e3:SetTarget(s.target)
 	e3:SetOperation(s.activate)
 	c:RegisterEffect(e3)
+end
+--cannot use token
+function s.matfilter(c,lc,sumtype,tp)
+	return not c:IsType(TYPE_TOKEN,lc,sumtype,tp)
 end
 --banish until end phase
 function s.thfilter(c)

@@ -18,7 +18,7 @@ end
 
 --negate
 function s.filterx(c)
-	return c:IsOnField() and c:IsControler(tp) and c:IsType(TYPE_MONSTER) and c:IsSetCard(0x0x10x14c9)
+	return c:IsOnField() and c:IsControler(tp) and c:IsType(TYPE_MONSTER) and c:IsSetCard(0x14c9)
 end
 
 function s.condition(e,tp,eg,ep,ev,re,r,rp)

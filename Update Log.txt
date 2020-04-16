@@ -80,3 +80,13 @@ MASSIVE UPDATE
 - Rush Duel imports moved to Generic 1
 - 800 range will be for overflow archetypes
 - "Component Folder" inside "expansions" has the individual set files if you would like them.
+
+4/16/2020
+
+As YGOPro is currently being replaced with ED0Pro as of 4/5 (right after I updated this the previous time), I am switching gears for it and coding it for this software.
+
+However, the original code will be kept in back code (YGOPro) if you prefer to still use that version. Just be aware that I won't update it as often.
+
+(Though to be fair, the only things that really changed are likely the codes and some pictures)
+
+That being said though, some of the code may work on YGOPro, but not so much on ED0Pro. If this occurs, please let me know so I can rectify the issue ASAP.

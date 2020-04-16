@@ -3,7 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--summon conditions
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsAttribute,ATTRIBUTE_WIND),2,3,s.lcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsAttribute,ATTRIBUTE_WIND),2,nil,s.lcheck)
 	--Self immunity
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -45,8 +45,11 @@ function s.initial_effect(c)
 	c:RegisterEffect(e8)
 end
 --summon condition
-function s.lcheck(g,lc,tp)
-	return g:IsExists(Card.IsSetCard,1,nil,0xd0)
+function s.lcheck(g,lc)
+	return g:IsExists(s.mzfilter,1,nil)
+end
+function s.mzfilter(c)
+	return c:IsSetCard(0xd0)
 end
 --don't even bother, opponent
 function s.unaffectedval(e,te)

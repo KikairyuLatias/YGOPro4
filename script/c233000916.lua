@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
+	Link.AddProcedure(c,nil,2,2)
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,nil,2,2)
 	--protection
 	local e0=Effect.CreateEffect(c)
 	e0:SetProperty(EFFECT_FLAG_SET_AVAILABLE)

@@ -1,9 +1,9 @@
 --Skystorm Mecha Fighter Jet - Cyclone
 local s,id=GetID()
 function s.initial_effect(c)
-	--summon reqs
-	aux.AddLinkProcedure(c,s.matfilter,2,2)
+	--summon conditions
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,s.matfilter,2,2)
 	--special summon
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)

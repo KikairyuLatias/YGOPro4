@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x7d8),2,3)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x7d8),2)
 	c:EnableReviveLimit()
 	--stat drop
 		--atk

@@ -2,10 +2,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	 Pendulum.AddProcedure(c)
 	--fusion material
 	c:EnableReviveLimit()
-	aux.AddFusionProcMixN(c,true,true,s.ffilter,2)
+	Fusion.AddProcMixN(c,true,true,s.ffilter,2)
 	--special summon self from P-Zone by Tributing
 	local e0=Effect.CreateEffect(c)
 	e0:SetDescription(aux.Stringid(id,0))
@@ -54,10 +54,10 @@ end
 --fusion materials
 s.material_setcode=0x4ae
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsFusionSetCard(0x4ae) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetFusionCode())) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x8,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
 end
-function s.fusfilter(c,code)
-	return c:IsFusionCode(code) and not c:IsHasEffect(511002961)
+function s.fusfilter(c,code,fc,sumtype,tp)
+	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
 end
 --get out of the P-Zone
 function s.cfilter(c)

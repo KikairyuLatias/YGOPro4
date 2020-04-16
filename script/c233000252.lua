@@ -1,8 +1,8 @@
 --Psychic Dragon Prince Latios
 local s,id=GetID()
 function s.initial_effect(c)
-	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsRace,RACE_DRAGON),1,99)
+	--materials
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x5f3),1,99)
 	c:EnableReviveLimit()
 	--added typing
 	local e1=Effect.CreateEffect(c)

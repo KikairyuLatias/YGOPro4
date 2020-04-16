@@ -2,8 +2,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),1,1,aux.NonTuner(Card.IsSetCard,0x439),1,99)
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x439),1,1,Synchro.NonTunerEx(Card.IsSetCard,0x1439),1,99)
 	c:EnableReviveLimit()
+	--pendulum summon
+	Pendulum.AddProcedure(c)
 	--mill the deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))

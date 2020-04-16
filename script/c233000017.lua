@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,2,s.lcheck)
+	Link.AddProcedure(c,nil,2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--special summon
 	local e1=Effect.CreateEffect(c)
@@ -43,11 +43,8 @@ function s.initial_effect(c)
 end
 
 --check if you are using a MPB monster
-function s.lcheck(g,lc)
-	return g:IsExists(s.mzfilter,1,nil)
-end
-function s.mzfilter(c)
-	return c:IsSetCard(0x101b)
+function s.lcheck(g,lc,tp)
+	return g:IsExists(Card.IsSetCard,1,nil,0x101b,lc,SUMMON_TYPE_LINK,tp)
 end
 --standard shit
 function s.indcon(e)

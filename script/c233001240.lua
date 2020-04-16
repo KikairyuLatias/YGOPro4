@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,3,s.lcheck)
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,nil,2,3,s.lcheck)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -36,8 +36,8 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 --req
-function s.lcheck(g,lc)
-	return g:IsExists(Card.IsSetCard,1,nil,0x4c9)
+function s.lcheck(g,lc,tp)
+	return g:IsExists(Card.IsSetCard,1,nil,0x4c9,lc,SUMMON_TYPE_LINK,tp)
 end
 
 --ss condition

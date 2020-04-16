@@ -1,8 +1,8 @@
---Number 45: Psychic Dragon Shinshoryu
+--Number 145: Psychic Dragon Shinshoryu
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz
-	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),4,2)
+	--xyz summon
+	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),8,2)
 	c:EnableReviveLimit()
 	--search
 	local e1=Effect.CreateEffect(c)

@@ -1,8 +1,9 @@
 --Advent of the Flash Blossom Reindeer
 local s,id=GetID()
 function s.initial_effect(c)
-	aux.AddRitualProcGreater(c,s.ritualfil,nil,nil,s.extrafil,s.extraop,s.forcedgroup,nil,LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE):SetCountLimit(1,id+EFFECT_COUNT_CODE_OATH)
-	--to hand
+	local e1=Ritual.CreateProc({handler=c,lvtype=RITPROC_GREATER,filter=s.ritualfil,extrafil=s.extrafil,extraop=s.extraop,matfilter=s.forcedgroup,location=LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE })
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+	c:RegisterEffect(e1)
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_FIELD)
@@ -23,10 +24,9 @@ function s.exfilter0(c)
 	return c:IsSetCard(0x4c8) and c:GetLevel()>=1 and c:IsAbleToGrave()
 end
 function s.extrafil(e,tp,eg,ep,ev,re,r,rp,chk)
-	if Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)>=0 then
+	if Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)>=0 then
 		return Duel.GetMatchingGroup(s.exfilter0,tp,LOCATION_EXTRA,0,nil)
 	end
-	return Group.CreateGroup()
 end
 function s.extraop(mg,e,tp,eg,ep,ev,re,r,rp)
 	local mat2=mg:Filter(Card.IsLocation,nil,LOCATION_EXTRA)

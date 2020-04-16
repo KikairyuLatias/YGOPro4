@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.NOT(aux.FilterBoolFunctionEx(Card.IsType,TYPE_TOKEN)),2)
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,s.matfilter,2)
 	--can`t touch me
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -52,6 +52,11 @@ function s.initial_effect(c)
 	e6:SetOperation(s.banop)
 	c:RegisterEffect(e6)
 end
+--no token cheating
+function s.matfilter(c,lc,sumtype,tp)
+	return not c:IsType(TYPE_TOKEN,lc,sumtype,tp)
+end
+
 --ohai stuff
 function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()

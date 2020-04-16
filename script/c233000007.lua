@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -22,7 +22,6 @@ function s.initial_effect(c)
 	e3:SetCode(EFFECT_SET_ATTACK_FINAL)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetTargetRange(0,LOCATION_MZONE)
-	e3:SetTarget(s.atktg)
 	e3:SetCondition(s.condition)
 	e3:SetValue(s.atkval)
 	c:RegisterEffect(e3)

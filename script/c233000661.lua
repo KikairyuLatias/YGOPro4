@@ -3,7 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,nil,2,2,s.spcheck)
+	Link.AddProcedure(c,nil,2,2,s.spcheck)
 	--float and stuff
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)

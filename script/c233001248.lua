@@ -2,9 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
-	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsSetCard,0x4c9),1,99)
+	Pendulum.AddProcedure(c)
+	--materials
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x4c9),1,99)
 	c:EnableReviveLimit()
 	--effect immunity
 		--cannot target
@@ -178,7 +178,7 @@ end
 function s.filter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c9) or c:IsCode(233001215)
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+function s.spencon(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
 	return g:GetClassCount(Card.GetCode)>=2
 end

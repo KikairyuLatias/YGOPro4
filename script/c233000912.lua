@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsAttribute,ATTRIBUTE_WIND),1,99)
 	c:EnableReviveLimit()
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsAttribute,ATTRIBUTE_WIND),1,99)
 	--typing
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

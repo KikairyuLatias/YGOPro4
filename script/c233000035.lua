@@ -2,10 +2,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(s.synchop),1,99)
 	c:EnableReviveLimit()
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(s.matfilter),1,99)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--don't even try chaining to my board
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -68,8 +68,8 @@ function s.initial_effect(c)
 	c:RegisterEffect(e7)
 end
 --tuning req
-function s.synchop(c,scard,sumtype,tp)
-	return c:IsRace(RACE_SPELLCASTER,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_WIND,scard,sumtype,tp)
+function s.matfilter(c,val,sc,sumtype,tp)
+	return c:IsAttribute(ATTRIBUTE_WIND,sc,sumtype,tp) and c:IsRace(RACE_SPELLCASTER,sc,sumtype,tp)
 end
 
 --chaining lock

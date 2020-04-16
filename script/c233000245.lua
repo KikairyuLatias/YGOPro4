@@ -1,8 +1,8 @@
 --Number 110: Psychic Dragon Scarlet Shocker
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz
-	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_DRAGON),4,2)
+	--xyz summon
+	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_DRAGON),4,2)
 	c:EnableReviveLimit()
 	--protection
 	local e1=Effect.CreateEffect(c)

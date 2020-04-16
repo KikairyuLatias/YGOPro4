@@ -2,9 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
-	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.NonTuner(Card.IsSetCard,0x4c9),1,99)
+	Pendulum.AddProcedure(c)
+	--materials
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x4c9),1,99)
 	c:EnableReviveLimit()
 	--effect immunity
 		--cannot target

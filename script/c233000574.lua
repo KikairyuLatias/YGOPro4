@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST),2,nil,s.matcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST),2,nil,s.matcheck)
 	--shuffle 5, draw 1
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -38,7 +38,7 @@ function s.initial_effect(c)
 end
 --make sure you use an arch member
 function s.matcheck(g,lc,tp)
-	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
+	return g:IsExists(Card.IsSetCard,1,nil,0x43a,lc,SUMMON_TYPE_LINK,tp)
 end
 
 --recycle draw
@@ -71,7 +71,7 @@ end
 
 --activate the field
 function s.filter(c,tp)
-	return c:IsCode(233000567) and c:GetActivateEffect() and c:GetActivateEffect():IsActivatable(tp,true,true)
+	return c:IsCode(233000576) and c:GetActivateEffect() and c:GetActivateEffect():IsActivatable(tp,true,true)
 end
 function s.actg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil,tp) end
@@ -79,18 +79,7 @@ end
 function s.acop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
 	local tc=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil,tp):GetFirst()
-	if tc then
-		local fc=Duel.GetFieldCard(tp,LOCATION_SZONE,5)
-		if fc then
-			Duel.BreakEffect()
-		end
-		Duel.MoveToField(tc,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
-		local te=tc:GetActivateEffect()
-		local tep=tc:GetControler()
-		local cost=te:GetCost()
-		if cost then cost(te,tep,eg,ep,ev,re,r,rp,1) end
-		Duel.RaiseEvent(tc,4179255,te,0,tp,tp,Duel.GetCurrentChain())
-	end
+	aux.PlayFieldSpell(tc,e,tp,eg,ep,ev,re,r,rp)
 end
 
 --revival

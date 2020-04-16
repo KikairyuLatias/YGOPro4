@@ -1,8 +1,8 @@
 --Number 128: Psychic Dragon Supreme Emperor Ryukyu
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz
-	aux.AddXyzProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),8,2)
+	--xyz summon
+	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),8,2)
 	c:EnableReviveLimit()
 	--cannot special summon
 	local e1=Effect.CreateEffect(c)

@@ -48,6 +48,7 @@ function s.tg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if sel==1 then
 		local g=Duel.GetMatchingGroup(s.desfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)
 		Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+	end
 end
 function s.op(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -61,4 +62,5 @@ function s.op(e,tp,eg,ep,ev,re,r,rp)
 			Duel.HintSelection(dg)
 			Duel.Destroy(dg,REASON_EFFECT)
 		end
+	end
 end

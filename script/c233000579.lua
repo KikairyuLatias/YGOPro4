@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,nil,2,2,s.lcheck)
+	Link.AddProcedure(c,nil,2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--to hand or grave
 	local e1=Effect.CreateEffect(c)
@@ -42,7 +42,7 @@ end
 
 --check if you are using a hazmanimal monster
 function s.lcheck(g,lc)
-	return g:IsExists(Card.IsLinkSetCard,1,nil,0x43a)
+	return g:IsExists(Card.IsSetCard,1,nil,0x43a,lc,SUMMON_TYPE_LINK,tp)
 end
 
 --grab the field, damn it!
@@ -50,7 +50,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 function s.thfilter(c,tp)
-	return c:IsCode(233000567)
+	return c:IsCode(233000576)
 		and (c:IsAbleToHand() or (c:GetActivateEffect():IsActivatable(tp) and Duel.GetLocationCount(tp,LOCATION_FZONE)>0))
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)

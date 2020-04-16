@@ -8,8 +8,9 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_SPSUMMON_PROC)
 	e1:SetProperty(EFFECT_FLAG_UNCOPYABLE)
 	e1:SetRange(LOCATION_HAND)
-	e1:SetCondition(s.spcon)
-	e1:SetOperation(s.spop)
+	e1:SetCondition(s.spcon1)
+	e1:SetTarget(s.sptg1)
+	e1:SetOperation(s.spop1)
 	c:RegisterEffect(e1)
 	--spsummon
 	local e2=Effect.CreateEffect(c)
@@ -36,23 +37,37 @@ function s.initial_effect(c)
 end
 
 --special condition
-function s.spfilter(c,ft,tp)
-	return c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEAST) and c:IsAttackAbove(1900) and c:IsAbleToGraveAsCost()
+function s.spfilter(c)
+	return c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEAST) and c:IsAttackAbove(1900) and c:IsDiscardable()
 end
-function s.spcon(e,c)
+function s.spcon1(e,c)
 	if c==nil then return true end
 	local tp=c:GetControler()
-	local ft=Duel.GetLocationCount(tp,LOCATION_HAND)
-	return tp>-1 and Duel.CheckReleaseGroup(tp,s.spfilter,1,nil,ft,tp)
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_HAND,0,c)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and #rg>0 and aux.SelectUnselectGroup(rg,e,tp,2,2,nil,0)
 end
-function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
-	local g=Duel.SelectReleaseGroup(tp,s.spfilter,2,2,nil,Duel.GetLocationCount(tp,LOCATION_HAND),tp)
-	Duel.DiscardHand(g,REASON_COST)
+function s.sptg1(e,tp,eg,ep,ev,re,r,rp,c)
+	local c=e:GetHandler()
+	local g=nil
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_HAND,0,c)
+	local g=aux.SelectUnselectGroup(rg,e,tp,2,2,nil,1,tp,HINTMSG_TOGRAVE,nil,nil,true)
+	if #g>0 then
+		g:KeepAlive()
+		e:SetLabelObject(g)
+		return true
+	end
+	return false
+end
+function s.spop1(e,tp,eg,ep,ev,re,r,rp,c)
+	local g=e:GetLabelObject()
+	if not g then return end
+		Duel.SendtoGrave(g,REASON_COST)
+	g:DeleteGroup()
 end
 
 --ss
 function s.filter2(c,e,tp)
-	return c:IsRace(RACE_BEAST) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsRace(RACE_BEAST) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--materials
-	aux.AddLinkProcedure(c,s.matfilter,2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f0),2)
 	c:EnableReviveLimit()
 	--add the field
 	local e1=Effect.CreateEffect(c)
@@ -24,10 +24,6 @@ function s.initial_effect(c)
 	e3:SetCondition(s.chaincon)
 	e3:SetOperation(s.chainop)
 	c:RegisterEffect(e3)
-end
---materials
-function s.matfilter(c,scard,sumtype,tp)
-	return c:IsSetCard(0x5f0,scard,sumtype,tp)
 end
 --search feature
 function s.thfilter(c)

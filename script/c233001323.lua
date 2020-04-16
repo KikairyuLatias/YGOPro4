@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x7d8),2,nil,s.matcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x7d8),2,nil,s.matcheck)
 	--protection
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

@@ -1,9 +1,9 @@
 -- Flash Flyer - Hayashi Accel
 local s,id=GetID()
 function s.initial_effect(c)
-	--link summon
+	--summon conditions
 	c:EnableReviveLimit()
-	aux.AddLinkProcedure(c,s.matfilter,2,2)
+	Link.AddProcedure(c,s.matfilter,2,2)
 	--don't bother chaining
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -28,7 +28,7 @@ end
 
 --mat filter
 function s.matfilter(c,scard,sumtype,tp)
-	return c:IsSetCard(0x4c9,scard,sumtype,tp) or c:IsSetCard(0x14c9,scard,sumtype,tp) or c:IsSetCard(0x24c9,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_LIGHT,scard,sumtype,tp)
+	return c:IsSetCard(0x4c9,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_LIGHT,scard,sumtype,tp)
 end
 
 --don't even bother chaining

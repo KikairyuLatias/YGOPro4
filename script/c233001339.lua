@@ -12,10 +12,10 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--set up P-Zone
 	local e2=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,1))
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetHintTiming(0,TIMING_END_PHASE)
 	e2:SetType(EFFECT_TYPE_ACTIVATE)
 	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetCondition(s.condition)
 	e2:SetOperation(s.activate2)
 	c:RegisterEffect(e2)
 end
@@ -35,14 +35,6 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if g:GetCount()>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
-end
-
---condition
-function s.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4c8)
-end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_EXTRA,0,1,nil)
 end
 
 --P-zone stuff

@@ -25,9 +25,10 @@ function s.initial_effect(c)
 	e4:SetValue(s.slevel)
 	c:RegisterEffect(e4)
 end
+
 --SS
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x7D0) or c:IsSetCard(0x5F7) and c:IsLevelBelow(4) and not c:IsType(TYPE_XYZ+TYPE_LINK)and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x5f7) or c:IsSetCard(0x7d0) and c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -42,6 +43,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+
 --level
 function s.slevel(e,c)
 	local lv=e:GetHandler():GetLevel()

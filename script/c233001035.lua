@@ -18,6 +18,7 @@ end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
 end
+
 --screw your hands
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
@@ -28,7 +29,6 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	--add burn later and other stuff
 end
 
-end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
 	local gc=g:GetCount()

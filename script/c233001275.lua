@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x9d0),2,2,s.lcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x9d0),2,2,s.lcheck)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)
@@ -31,7 +31,7 @@ function s.initial_effect(c)
 end
 --summon cond
 function s.lcheck(g,lc,tp)
-	return g:GetClassCount(Card.GetCode)==g:GetCount()
+	return g:GetClassCount(Card.GetCode)==#g
 end
 --ss condition
 function s.filter(c,e,tp)

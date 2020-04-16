@@ -2,7 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST+RACE_BEASTWARRIOR+RACE_SPELLCASTER),2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST+RACE_BEASTWARRIOR+RACE_SPELLCASTER),2,2)
+	c:EnableReviveLimit()
 	--atk up/indestructable
 	local e1=Effect.CreateEffect(c)
 	e1:SetProperty(EFFECT_FLAG_SET_AVAILABLE)

@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x4af),2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2,2)
 	c:EnableReviveLimit()
 	--cannot be target/battle indestructable (fix to include Diver Deers that are pointed to by ANY Link)
 	local e1=Effect.CreateEffect(c)

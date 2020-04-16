@@ -2,9 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--synchro summon
-	aux.AddSynchroProcedure(c,nil,1,1,aux.FilterBoolFunction(Card.IsCode,233001328),1,1)
+	Synchro.AddProcedure(c,nil,1,1,aux.FilterSummonCode(233001328),1,1)
 	c:EnableReviveLimit()
 	--effect immunity
 		--cannot target

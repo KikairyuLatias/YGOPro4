@@ -1,70 +1,59 @@
---Hazmanimal B-Class - Brown Inferno Cow
+--Hazmanimal A-Class - Black Flame Tiger
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x43a),2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x43a),3)
 	c:EnableReviveLimit()
-	--no effect damage
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_CHANGE_DAMAGE)
-	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetTargetRange(1,0)
-	e1:SetValue(s.damval)
-	c:RegisterEffect(e1)
-	--atkup
+	--banish
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_ATKCHANGE)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetHintTiming(TIMING_DAMAGE_STEP)
+	e2:SetCategory(CATEGORY_REMOVE)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_BATTLE_DAMAGE)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e2:SetCountLimit(1,id)
-	e2:SetCondition(s.condition)
-	e2:SetOperation(s.operation)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetCountLimit(1)
+	e2:SetCondition(s.descon)
+	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)
-	--special summon
+	--cannot be targeted by card effects
 	local e3=Effect.CreateEffect(c)
-	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
-	e3:SetCode(EVENT_TO_GRAVE)
-	e3:SetCountLimit(1,id)
-	e3:SetCondition(s.condition)
-	e3:SetCost(s.cost)
-	e3:SetTarget(s.target)
-	e3:SetOperation(s.operation)
+	e3:SetType(EFFECT_TYPE_SINGLE)
+	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCondition(s.tgcon)
+	e3:SetValue(1)
 	c:RegisterEffect(e3)
+	--special summon
+	local e4=Effect.CreateEffect(c)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetDescription(aux.Stringid(id,0))
+	e4:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
+	e4:SetCode(EVENT_TO_GRAVE)
+	e4:SetCountLimit(1,id)
+	e4:SetCondition(s.condition)
+	e4:SetCost(s.cost)
+	e4:SetTarget(s.target)
+	e4:SetOperation(s.operation)
+	c:RegisterEffect(e4)
 end
 
---buff
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	local phase=Duel.GetCurrentPhase()
-	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
-	local a=Duel.GetAttacker()
-	local d=Duel.GetAttackTarget()
-	return (a:GetControler()==tp and a:IsSetCard(0x43a) and a:IsRelateToBattle())
-		or (d and d:GetControler()==tp and d:IsSetCard(0x43a) and d:IsRelateToBattle())
-end
-function s.operation(e,tp,eg,ep,ev,re,r,rp,chk)
-	local a=Duel.GetAttacker()
-	if Duel.GetTurnPlayer()~=tp then a=Duel.GetAttackTarget() end
-	if not a:IsRelateToBattle() then return end
-	local e2=Effect.CreateEffect(e:GetHandler())
-	e2:SetType(EFFECT_TYPE_SINGLE)
-	e2:SetCode(EFFECT_UPDATE_ATTACK)
-	e2:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-	e2:SetValue(1000)
-	a:RegisterEffect(e2)
+--protection
+function s.tgcon(e)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 
---effect negation damage
-function s.damval(e,re,val,r,rp,rc)
-	if r&REASON_EFFECT~=0 then return 0 end
-	return val
+--banish
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x43a)
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetDecktopGroup(1-tp,3)
+		if g:GetCount()>0 then
+			Duel.DisableShuffleCheck()
+			Duel.Remove(g,POS_FACEDOWN,REASON_EFFECT)
+		end
 end
 
 --revival

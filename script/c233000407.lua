@@ -1,9 +1,9 @@
 --Skystorm Mecha Fortress - Blue Typhoon
 local s,id=GetID()
 function s.initial_effect(c)
-	--materials
-	aux.AddLinkProcedure(c,s.matfilter,2)
+	--summon conditions
 	c:EnableReviveLimit()
+	Link.AddProcedure(c,s.matfilter,2)
 	--self preservation
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

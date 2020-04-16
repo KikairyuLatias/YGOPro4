@@ -3,9 +3,9 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--materials
 	c:EnableReviveLimit()
-	aux.AddFusionProcMixN(c,true,true,s.ffilter,2)
+	Fusion.AddProcMixN(c,true,true,s.ffilter,2)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--atk up
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
@@ -64,12 +64,13 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 end
 --fusion materials
+s.listed_series={0x5f3}
 s.material_setcode=0x5f3
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsFusionSetCard(0x5f3) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetFusionCode()))
+	return c:IsSetCard(0x5f3,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
 end
-function s.fusfilter(c,code)
-	return c:IsFusionCode(code) and not c:IsHasEffect(511002961)
+function s.fusfilter(c,code,fc,sumtype,tp)
+	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
 end
 --weaken stuff up
 function s.filter(c)

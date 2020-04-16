@@ -18,13 +18,13 @@ end
 
 --Honest
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
-	local phase=Duel.GetCurrentPhase()
-	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
-	local a=Duel.GetAttacker()
-	local d=Duel.GetAttackTarget()
-	return (d~=nil and a:GetControler()==tp and a:IsSetCard(0x4b0) and a:IsRelateToBattle())
-		or (d~=nil and d:GetControler()==tp and d:IsFaceup() and d:IsSetCard(0x4b0) and d:IsRelateToBattle())
+	local c=Duel.GetAttackTarget()
+	if not c then return false end
+	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
+	e:SetLabelObject(c)
+	return c and c:IsSetCard(0x4b0) and c:IsRelateToBattle()
 end
+
 function s.cost2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToGraveAsCost() end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST)

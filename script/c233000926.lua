@@ -1,7 +1,9 @@
 --March of the Brave Dragon
 local s,id=GetID()
 function s.initial_effect(c)
-	aux.AddRitualProcGreater(c,s.ritualfil,nil,nil,s.extrafil,s.extraop,s.forcedgroup,nil,LOCATION_HAND+LOCATION_GRAVE):SetCountLimit(1,id+EFFECT_COUNT_CODE_OATH)
+	local e1=Ritual.CreateProc({handler=c,lvtype=RITPROC_GREATER,filter=s.ritualfil,extrafil=s.extrafil,extraop=s.extraop,matfilter=s.forcedgroup,location=LOCATION_HAND+LOCATION_GRAVE})
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
+	c:RegisterEffect(e1)
 	--opponent can't trigger
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)

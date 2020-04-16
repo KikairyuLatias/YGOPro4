@@ -36,12 +36,11 @@ end
 
 --stat boost
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
-	local phase=Duel.GetCurrentPhase()
-	if phase~=PHASE_DAMAGE or Duel.IsDamageCalculated() then return false end
-	local a=Duel.GetAttacker()
-	local d=Duel.GetAttackTarget()
-	return (d~=nil and a:GetControler()==tp and a:IsRace(RACE_MACHINE) and a:IsAttribute(ATTRIBUTE_WIND) and a:IsRelateToBattle())
-		or (d~=nil and d:GetControler()==tp and d:IsFaceup() and d:IsRace(RACE_MACHINE) and d:IsAttribute(ATTRIBUTE_WIND) and d:IsRelateToBattle())
+	local c=Duel.GetAttackTarget()
+	if not c then return false end
+	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
+	e:SetLabelObject(c)
+	return c and c:IsAttribute(ATTRIBUTE_WIND)and c:IsRace(RACE_MACHINE) and c:IsRelateToBattle()
 end
 function s.operation2(e,tp,eg,ep,ev,re,r,rp,chk)
 	local a=Duel.GetAttacker()

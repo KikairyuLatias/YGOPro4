@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--materials and stuff
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsRace,RACE_BEAST),2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST),2,3)
 	c:EnableReviveLimit()
 	--negate things
 	local e1=Effect.CreateEffect(c)

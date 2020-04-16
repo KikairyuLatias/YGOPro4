@@ -1,7 +1,8 @@
 -- Scuba Pony Smoke
 local s,id=GetID()
 function s.initial_effect(c)
-	aux.EnablePendulumAttribute(c,false)
+	--pendulum summon
+	Pendulum.AddProcedure(c)
 	--Activate
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_ACTIVATE)

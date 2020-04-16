@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
-	aux.AddXyzProcedure(c,nil,4,2,nil,nil,5)
+	Xyz.AddProcedure(c,nil,4,2,nil,nil,5)
 	c:EnableReviveLimit()
 	--while I have Xyz, my reindeer are safe
 	local e1=Effect.CreateEffect(c)

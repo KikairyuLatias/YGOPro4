@@ -4,7 +4,7 @@ function s.initial_effect(c)
 	--can only control 1
 	c:SetUniqueOnField(1,0,id)
 	--link summon
-	aux.AddLinkProcedure(c,aux.FilterBoolFunction(Card.IsLinkSetCard,0x439),2,2,s.lcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),2,2,s.lcheck)
 	--cannot special summon
 	local e1=Effect.CreateEffect(c)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_SINGLE_RANGE)

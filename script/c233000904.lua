@@ -1,8 +1,8 @@
 -- Black Enforcer the Legendary Crime Fighter
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz materials
-	aux.AddXyzProcedure(c,nil,10,2,s.ovfilter,aux.Stringid(id,0))
+	--xyz summon
+	Xyz.AddProcedure(c,nil,10,2,s.ovfilter,aux.Stringid(id,0))
 	c:EnableReviveLimit()
 	--remove
 	local e2=Effect.CreateEffect(c)

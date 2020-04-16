@@ -1,11 +1,11 @@
 --Pony Assault Soldier
 local s,id=GetID()
 function s.initial_effect(c)
-	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
-	--fusion material
+	--fusion summon
 	c:EnableReviveLimit()
-	aux.AddFusionProcFunRep(c,aux.FilterBoolFunction(Card.IsSetCard,0x439),2,false)
+	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x439),2)
+	--pendulum summon
+	Pendulum.AddProcedure(c)
 	--spsummon condition
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)

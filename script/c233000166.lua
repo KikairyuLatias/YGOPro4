@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e4:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
 	e4:SetRange(LOCATION_FZONE)
 	e4:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e4:SetTarget(aux.TargetBoolFunction(Card.IsSummonType,SUMMON_TYPE_RITUAL))
+	e4:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4ad))
 	e4:SetValue(s.indct)
 	c:RegisterEffect(e4)
 	--gain lp

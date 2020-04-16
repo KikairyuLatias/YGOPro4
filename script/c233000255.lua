@@ -1,8 +1,8 @@
 --Psychic Dragon Nexus Storm
 local s,id=GetID()
 function s.initial_effect(c)
-	--materials
-	aux.AddLinkProcedure(c,s.matfilter,2,2)
+	--link summon
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f1),2,2)
 	c:EnableReviveLimit()
 	--special summon
 	local e1=Effect.CreateEffect(c)
@@ -39,10 +39,6 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_UPDATE_DEFENSE)
 	e5:SetValue(400)
 	c:RegisterEffect(e5)
-end
---materials
-function s.matfilter(c,scard,sumtype,tp)
-	return c:IsSetCard(0x5f1,scard,sumtype,tp)
 end
 --ss
 function s.filter(c,e,tp)
