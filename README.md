@@ -1,17 +1,13 @@
 # YGOPro4
-UPDATED: 12/17/2019
+UPDATED: 4/16/2020
 
 Welcome to my YGOPro Github.
 
-Please be warned that these are written with YGOPro 1.034 in mind. Some MAY work on previous versions with exceptions.
-
 # ANNOUNCEMENT
 
-As of 12/17, I am currently in the process of moving my cards over to 9-digit passcodes in an attempt to avoid having collisions with Konami IDs. They will be listed as 233xxxxxx (which should generally be fine). The following is also true.
-- Archetypes will be shifted around a bit to group similar archetypes together (least in the sense of where their origins lie)
-- Cards that have not been coded will be stricken from the roster in the new additions, so you may see less cards altogether.
+As of April 5, 2020, please be warned that I have switched gears into coding using ED0Pro stuff as YGOPro will no longer be functional / receive updates.
 
-I will keep the original files as archival if required.
+For those who require the old files, please check "back code (YGOPro)", though be mindful that I may not always update it. Though barring Pendulum, Rituals and Extra Deck monsters with materials, some of the ED0Pro stuff can be used.
 
 # Disclaimer
 
@@ -31,4 +27,8 @@ In line with the updates, I am removing cards from the .cdb which do not have co
 
 # Archetypes and Codes
 
-See "Set ID.xlsx" for the list. Please note that I may not update it as periodically as I do with the card files.
+See "Set ID 2020.xlsx" for the list. 
+
+Please note that I may not update it as periodically as I do with the card files.
+
+Going to work on a Google Sheet that you may view for much easier access / not be required to download this document every time.
