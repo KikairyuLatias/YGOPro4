@@ -6,15 +6,14 @@ function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--lighting the way
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e1:SetRange(LOCATION_MZONE)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e1:SetRange(LOCATION_SZONE)
+	e1:SetTargetRange(0,1)
+	e1:SetValue(1)
 	e1:SetCondition(s.actcon)
-	e1:SetOperation(s.actop)
 	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e2)
 	--special summon
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
@@ -32,23 +31,14 @@ function s.initial_effect(c)
 	end
 
 --forget about triggering
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:IsSetCard(0x4af)
+function s.cfilterx(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsControler(tp)
 end
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e1=Effect.CreateEffect(e:GetHandler())
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e1:SetTargetRange(0,1)
-	e1:SetValue(s.aclimit)
-	e1:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e1,tp)
-end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilterx(d,tp))
 end
 
 --ss man

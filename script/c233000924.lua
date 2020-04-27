@@ -6,15 +6,14 @@ function s.initial_effect(c)
 	Fusion.AddProcMix(c,true,true,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEAST),s.matfilter)
 	--don`t bother chaining
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e1:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e1:SetRange(LOCATION_PZONE)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e1:SetRange(LOCATION_SZONE)
+	e1:SetTargetRange(0,1)
+	e1:SetValue(1)
 	e1:SetCondition(s.actcon)
-	e1:SetOperation(s.actop)
 	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e2)
 	--special summon self from P-Zone
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
@@ -66,22 +65,18 @@ end
 function s.matfilter(c,lc,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_DARK,lc,sumtype,tp)
 end
+
 --forget about triggering
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp)
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsControler(tp)
 end
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e5=Effect.CreateEffect(e:GetHandler())
-	e5:SetType(EFFECT_TYPE_FIELD)
-	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e5:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e5:SetTargetRange(0,1)
-	e5:SetValue(s.aclimit)
-	e5:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e5,tp)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end
+
 --special summon myself
 function s.aclimit(e,re,tp)
 	return not re:GetHandler():IsImmuneToEffect(e)

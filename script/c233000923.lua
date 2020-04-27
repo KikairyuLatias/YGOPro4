@@ -46,27 +46,20 @@ function s.initial_effect(c)
 	local e8=e7:Clone()
 	e8:SetCode(EFFECT_UNRELEASABLE_NONSUM)
 	c:RegisterEffect(e8)
-	--armades
+	--actlimit
 	local e9=Effect.CreateEffect(c)
 	e9:SetType(EFFECT_TYPE_FIELD)
 	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e9:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e9:SetRange(LOCATION_MZONE)
 	e9:SetTargetRange(0,1)
-	e9:SetValue(s.aclimit)
+	e9:SetValue(1)
 	e9:SetCondition(s.actcon)
 	c:RegisterEffect(e9)
 	--for linked monsters
-	local e10=Effect.CreateEffect(c)
-	e10:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e10:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e10:SetRange(LOCATION_MZONE)
+	local e10=e9:Clone()
 	e10:SetCondition(s.actcon2)
-	e10:SetOperation(s.actop)
 	c:RegisterEffect(e10)
-	local e11=e10:Clone()
-	e11:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e11)
 	--burn damage
 	local e12=Effect.CreateEffect(c)
 	e12:SetCategory(CATEGORY_DAMAGE)
@@ -89,29 +82,22 @@ end
 function s.unaffectedval(e,te)
 	return te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
+
 --armades for lord rayquaza
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
-end
 function s.actcon(e)
 	return Duel.GetAttacker()==e:GetHandler() or Duel.GetAttackTarget()==e:GetHandler()
 end
+
 --armades for everything else
-function s.actcon2(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:GetLinkedZone()
+function s.cfilter2(c,tp)
+	return c:IsFaceup() and e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsControler(tp)
 end
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e4=Effect.CreateEffect(e:GetHandler())
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e4:SetTargetRange(0,1)
-	e4:SetValue(s.aclimit)
-	e4:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e4,tp)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	return (a and s.cfilter(a,tp))
 end
+
 --burn
 function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

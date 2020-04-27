@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
+	Pendulum.AddProcedure(c)
 	--Activate
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_ACTIVATE)
@@ -106,7 +106,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		local atk=tc:GetAttack()
 		tc=sg:GetNext()
 		if tc then
-			if tc:GetAttack()>atk then atk=tc:GetAttack() end	   
+			if tc:GetAttack()>atk then atk=tc:GetAttack() end	  
 		end
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local g=Duel.SelectMatchingCard(tp,s.filterx,tp,LOCATION_DECK,0,1,1,nil,atk,att,e,tp)

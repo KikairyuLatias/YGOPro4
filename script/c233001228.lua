@@ -60,7 +60,9 @@ end
 --lp restoration
 function s.reccon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4c9)
+	local bc=tc:GetBattleTarget()
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x4c9)
+		and bc:IsReason(REASON_BATTLE)
 end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

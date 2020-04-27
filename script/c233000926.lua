@@ -5,17 +5,17 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
 	--opponent can't trigger
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e4:SetCode(EVENT_ATTACK_ANNOUNCE)
-	e4:SetRange(LOCATION_GRAVE)
-	e4:SetCondition(s.actcon)
-	e4:SetOperation(s.actop)
-	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e5)  
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_FIELD)
+	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e5:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e5:SetRange(LOCATION_FZONE)
+	e5:SetTargetRange(0,1)
+	e5:SetValue(1)
+	e5:SetCondition(s.actcon)
+	c:RegisterEffect(e5)
 end
+
 --ritual stuff
 function s.ritualfil(c)
 	return c:IsCode(233000925)
@@ -40,26 +40,15 @@ function s.forcedgroup(c,e,tp)
 end
 
 --forget about triggering
-function s.cfilter(c)
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsControler(tp)
+end
+function s.cfilterx(c)
 	return c:IsFaceup() and c:IsType(TYPE_RITUAL) and c:IsRace(RACE_DRAGON) and c:GetBaseAttack()>=2500
 end
-
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
-end
-
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e4=Effect.CreateEffect(e:GetHandler())
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e4:SetTargetRange(0,1)
-	e4:SetValue(s.aclimit)
-	e4:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e4,tp)
-end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return Duel.IsExistingMatchingCard(s.cfilterx,tp,LOCATION_MZONE,0,1,nil) and (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end

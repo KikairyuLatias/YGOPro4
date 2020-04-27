@@ -59,16 +59,16 @@ function s.initial_effect(c)
 	c:RegisterEffect(e8)
 	--冒着敌人的炮火，前进！ 
 	local e9=Effect.CreateEffect(c)
-	e9:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e9:SetCode(EVENT_ATTACK_ANNOUNCE)
+	e9:SetType(EFFECT_TYPE_FIELD)
+	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e9:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e9:SetRange(LOCATION_MZONE)
+	e9:SetTargetRange(0,1)
+	e9:SetValue(1)
 	e9:SetCondition(s.actcon)
-	e9:SetOperation(s.actop)
 	c:RegisterEffect(e9)
-	local e10=e9:Clone()
-	e10:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e10)
 end
+
 --summon cond
 function s.lcheck(g,lc,tp)
 	return g:GetClassCount(Card.GetCode)==g:GetCount()
@@ -100,22 +100,12 @@ function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --我们万众一心，冒着敌人的炮火，前进！
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:IsSetCard(0x5f9)
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x5f9) and c:IsControler(tp)
 end
-
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e4=Effect.CreateEffect(e:GetHandler())
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e4:SetTargetRange(0,1)
-	e4:SetValue(s.aclimit)
-	e4:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e4,tp)
-end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end

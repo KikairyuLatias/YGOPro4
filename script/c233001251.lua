@@ -20,15 +20,14 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--opponent can't trigger
 	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e4:SetCode(EVENT_ATTACK_ANNOUNCE)
+	e4:SetType(EFFECT_TYPE_FIELD)
+	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e4:SetRange(LOCATION_MZONE)
+	e4:SetTargetRange(0,1)
+	e4:SetValue(1)
 	e4:SetCondition(s.actcon)
-	e4:SetOperation(s.actop)
 	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e5)
 end
 --searcher
 function s.filter(c)
@@ -46,22 +45,15 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end
+
 --forget about triggering
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:IsSetCard(0x9d0)
+s.listed_series={0x9d0}
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x9d0) and c:IsControler(tp)
 end
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e4=Effect.CreateEffect(e:GetHandler())
-	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e4:SetTargetRange(0,1)
-	e4:SetValue(s.aclimit)
-	e4:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e4,tp)
-end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end

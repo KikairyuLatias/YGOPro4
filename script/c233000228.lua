@@ -29,12 +29,6 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 
---armades for psychic dragon while attacking
-function s.actcon(e)
-	local a=Duel.GetAttacker()
-	return a and a:IsControler(e:GetHandlerPlayer()) and a:IsSetCard(0x5f1)
-end
-
 --protect my dragons
 function s.indct(e,re,r,rp)
 	if bit.band(r,REASON_BATTLE+REASON_EFFECT)~=0 then
@@ -44,10 +38,12 @@ function s.indct(e,re,r,rp)
 	end
 end
 
---armades
-function s.indcon(e)
-	return Duel.GetAttacker()==e:GetHandler() and Duel.IsExistingMatchingCard(s.indfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+--armades for psychic dragon while attacking
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x5f1) and c:IsControler(tp)
 end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	return (a and s.cfilter(a,tp))
 end

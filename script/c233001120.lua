@@ -39,7 +39,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 	--come back
 	local e6=Effect.CreateEffect(c)
-	e6:SetDescription(aux.Stringid(90000720,0))
+	e6:SetDescription(aux.Stringid(id,0))
 	e6:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
 	e6:SetCategory(CATEGORY_DESTROY)
 	e6:SetCode(EVENT_DESTROYED)

@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(0,1)
-	e1:SetValue(s.aclimit)
+	e1:SetValue(1)
 	e1:SetCondition(s.actcon)
 	c:RegisterEffect(e1)
 	--spsummon
@@ -52,11 +52,8 @@ function s.penop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --armades
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
-end
 function s.actcon(e)
-	return Duel.GetAttacker()==e:GetHandler() or Duel.GetAttackTarget()==e:GetHandler()
+	return Duel.GetAttacker()==e:GetHandler()
 end
 
 --SS man

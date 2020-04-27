@@ -28,17 +28,16 @@ function s.initial_effect(c)
 	e4:SetTarget(s.target)
 	e4:SetOperation(s.activate)
 	c:RegisterEffect(e4)
-	--opponent can't trigger
+	--actlimit
 	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e5:SetCode(EVENT_ATTACK_ANNOUNCE)
+	e5:SetType(EFFECT_TYPE_FIELD)
+	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e5:SetCode(EFFECT_CANNOT_ACTIVATE)
 	e5:SetRange(LOCATION_FZONE)
+	e5:SetTargetRange(0,1)
+	e5:SetValue(1)
 	e5:SetCondition(s.actcon)
-	e5:SetOperation(s.actop)
 	c:RegisterEffect(e5)
-	local e6=e5:Clone()
-	e6:SetCode(EVENT_BE_BATTLE_TARGET)
-	c:RegisterEffect(e6)
 	--draw
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,1))
@@ -53,38 +52,14 @@ function s.initial_effect(c)
 end
 
 --forget about triggering
-function s.actcon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetAttacker()
-	if tc:IsControler(1-tp) then tc=Duel.GetAttackTarget() end
-	return tc and tc:IsControler(tp) and tc:IsSetCard(0x5f7) or tc:IsSetCard(0x5f8)
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) and c:IsControler(tp)
 end
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e5=Effect.CreateEffect(e:GetHandler())
-	e5:SetType(EFFECT_TYPE_FIELD)
-	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e5:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e5:SetTargetRange(0,1)
-	e5:SetValue(s.aclimit)
-	e5:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e5,tp)
-end
---lock
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
-end
-
-function s.actop(e,tp,eg,ep,ev,re,r,rp)
-	local e5=Effect.CreateEffect(e:GetHandler())
-	e5:SetType(EFFECT_TYPE_FIELD)
-	e5:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e5:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e5:SetTargetRange(0,1)
-	e5:SetValue(s.aclimit)
-	e5:SetReset(RESET_PHASE+PHASE_DAMAGE)
-	Duel.RegisterEffect(e5,tp)
-end
-function s.aclimit(e,re,tp)
-	return not re:GetHandler():IsImmuneToEffect(e)
+function s.actcon(e)
+	local tp=e:GetHandlerPlayer()
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end
 
 --Dreamlight/star power up
