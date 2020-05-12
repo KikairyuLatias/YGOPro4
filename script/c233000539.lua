@@ -1,6 +1,8 @@
 --Diver Deer Major Rangikouru
 local s,id=GetID()
 function s.initial_effect(c)
+	--only SS this once
+	c:SetSPSummonOnce(id)
 	--xyz summon
 	Xyz.AddProcedure(c,s.mfilter,6,2,s.ovfilter,aux.Stringid(id,0),2,s.xyzop)
 	c:EnableReviveLimit()
@@ -12,7 +14,7 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
-	c:RegisterEffect(e1,false,REGISTER_FLAG_ACTIVATE)
+	c:RegisterEffect(e1)
 	--attach stuff to this as material
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,2))
@@ -21,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
 	e2:SetTarget(s.mttg)
 	e2:SetOperation(s.mtop)
-	c:RegisterEffect(e2,false,REGISTER_FLAG_ACTIVATE)
+	c:RegisterEffect(e2)
 	--destroy replace
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)

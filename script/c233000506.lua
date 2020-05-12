@@ -33,7 +33,7 @@ end
 
 --protection
 function s.indfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and not c:IsCode(id)
+	return c:IsFaceup() and c:IsSetCard(0x4af)
 end
 function s.indcon(e)
 	return Duel.IsExistingMatchingCard(s.indfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)

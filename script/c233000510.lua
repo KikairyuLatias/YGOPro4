@@ -2,8 +2,8 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),2)
 	c:EnableReviveLimit()
-	Link.AddProcedure(c,s.matfilter,2)
 	--banish until end phase
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
@@ -27,23 +27,20 @@ function s.initial_effect(c)
 	e3:SetOperation(s.activate)
 	c:RegisterEffect(e3)
 end
---cannot use token
-function s.matfilter(c,lc,sumtype,tp)
-	return not c:IsType(TYPE_TOKEN,lc,sumtype,tp)
-end
+
 --banish until end phase
 function s.thfilter(c)
 	return c:IsType(TYPE_MONSTER) or c:IsType(SPELL) or c:IsType(TYPE_TRAP) and c:IsAbleToRemove()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local c=e:GetHandler()
-	local ct=c:GetLinkedGroupCount()
+	local ct=e:GetHandler():GetLinkedGroup():FilterCount(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),nil)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and s.thfilter(chkc) end
 	if chk==0 then return ct>0 and Duel.IsExistingTarget(s.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectTarget(tp,s.thfilter,tp,LOCATION_MZONE,LOCATION_MZONE,1,ct,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,g:GetCount(),0,0)
-	c:RegisterFlagEffect(0,RESET_EVENT+0x1fe0000,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(id,1))
+	c:RegisterFlagEffect(0,RESET_EVENT+0x1fe0000,EFFECT_FLAG_CLIENT_HINT,1,0,aux.Stringid(id,0))
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -100,7 +97,7 @@ function s.retop(e,tp,eg,ep,ev,re,r,rp)
 end
 --special summon
 function s.filter(c)
-	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x4af) 
+	return c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEASTWARRIOR) 
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

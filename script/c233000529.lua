@@ -18,12 +18,13 @@ function s.initial_effect(c)
 	e2:SetCondition(s.handcon)
 	c:RegisterEffect(e2)
 end
+
 --QP handcon
-function s.handcon(e)
-	return Duel.IsExistingMatchingCard(s.cfilter2,tp,LOCATION_MZONE,0,1,nil)
-end
-function s.cfilter2(c)
+function s.actfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x4af) and c:GetBaseAttack()>=2400
+end
+function s.handcon(e)
+	return Duel.IsExistingMatchingCard(s.actfilter,tp,LOCATION_MZONE,0,1,nil)
 end
 
 --hello

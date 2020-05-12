@@ -100,3 +100,8 @@ A few minor code updates, but nothing too serious. Except actually adding code f
 Updated some code so Armades-esque stuff works properly in ED0Pro.
 
 Also a few modifications to other Decks.
+
+5/12/2020
+
+Diver Deer updates
+Replacing some images for other stuff for updating/balancing

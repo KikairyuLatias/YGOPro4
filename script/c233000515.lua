@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),1,1)
+	Link.AddProcedure(c,s.matfilter,1,1)
 	c:EnableReviveLimit()
 	--spsummon
 	local e1=Effect.CreateEffect(c)
@@ -23,10 +23,15 @@ function s.initial_effect(c)
 	e4:SetCode(EVENT_LEAVE_FIELD)
 	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e4:SetCondition(s.descon)
-	e4:SetCountLimit(1,id+99999)
+	e4:SetCountLimit(1,id)
 	e4:SetTarget(s.destg)
 	e4:SetOperation(s.desop)
 	c:RegisterEffect(e4)
+end
+
+--cannot use self to Link Summon
+function s.matfilter(c,lc,sumtype,tp)
+	return c:IsRace(RACE_BEASTWARRIOR,lc,sumtype,tp) and not c:IsSummonCode(lc,sumtype,tp,id)
 end
 
 --special summon

@@ -4,18 +4,25 @@ function s.initial_effect(c)
 	--link summon
 	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2,2)
 	c:EnableReviveLimit()
-	--cannot be target/battle indestructable (fix to include Diver Deers that are pointed to by ANY Link)
+	--cannot be targeted
 	local e1=Effect.CreateEffect(c)
+	e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
 	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
 	e1:SetTarget(s.tgtg)
-	e1:SetValue(1)
+	e1:SetValue(aux.tgoval)
 	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	--cannot destroy w/effect
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
+	e2:SetTarget(s.tgtg)
+	e2:SetValue(aux.tgoval)
 	c:RegisterEffect(e2)
 	--SS
 	local e3=Effect.CreateEffect(c)
@@ -31,7 +38,7 @@ function s.initial_effect(c)
 	
 --protection
 function s.tgtg(e,c)
-	return e:GetHandler():GetLinkedGroup():IsContains(c)
+	return e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsSetCard(0x4af)
 end
 
 --ss condition

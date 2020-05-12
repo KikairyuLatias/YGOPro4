@@ -14,7 +14,7 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetCode(EFFECT_TRAP_ACT_IN_HAND)
-	e2:SetCondition(s.handcon)
+	e2:SetCondition(s.actcon)
 	c:RegisterEffect(e2)
 end
 --stuff
@@ -26,14 +26,13 @@ function s.cfilter(c)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then
-		local ct=Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_MZONE,0,nil)
-		e:SetLabel(ct)
-		return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,ct,c)
-	end
-	local ct=e:GetLabel()
-	local sg=Duel.GetMatchingGroup(s.filter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,c)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,ct,0,0)
+	if chkc then return chkc:IsOnField() and chkc:IsType(TYPE_SPELL+TYPE_TRAP) and chkc~=c end
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),tp,LOCATION_MZONE,0,1,nil) end
+	local g=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),tp,LOCATION_MZONE,0,nil)
+	local ct=g:GetClassCount(Card.GetCode)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local sg=Duel.SelectTarget(tp,Card.IsType,TYPE_SPELL+TYPE_TRAP,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,ct,c)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local ct=Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_MZONE,0,nil)
@@ -47,9 +46,9 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --handtrap cond
-function s.filter2(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsLinkAbove(3)
+function s.actfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsLinkMonster() and c:IsLinkAbove(3)
 end
-function s.handcon(e)
-	return Duel.IsExistingMatchingCard(s.filter2,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+function s.actcon(e)
+	return Duel.IsExistingMatchingCard(s.actfilter,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

@@ -42,8 +42,11 @@ function s.hdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.hdop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)
+	local ct=c:GetLinkedGroupCount()
 	if g:GetCount()>0 then
 		local sg=g:RandomSelect(tp,1)
 		Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
+		Duel.BreakEffect()
+		Duel.Damage(1-tp,ct*300,REASON_EFFECT)
 	end
 end

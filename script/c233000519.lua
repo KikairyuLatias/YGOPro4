@@ -20,21 +20,24 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--special summoning
 	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,1))
+	e4:SetDescription(aux.Stringid(id,0))
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_FZONE)
 	e4:SetCountLimit(1,id)
 	e4:SetTarget(s.target)
 	e4:SetOperation(s.activate)
 	c:RegisterEffect(e4)
-	--recycle links?
+	--link summon time
 	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_IGNITION)
-	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetDescription(aux.Stringid(id,1))
+	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e5:SetType(EFFECT_TYPE_QUICK_O)
+	e5:SetCode(EVENT_FREE_CHAIN)
 	e5:SetRange(LOCATION_FZONE)
-	e5:SetCountLimit(1,id+99999)
-	e5:SetTarget(s.target2)
-	e5:SetOperation(s.activate2)
+	e5:SetCondition(s.lkcon)
+	e5:SetCost(s.lkcost)
+	e5:SetTarget(s.lktg)
+	e5:SetOperation(s.lkop)
 	c:RegisterEffect(e5)
 end
 
@@ -70,35 +73,57 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 
--- recycle link thing
-function s.spfilter(c,code,lv,e,tp)
-	return c:GetLink()==link and c:IsSetCard(0x4af) and not c:IsCode(code) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+--link
+function s.lkcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2 or Duel.GetCurrentPhase()==PHASE_BATTLE
 end
-function s.filter3(c,e,tp)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsType(TYPE_LINK) and c:IsAbleToExtra()
-		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_EXTRA,0,1,nil,c:GetCode(),c:GetLink(),e,tp)
-		and Duel.GetLocationCountFromEx(tp,tp,c)>0
+function s.lkcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFlagEffect(tp,id)==0 end
+	Duel.RegisterFlagEffect(tp,id,RESET_PHASE+PHASE_END,0,1)
 end
-function s.target2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.filter3(chkc,e,tp) end
-	if chk==0 then return Duel.IsExistingTarget(s.filter3,tp,LOCATION_MZONE,0,1,nil,e,tp) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-	local g=Duel.SelectTarget(tp,s.filter3,tp,LOCATION_MZONE,0,1,1,nil,e,tp)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
+function s.lkfilter(c)
+	return c:IsSetCard(0x4af) and c:IsLinkMonster() and c:IsSpecialSummonable(SUMMON_TYPE_LINK)
+end
+function s.lktg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then
+		local el={}
+		local mg=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),tp,LOCATION_MZONE,0,nil)
+		local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,mg)
+		for tc in aux.Next(g) do
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+			tc:RegisterEffect(e1)
+			table.insert(el,e1)
+		end
+		local res=Duel.IsExistingMatchingCard(s.lkfilter,tp,LOCATION_EXTRA,0,1,nil)
+		for _,e in ipairs(el) do
+			e:Reset()
+		end
+		return res
+	end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
-function s.activate2(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if Duel.GetLocationCountFromEx(tp,tp,tc)<=0 then return end
-	if not tc:IsRelateToEffect(e) then return end
-	local code=tc:GetCode()
-	local lv=tc:GetLink()
-	if Duel.SendtoDeck(tc,nil,0,REASON_EFFECT)==0 then return end
+function s.lkop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if not c:IsRelateToEffect(e) then return end
+	local el={}
+	local mg=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x120),tp,LOCATION_MZONE,0,nil)
+	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,mg)
+	for tc in aux.Next(g) do
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+		tc:RegisterEffect(e1)
+		table.insert(el,e1)
+	end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA,0,1,1,nil,code,lv,e,tp)
-	if g:GetCount()>0 then
-		Duel.BreakEffect()
-		Duel.SpecialSummon(g,0,tp,tp,true,false,POS_FACEUP)
-		g:GetFirst():CompleteProcedure()
+	local xg=Duel.SelectMatchingCard(tp,s.lkfilter,tp,LOCATION_EXTRA,0,1,1,nil)
+	local tc=xg:GetFirst()
+	if tc then
+		Duel.SpecialSummonRule(tp,tc,SUMMON_TYPE_LINK)
+	end
+	for _,e in ipairs(el) do
+		e:Reset()
 	end
 end

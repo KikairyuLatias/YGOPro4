@@ -40,7 +40,7 @@ function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 	if not c then return false end
 	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
 	e:SetLabelObject(c)
-	return c and c:IsAttribute(ATTRIBUTE_WIND)and c:IsRace(RACE_MACHINE) and c:IsRelateToBattle()
+	return c and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsRelateToBattle()
 end
 function s.operation2(e,tp,eg,ep,ev,re,r,rp,chk)
 	local a=Duel.GetAttacker()

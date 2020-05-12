@@ -9,65 +9,63 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e1:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e1:SetRange(LOCATION_SZONE)
+	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(0,1)
 	e1:SetValue(1)
 	e1:SetCondition(s.actcon)
 	c:RegisterEffect(e1)
-	--special summon
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e4:SetProperty(EFFECT_FLAG_DELAY)
-	e4:SetCode(EVENT_LEAVE_FIELD)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1)
-	e4:SetCondition(s.spcon)
-	e4:SetCost(s.spcost)
-	e4:SetTarget(s.sptg2)
-	e4:SetOperation(s.spop)
-	c:RegisterEffect(e4)
-	end
+	--replacement
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e2:SetCode(EVENT_DESTROYED)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
+	e2:SetCondition(s.spcon)
+	e2:SetTarget(s.sptg)
+	e2:SetOperation(s.spop)
+	c:RegisterEffect(e2)
+end
 
 --forget about triggering
-function s.cfilterx(c,tp)
+s.listed_series={0x4af}
+function s.cfilterkk(c,tp)
 	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsControler(tp)
 end
 function s.actcon(e)
 	local tp=e:GetHandlerPlayer()
 	local a=Duel.GetAttacker()
 	local d=Duel.GetAttackTarget()
-	return (a and s.cfilter(a,tp)) or (d and s.cfilterx(d,tp))
+	return (a and s.cfilterkk(a,tp)) or (d and s.cfilterkk(d,tp))
 end
 
---ss man
+--replace
 function s.cfilter(c,tp)
-	return c:IsPreviousSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousPosition(POS_FACEUP) and c:GetPreviousControler()==tp
+	return c:IsReason(REASON_BATTLE) and c:GetPreviousSetCard(0x4af)
+		and c:IsPreviousControler(tp) and c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousPosition(POS_FACEUP)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(s.cfilter,1,e:GetHandler(),tp)
+	if eg:IsExists(s.cfilter,1,nil,tp) then
+		local tc=eg:GetFirst()
+		e:SetLabel(tc:GetOriginalCode())
+		return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,e,tp,tc:GetOriginalCode())
+	end
 end
-function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():GetFlagEffect(id)==0 end
-	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1)
+function s.spfilter(c,e,tp,code)
+	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsOriginalCode(code)
 end
-function s.spfilter(c,e,tp)
-	local atk=c:GetAttack()
-	return atk>=0 and atk<val and c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand()
-end
-function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsRelateToEffect(e)
-		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_HAND,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_HAND)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,e,tp,e:GetLabel()) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 or not e:GetHandler():IsRelateToEffect(e) then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_HAND,0,1,1,nil,e,tp)
-	if g:GetCount()>0 then
+	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil,e,tp,e:GetLabel())
+	if #g>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
