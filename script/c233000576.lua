@@ -1,166 +1,81 @@
---Hazmanimal Biodomain
+--Hazmanimal Yellow Fire Wolf
 local s,id=GetID()
 function s.initial_effect(c)
-	c:EnableCounterPermit(0x43a)
-	--act limit
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_FIELD)
-	e0:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e0:SetCode(EFFECT_CANNOT_ACTIVATE)
-	e0:SetRange(LOCATION_SZONE)
-	e0:SetTargetRange(1,0)
-	e0:SetValue(s.aclimit)
-	c:RegisterEffect(e0)
-	--Activate
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	c:RegisterEffect(e1)
-	--counter
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e2:SetProperty(EFFECT_FLAG_DELAY)
-	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetRange(LOCATION_FZONE)
-	e2:SetCondition(s.ctcon)
-	e2:SetOperation(s.ctop)
-	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	c:RegisterEffect(e3)
-	--add counter
+	--atk up
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_FIELD)
+		e2:SetCode(EFFECT_UPDATE_ATTACK)
+		e2:SetRange(LOCATION_MZONE)
+		e2:SetTargetRange(LOCATION_MZONE,0)
+		e2:SetTarget(s.tg)
+		e2:SetValue(s.val)
+		c:RegisterEffect(e2)
+	--token (need to add summon lock later)
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-	e4:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	e4:SetCode(EVENT_CHAINING)
-	e4:SetRange(LOCATION_FZONE)
-	e4:SetOperation(aux.chainreg)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1,id)
+	e4:SetTarget(s.sptg)
+	e4:SetCost(s.spcost)
+	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
-	e5:SetCode(EVENT_CHAIN_SOLVING)
-	e5:SetProperty(EFFECT_FLAG_DELAY)
-	e5:SetRange(LOCATION_FZONE)
-	e5:SetOperation(s.ctop2)
-	c:RegisterEffect(e5)
-	--atk down
-	local e6=Effect.CreateEffect(c)
-	e6:SetType(EFFECT_TYPE_FIELD)
-	e6:SetCode(EFFECT_UPDATE_ATTACK)
-	e6:SetRange(LOCATION_FZONE)
-	e6:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e6:SetValue(s.val)
-	e6:SetTarget(s.hztg)
-	c:RegisterEffect(e6)
-	--def down
-	local e7=Effect.CreateEffect(c)
-	e7:SetType(EFFECT_TYPE_FIELD)
-	e7:SetCode(EFFECT_UPDATE_DEFENSE)
-	e7:SetRange(LOCATION_FZONE)
-	e7:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e7:SetValue(s.val)
-	e7:SetTarget(s.hztg)
-	c:RegisterEffect(e7)
-	--damage
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-	e8:SetCode(EVENT_LEAVE_FIELD_P)
-	e8:SetOperation(s.damp)
-	c:RegisterEffect(e8)
-	--both players get hit
-	local e9=Effect.CreateEffect(c)
-	e9:SetDescription(aux.Stringid(id,1))
-	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e9:SetCategory(CATEGORY_DAMAGE)
-	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e9:SetCode(EVENT_LEAVE_FIELD_P)
-	e9:SetCondition(s.damcon)
-	e9:SetOperation(s.damop)
-	e9:SetLabelObject(e8)
-	c:RegisterEffect(e9)
-	--controller gets screwed
-	local e10=e9:Clone()
-	e10:SetDescription(aux.Stringid(id,2))
-	e10:SetCondition(s.damcon2)
-	e10:SetOperation(s.damop2)
-	c:RegisterEffect(e10)
-	--someone explain why my suit warranty ran out
-	local e11=Effect.CreateEffect(c)
-	e11:SetType(EFFECT_TYPE_FIELD)
-	e11:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
-	e11:SetRange(LOCATION_FZONE)
-	e11:SetTargetRange(LOCATION_MZONE,0)
-	e11:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x43a))
-	e11:SetValue(s.indct)
-	c:RegisterEffect(e11)
-end
-
---cannot activate new field to get rid of this without penalties
-function s.aclimit(e,re,tp)
-	return re:IsHasType(EFFECT_TYPE_ACTIVATE) and re:IsActiveType(TYPE_SPELL) and re:IsActiveType(TYPE_FIELD)
-end
-
---counter addition for summoning
-function s.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x43a)
-end
-function s.ctcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(s.cfilter,1,nil)
-end
-function s.ctop(e,tp,eg,ep,ev,re,r,rp)
-	e:GetHandler():AddCounter(0x43a,1)
-end
-
---counter addition 2
-function s.ctop2(e,tp,eg,ep,ev,re,r,rp)
-	if re:IsActiveType(TYPE_MONSTER) and re:GetHandler():IsSetCard(0x43a) and e:GetHandler():GetFlagEffect(1)>0 then
-		e:GetHandler():AddCounter(0x43a,1)
-	end
-end
-
---drop
-function s.val(e)
-	return e:GetHandler():GetCounter(0x43a)*-100
 end
 --boost
-function s.hztg(e,c)
-	return not c:IsSetCard(0x43a) and c:IsType(TYPE_MONSTER)
+function s.tg(e,c)
+	return c:IsSetCard(0x43a) and c:IsType(TYPE_MONSTER)
+end
+function s.filter(c)
+	return c:IsFaceup() and c:IsSetCard(0x43a)
+end
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*100
 end
 
---conditions
-function s.damcon(e)
-	return e:GetHandler():GetCounter(0x43a)<9
-end
-function s.damcon2(e)
-	return e:GetHandler():GetCounter(0x43a)>=9
+--i make tokens
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckLPCost(tp,0) end
+	Duel.PayLPCost(tp,0)
 end
 
---damage
-function s.damp(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local ct=c:GetCounter(0x43a)
-	e:SetLabel(ct)
-end
-function s.damop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetLabelObject():GetLabel()
-	if ct>0 and ct<9 then
-		Duel.Damage(tp,ct*300,REASON_EFFECT)
-		Duel.Damage(1-tp,ct*300,REASON_EFFECT)
-	end
-end
-function s.damop2(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetLabelObject():GetLabel()
-	if ct>=9 then
-		Duel.SetLP(tp,Duel.GetLP(tp)-ct*600)
-	end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,59822133)
+		and Duel.GetLocationCount(tp,LOCATION_MZONE)>1
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,233000577,0x43a,0x4011,0,0,3,RACE_BEAST,ATTRIBUTE_FIRE) end
+	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,2,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,2,0,0)
 end
 
---renew suit warranty damn it
-function s.indct(e,re,r,rp)
-	if bit.band(r,REASON_EFFECT)~=0 then
-		return 1
-	else
-		return 0
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_BE_FUSION_MATERIAL)
+	e1:SetTargetRange(0xff,0xff)
+	e1:SetTarget(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,0x43a)))
+	e1:SetValue(s.sumlimit)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+	local e2=e1:Clone()
+	e2:SetCode(EFFECT_CANNOT_BE_SYNCHRO_MATERIAL)
+	Duel.RegisterEffect(e2,tp)
+	local e3=e1:Clone()
+	e3:SetCode(EFFECT_CANNOT_BE_XYZ_MATERIAL)
+	Duel.RegisterEffect(e3,tp)
+	local e4=e1:Clone()
+	e4:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
+	Duel.RegisterEffect(e4,tp)
+	if Duel.IsPlayerAffectedByEffect(tp,59822133) then return end
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=1 then return end
+	if Duel.IsPlayerCanSpecialSummonMonster(tp,233000577,0x101b,0x4011,0,0,3,RACE_BEAST,ATTRIBUTE_FIRE) then
+		local token1=Duel.CreateToken(tp,233000577)
+		Duel.SpecialSummonStep(token1,0,tp,tp,false,false,POS_FACEUP)
+		local token2=Duel.CreateToken(tp,233000577)
+		Duel.SpecialSummonStep(token2,0,tp,tp,false,false,POS_FACEUP)
+		Duel.SpecialSummonComplete()
 	end
+end
+function s.sumlimit(e,c)
+	if not c then return false end
+	return c:IsControler(e:GetHandlerPlayer())
 end

@@ -54,5 +54,5 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.operationx(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
-	Duel.ConfirmCards(tp,3)
+	Duel.ConfirmCards(tp,tp,3)
 end

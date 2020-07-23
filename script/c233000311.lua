@@ -21,7 +21,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 	--special summon 1
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,2))
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
@@ -38,7 +38,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2b)
 	--special summon 2 different
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_SUMMON_SUCCESS)
@@ -93,7 +93,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		local atk=tc:GetAttack()
 		tc=sg:GetNext()
 		if tc then
-			if tc:GetAttack()>atk then atk=tc:GetAttack() end	
+			if tc:GetAttack()>atk then atk=tc:GetAttack() end   
 		end
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 		local g=Duel.SelectMatchingCard(tp,s.filterx,tp,LOCATION_DECK,0,1,1,nil,atk,att,e,tp)

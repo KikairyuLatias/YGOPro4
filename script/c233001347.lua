@@ -61,7 +61,7 @@ function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	local bc=c:GetBattleTarget()
 	local rec=bc:GetAttack()
-	if bc:GetAttack() < bc:GetDefence() then rec=bc:GetDefence() end
+	if bc:GetAttack() < bc:GetDefense() then rec=bc:GetDefense() end
 	if rec<0 then rec=0 end
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(rec)
@@ -101,7 +101,7 @@ function s.handtg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.handop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_DECK,0,1,1,nil)
 	if g:GetCount()>0 then
 		Duel.SendtoHand(g,nil,REASON_EFFECT)
 		Duel.ConfirmCards(1-tp,g)

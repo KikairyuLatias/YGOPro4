@@ -48,9 +48,11 @@ function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.ConfirmCards(1-tp,g)
 	end
 end
+
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
 	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
+		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end

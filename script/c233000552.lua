@@ -1,106 +1,122 @@
---Superstar Diver Equine Kailani
+--Diver Equine Makani
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-		Pendulum.AddProcedure(c)
-	--fusion material
-	c:EnableReviveLimit()
-	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4ae),2)
-	--special summon self from P-Zone by Tributing
+	 Pendulum.AddProcedure(c)
+	--Activate
 	local e0=Effect.CreateEffect(c)
-	e0:SetDescription(aux.Stringid(id,0))
-	e0:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e0:SetType(EFFECT_TYPE_IGNITION)
-	e0:SetRange(LOCATION_PZONE)
-	e0:SetCountLimit(1,id)
-	e0:SetCost(s.spcost)
-	e0:SetTarget(s.sptg)
-	e0:SetOperation(s.spop)
+	e0:SetType(EFFECT_TYPE_ACTIVATE)
+	e0:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e0)
-	--added normal summon
+	--foolish something to the GY
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
-	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4ae))
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_TOGRAVE)
+	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
+	e2:SetCode(EVENT_SUMMON_SUCCESS)
+	e2:SetTarget(s.target)
+	e2:SetCountLimit(1,id)
+	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
-	--burn damage for arch members
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,1))
-	e3:SetCategory(CATEGORY_DAMAGE)
-	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e3:SetCode(EVENT_BATTLE_DESTROYING)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCountLimit(1)
-	e3:SetCondition(s.condition)
-	e3:SetTarget(s.target)
-	e3:SetOperation(s.activate)
+	local e3=e2:Clone()
+	e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e3)
-	--pendulum
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,2))
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e4:SetCode(EVENT_DESTROYED)
-	e4:SetProperty(EFFECT_FLAG_DELAY)
-	e4:SetCondition(s.pencon)
-	e4:SetTarget(s.pentg)
-	e4:SetOperation(s.penop)
+	local e4=e2:Clone()
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e4)
+	--banish to Fusion Summon
+	local e6=Effect.CreateEffect(c)
+	e6:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
+	e6:SetType(EFFECT_TYPE_QUICK_O)
+	e6:SetCode(EVENT_FREE_CHAIN)
+	e6:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
+	e6:SetCountLimit(1,id+99999)
+	e6:SetTarget(s.fstg)
+	e6:SetOperation(s.fsop)
+	c:RegisterEffect(e6)
+	if not GhostBelleTable then GhostBelleTable={} end
+	table.insert(GhostBelleTable,e6) 
 end
---get out of the P-Zone
-function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
-end
-function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_MZONE,0,1,1,nil)
-	Duel.Release(g,POS_FACEUP,REASON_COST)
-end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
-end
-function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
-	end
-end
---burn
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	local bc=tc:GetBattleTarget()
-	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x4ae)
-		and bc:IsReason(REASON_BATTLE)
+
+--mill effect
+function s.tgfilter(c)
+	return c:IsSetCard(0x4ae) and c:IsAbleToGrave()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetTargetPlayer(1-tp)
-	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
-	if atk<0 then atk=0 end
-	Duel.SetTargetParam(atk)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,atk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Damage(p,d,REASON_EFFECT)
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
+	if g:GetCount()>0 then
+		Duel.SendtoGrave(g,REASON_EFFECT)
+	end
 end
---to pendulumZ
-function s.pencon(e,tp,eg,ep,ev,re,r,rp)
+
+--fusion
+function s.filter0(c)
+	return c:IsType(TYPE_MONSTER) and c:IsCanBeFusionMaterial() and c:IsAbleToRemove()
+end
+function s.filter1(c,e)
+	return c:IsType(TYPE_MONSTER) and c:IsCanBeFusionMaterial() and c:IsAbleToRemove() and not c:IsImmuneToEffect(e)
+end
+function s.filter2(c,e,tp,m,f,gc)
+	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x4ae) and (not f or f(c))
+		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_FUSION,tp,false,false) and c:CheckFusionMaterial(m,gc,tp)
+end
+function s.fstg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
+	if chk==0 then
+		if Duel.IsPlayerAffectedByEffect(e:GetHandlerPlayer(),69832741) then return false end
+		local mg1=Duel.GetMatchingGroup(s.filter0,tp,LOCATION_GRAVE,0,c)
+		local res=Duel.GetLocationCountFromEx(tp)>0
+			and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_EXTRA,0,1,nil,e,tp,mg1,nil,c)
+		if not res then
+			local ce=Duel.GetChainMaterial(tp)
+			if ce~=nil then
+				local fgroup=ce:GetTarget()
+				local mg2=fgroup(ce,e,tp)
+				local mf=ce:GetValue()
+				res=Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_EXTRA,0,1,nil,e,tp,mg2,mf,c)
+			end
+		end
+		return res
+	end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
 end
-function s.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
-end
-function s.penop(e,tp,eg,ep,ev,re,r,rp)
-	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+function s.fsop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	if c:IsRelateToEffect(e) then
-		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
+	if not c:IsRelateToEffect(e) or c:IsImmuneToEffect(e) then return end
+	local mg1=Duel.GetMatchingGroup(s.filter1,tp,LOCATION_GRAVE,0,c,e)
+	local sg1=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_EXTRA,0,nil,e,tp,mg1,nil,c)
+	local mg2=nil
+	local sg2=nil
+	local ce=Duel.GetChainMaterial(tp)
+	if ce~=nil then
+		local fgroup=ce:GetTarget()
+		mg2=fgroup(ce,e,tp)
+		local mf=ce:GetValue()
+		sg2=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_EXTRA,0,nil,e,tp,mg2,mf,c)
+	end
+	if (Duel.GetLocationCountFromEx(tp)>0 and #sg1>0) or (sg2~=nil and #sg2>0) then
+		local sg=sg1:Clone()
+		if sg2 then sg:Merge(sg2) end
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+		local tg=sg:Select(tp,1,1,nil)
+		local tc=tg:GetFirst()
+		if sg1:IsContains(tc) and (sg2==nil or not sg2:IsContains(tc) or not Duel.SelectYesNo(tp,ce:GetDescription())) then
+			local mat1=Duel.SelectFusionMaterial(tp,tc,mg1,c,tp)
+			tc:SetMaterial(mat1)
+			Duel.Remove(mat1,POS_FACEUP,REASON_EFFECT+REASON_MATERIAL+REASON_FUSION)
+			Duel.BreakEffect()
+			Duel.SpecialSummon(tc,SUMMON_TYPE_FUSION,tp,tp,false,false,POS_FACEUP)
+		else
+			local mat2=Duel.SelectFusionMaterial(tp,tc,mg2,c,tp)
+			local fop=ce:GetOperation()
+			fop(ce,e,tp,tc,mat2)
+		end
+		tc:CompleteProcedure()
 	end
 end

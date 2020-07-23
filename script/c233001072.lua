@@ -4,11 +4,11 @@ function s.initial_effect(c)
 	--link summon
 	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x5f9),2)
 	c:EnableReviveLimit()
-	--destroy
+	--banish
 	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_DESTROY)
+	e1:SetCategory(CATEGORY_REMOVE)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_BATTLE_DAMAGE)
+	e1:SetCode(EVENT_BATTLE_DESTROYING)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCountLimit(1)
@@ -51,13 +51,20 @@ function s.initial_effect(c)
 		e5:SetValue(s.val2)
 		c:RegisterEffect(e5)
 end
+
 --destruction for Eclipse Dream
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x5f9)
+	local c=e:GetHandler()
+	local rc=eg:GetFirst()
+	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
+		and rc:IsFaceup() and rc:IsSetCard(0x5f9) and rc:IsControler(tp)
 end
+
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,1,nil)
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsOnField() and chkc:IsRemovable() end
+	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectTarget(tp,Card.IsRemovable,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
@@ -67,6 +74,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
 	end
 end
+
 --boost
 function s.tg(e,c)
 	return c:IsSetCard(0x5f9) and c:IsType(TYPE_MONSTER)

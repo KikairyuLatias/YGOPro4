@@ -1,82 +1,65 @@
---Hazmat Animal Red Spark Kangaroo
+--Diver Equine Training
 local s,id=GetID()
 function s.initial_effect(c)
-	--special summon
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_FIELD)
-	e0:SetCode(EFFECT_SPSUMMON_PROC)
-	e0:SetProperty(EFFECT_FLAG_UNCOPYABLE)
-	e0:SetRange(LOCATION_HAND)
-	e0:SetCondition(s.spcon)
-	e0:SetCountLimit(1,id)
-	c:RegisterEffect(e0)
-	--remove counters
+	--Activate
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCountLimit(1,id+99999)
-	e1:SetCost(s.cocost)
-	e1:SetTarget(s.cotg)
-	e1:SetOperation(s.coop)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
-	--blow up stuff and burn the hell out of opponent
+	--atk up
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_DAMAGE)
-	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id+99999)
-	e2:SetCost(s.fpcost)
-	e2:SetTarget(s.fptg)
-	e2:SetOperation(s.fpop)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_UPDATE_ATTACK)
+	e2:SetRange(LOCATION_FZONE)
+	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
+	e2:SetTarget(s.tg)
+	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
+	local e3=e2:Clone()
+	e3:SetValue(s.val2)
+	c:RegisterEffect(e3)
+	--special summon with cost
+	local e4=Effect.CreateEffect(c)
+	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetCode(EVENT_FREE_CHAIN)
+	e4:SetCountLimit(1,id)
+	e4:SetRange(LOCATION_FZONE)
+	e4:SetTarget(s.sptg)
+	e4:SetOperation(s.spop)
+	c:RegisterEffect(e4)
 end
-
---special summon
+--boost
+function s.tg(e,c)
+	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER)
+end
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x43a)
+	return c:IsFaceup() and c:IsSetCard(0x4ae)
 end
-function s.spcon(e,c)
-	if c==nil then return true end
-	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
-		Duel.IsExistingMatchingCard(s.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
+function s.val(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*200
 end
-
---counter removal
-function s.cocost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsCanRemoveCounter(tp,1,1,0x43a,2,REASON_COST) end
-	Duel.RemoveCounter(tp,1,1,0x43a,2,REASON_COST)
-end
-function s.cotg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(0)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,0)
-end
-function s.coop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Recover(p,d,REASON_EFFECT)
+function s.val2(e,c)
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_MZONE,nil)*200
 end
 
---blow up something
-function s.fpcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,800) end
-	Duel.PayLPCost(tp,800)
-	Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
+--ss condition
+function s.filter2(c)
+	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER)
 end
-function s.fptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsOnField() end
-	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_DECK,0,1,nil,e,tp) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
-function s.fpop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) then return end
-	local tc=Duel.GetFirstTarget()
-	if tc:IsRelateToEffect(e) then
-		Duel.Destroy(tc,REASON_EFFECT)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_DECK,0,1,1,nil,e,tp)
+	local tc=g:GetFirst()
+	if tc then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
+		local lp=Duel.GetLP(tp)
+		Duel.SetLP(tp,lp-tc:GetLevel()*400)
 	end
-	Duel.BreakEffect()
 end

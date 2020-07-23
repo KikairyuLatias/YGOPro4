@@ -1,77 +1,79 @@
---Diver Equine Akané
+--Diver Deer Lieutenant General Pīkake Ānuenue
 local s,id=GetID()
 function s.initial_effect(c)
-	--pendulum summon
-	Pendulum.AddProcedure(c)
-	--Activate
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_ACTIVATE)
-	e0:SetCode(EVENT_FREE_CHAIN)
-	c:RegisterEffect(e0)
-	--tohand
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
-	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetCountLimit(1,id+20000)
-	e2:SetTarget(s.target)
-	e2:SetOperation(s.operation)
-	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	--synchro summon
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_BEASTWARRIOR),1,1,Synchro.NonTunerEx(Card.IsRace,RACE_BEASTWARRIOR),1,99)
+	c:EnableReviveLimit()
+	--protection
+		--cannot target
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+		e1:SetRange(LOCATION_MZONE)
+		e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+		e1:SetValue(aux.tgoval)
+		c:RegisterEffect(e1)
+		--indes
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+		e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+		e2:SetRange(LOCATION_MZONE)
+		e2:SetValue(s.indval)
+		c:RegisterEffect(e2)
+	--search
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1,id)
+	e3:SetTarget(s.thtg)
+	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
-	local e4=e2:Clone()
-	e4:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+	--the power of Diver Deer, so flood them away!
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,1))
+	e4:SetCategory(CATEGORY_TODECK)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1,id+99999)
+	e4:SetTarget(s.target2)
+	e4:SetOperation(s.operation2)
 	c:RegisterEffect(e4)
-	--synchro effect
-	local e5=Effect.CreateEffect(c)
-	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e5:SetType(EFFECT_TYPE_QUICK_O)
-	e5:SetCode(EVENT_FREE_CHAIN)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetHintTiming(0,TIMING_BATTLE_START+TIMING_BATTLE_END)
-	e5:SetCountLimit(1,id+20001)
-	e5:SetCondition(s.sccon)
-	e5:SetTarget(s.sctg)
-	e5:SetOperation(s.scop)
-	c:RegisterEffect(e5)
+end
+--because I can get into places you can't
+function s.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
+end
+--search
+function s.filter1(c)
+	return c:IsRace(RACE_BEASTWARRIOR) or c:IsSetCard(0x4af) and c:IsAbleToHand()
+end
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED,0,1,2) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED)
+end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.GetMatchingGroup(s.filter1,tp,LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED,0,nil)
+	if #g<=0 then return end
+	local sg=aux.SelectUnselectGroup(g,e,tp,1,2,aux.dncheck,1,tp,HINTMSG_ATOHAND)
+	Duel.SendtoHand(sg,nil,REASON_EFFECT)
+	Duel.ConfirmCards(1-tp,sg)
 end
 
---floating time
-function s.filter(c)
-	return c:IsSetCard(0x4ae) and c:IsAbleToHand()
+--bounce back
+function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,2) end 
+	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
-end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil)
-	if g:GetCount()>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
-	end
-end
---make either big Akane or Sayuri (or future Diver Equine Synchros)...
-function s.sccon(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetTurnPlayer()==tp then return false end
-	local ph=Duel.GetCurrentPhase()
-	return ph==PHASE_MAIN1 or (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) or ph==PHASE_MAIN2
-end
-function s.scfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsSynchroSummonable(nil)
-end
-function s.sctg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.scfilter,tp,LOCATION_EXTRA,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
-end
-function s.scop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.scfilter,tp,LOCATION_EXTRA,0,nil)
-	if g:GetCount()>0 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local sg=g:Select(tp,1,1,nil)
-		Duel.SynchroSummon(tp,sg:GetFirst(),nil)
-	end
+function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,2,nil)
+	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000,0,1)
+	Duel.SendtoDeck(g,nil,2,REASON_EFFECT)
 end

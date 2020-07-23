@@ -105,3 +105,15 @@ Also a few modifications to other Decks.
 
 Diver Deer updates
 Replacing some images for other stuff for updating/balancing
+
+7/22/2020
+
+- Updated Diver Deer stuff with new effects, some cards and fixes
+- Moved Diver Deer range to 500-549, Diver Equine to 550-569, Hazmat Animal to 570-589
+- A few of the Pony support (that are not actual) are revamped to be generic Beast support and moved accordingly.
+- Additional art for Enrique added and slight update to effect
+- Modified Scubapro a bit with summon requirements
+- Some code fixes
+
+You can also find a full list of cards and stuff on my new site:
+https://sites.google.com/view/sakuracarddesign/home

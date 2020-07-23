@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--destroy equip
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_DESTROY)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e3:SetCode(EVENT_EQUIP)
@@ -83,12 +83,12 @@ function s.seqop(e,tp,eg,ep,ev,re,r,rp)
 	local nseq=math.log(s,2)
 	Duel.MoveSequence(tc,nseq)
 end
-function s.filter(c,ec)
+function s.filter2(c,ec)
 	return c:GetEquipTarget()==ec
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local dg=eg:Filter(s.filter,nil,e:GetHandler())
+	local dg=eg:Filter(s.filter2,nil,e:GetHandler())
 	Duel.SetTargetCard(dg)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,dg,dg:GetCount(),0,0)
 end

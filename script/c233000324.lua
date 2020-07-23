@@ -60,15 +60,17 @@ function s.initial_effect(c)
 	e6:SetValue(1)
 	c:RegisterEffect(e6)
 end
+
 --you better summon this properly
 function s.splimit(e,se,sp,st)
-	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
 	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
+		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
@@ -83,12 +85,13 @@ function s.spfilter(c,e,tp)
 	return c:IsCode(233000322) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,zLOCATION_MZONE)<=0 then return end
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
 	local tc=Duel.GetFirstMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,nil,e,tp)
 	if tc then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+
 -- lock and fire
 function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():GetAttackAnnouncedCount()==0 end

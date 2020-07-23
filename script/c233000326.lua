@@ -52,15 +52,17 @@ function s.initial_effect(c)
 	e6:SetOperation(s.ctop)
 	c:RegisterEffect(e6)
 end
+
 --you better summon this properly
 function s.splimit(e,se,sp,st)
-	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
 	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
+		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
@@ -81,6 +83,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
+
 --steal shit
 function s.ctcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():GetAttackAnnouncedCount()==0 end

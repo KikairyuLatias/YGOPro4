@@ -50,7 +50,7 @@ function s.initial_effect(c)
 end
 --you better summon this properly
 function s.splimit(e,se,sp,st)
-	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
 --stat drop
 function s.adcon(e)

@@ -57,13 +57,14 @@ function s.initial_effect(c)
 end
 --you better summon this properly
 function s.splimit(e,se,sp,st)
-	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(90000531)
+	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
 	return (ph==PHASE_DAMAGE or ph==PHASE_DAMAGE_CAL)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
+		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)

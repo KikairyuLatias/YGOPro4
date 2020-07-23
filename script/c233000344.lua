@@ -21,27 +21,27 @@ function s.initial_effect(c)
 	e4:SetTargetRange(0,LOCATION_MZONE)
 	e4:SetTarget(s.atktg)
 	e4:SetCondition(s.atcon)
-	e4:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsCode,90000550)))
+	e4:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsCode,233000350)))
 	c:RegisterEffect(e4)
 end
 --summon dragon token
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():GetFlagEffect(id)==0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,90000550,0,TYPES_TOKEN,2000,2000,5,RACE_MACHINE,ATTRIBUTE_LIGHT) end
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,233000350,0,TYPES_TOKEN,2000,2000,5,RACE_MACHINE,ATTRIBUTE_LIGHT) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,tp,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
 	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) and e:GetLabel()~=0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
-	and Duel.IsPlayerCanSpecialSummonMonster(tp,90000550,0,TYPES_TOKEN,2000,2000,5,RACE_MACHINE,ATTRIBUTE_LIGHT) then
-		local token=Duel.CreateToken(tp,90000550)
+	and Duel.IsPlayerCanSpecialSummonMonster(tp,233000350,0,TYPES_TOKEN,2000,2000,5,RACE_MACHINE,ATTRIBUTE_LIGHT) then
+		local token=Duel.CreateToken(tp,233000350)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 --make sure opponent goes through token first
 function s.atcon(e)
-	return Duel.IsExistingMatchingCard(Card.IsCode,e:GetHandlerPlayer(),LOCATION_ONFIELD,0,1,nil,90000550)
+	return Duel.IsExistingMatchingCard(Card.IsCode,e:GetHandlerPlayer(),LOCATION_ONFIELD,0,1,nil,233000350)
 end
 function s.atktg(e,c)
 	return c:IsFaceup() and c~=e:GetHandler() and c:IsSetCard(0x7d5)

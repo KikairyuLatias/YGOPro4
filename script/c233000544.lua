@@ -1,83 +1,83 @@
---Diver Equine Sayuri
+--Diver Deer Colonel Nakonako
 local s,id=GetID()
 function s.initial_effect(c)
-	--pendulum summon
-	aux.EnablePendulumAttribute(c,false)
-	--Activate
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_ACTIVATE)
-	e0:SetCode(EVENT_FREE_CHAIN)
-	c:RegisterEffect(e0)
-	--Special Summon
+	--Fusion procedure
+	c:EnableReviveLimit()
+	Fusion.AddProcMixN(c,true,true,s.ffilter,2)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)
+	--double
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_FIELD)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetTargetRange(LOCATION_MZONE,0)
+	e1:SetCode(EVENT_PRE_BATTLE_DAMAGE)
+	e1:SetCondition(s.dcon)
+	e1:SetOperation(s.dop)
+	c:RegisterEffect(e1)
+	--special summon
 	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e2:SetCountLimit(1,id+99999)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1,id)
+	e2:SetCondition(s.spcon)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
-	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
-	c:RegisterEffect(e3)
-	local e4=e2:Clone()
-	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
-	c:RegisterEffect(e4)
-	--Accel Synchro desu wa!
-	local e6=Effect.CreateEffect(c)
-	e6:SetDescription(aux.Stringid(id,3))
-	e6:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e6:SetType(EFFECT_TYPE_QUICK_O)
-	e6:SetCode(EVENT_FREE_CHAIN)
-	e6:SetHintTiming(0,0x1c0+TIMING_MAIN_END)
-	e6:SetRange(LOCATION_MZONE)
-	e6:SetCountLimit(1,id+99999)
-	e6:SetCondition(s.sccon)
-	e6:SetTarget(s.sctarg)
-	e6:SetOperation(s.scop)
-	c:RegisterEffect(e6)
+	c:RegisterEffect(e2)  
+end
+
+--fusion materials
+s.listed_series={0x4af}
+s.material_setcode=0x4af
+function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
+	return c:IsSetCard(0x4af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
+end
+function s.contactfil(tp)
+	return Duel.GetMatchingGroup(Card.IsAbleToGraveAsCost,tp,LOCATION_ONFIELD,0,nil)
+end
+function s.contactop(g)
+	Duel.SendtoGrave(g,REASON_COST+REASON_MATERIAL)
+end
+function s.fusfilter(c,code,fc,sumtype,tp)
+	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
+end
+function s.splimit(e,se,sp,st)
+	return e:GetHandler():GetLocation()~=LOCATION_EXTRA
 end
 
 --special summon
-function s.filter(c,e,tp)
-	return c:IsSetCard(0x4ae) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsControler(tp)
 end
-function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+	return not eg:IsContains(e:GetHandler()) and eg:IsExists(s.cfilter,1,nil,tp)
+end
+function s.spfilter(c,e,tp)
+	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_GRAVE+LOCATION_REMOVED) and chkc:IsControler(tp) and s.spfilter(chkc,e,tp) end
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK+LOCATION_REMOVED,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_REMOVED)
+		and Duel.IsExistingTarget(s.spfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,1,nil,e,tp) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectTarget(tp,s.spfilter,tp,LOCATION_GRAVE+LOCATION_REMOVED,0,1,1,nil,e,tp)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,g,1,0,0)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK+LOCATION_REMOVED,0,1,1,nil,e,tp)
-	if g:GetCount()>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
 
---Accel Synchro
-function s.sccon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()~=tp and (Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2)
+--double
+function s.dcon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsSetCard(0x4af) and tc:GetBattleTarget()~=nil
 end
-function s.scfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsSynchroSummonable(nil)
-end
-function s.sctarg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	if chk==0 then return Duel.IsExistingMatchingCard(s.scfilter,tp,LOCATION_EXTRA,0,1,nil)==0
-		and Duel.IsExistingMatchingCard(Card.IsSynchroSummonable,tp,LOCATION_EXTRA,0,1,nil,e:GetHandler()) end
-	c:RegisterFlagEffect(id,RESET_CHAIN,0,1)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
-end
-function s.scop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsControler(1-tp) or not c:IsRelateToEffect(e) or c:IsFacedown() then return end
-	local g=Duel.GetMatchingGroup(Card.IsSynchroSummonable,tp,LOCATION_EXTRA,0,nil,c)
-	if #g>0 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		local sg=g:Select(tp,1,1,nil)
-		Duel.SynchroSummon(tp,sg:GetFirst(),c)
-	end
+function s.dop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.ChangeBattleDamage(ep,ev*2)
 end
