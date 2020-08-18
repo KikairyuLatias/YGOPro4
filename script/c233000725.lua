@@ -10,15 +10,15 @@ function s.initial_effect(c)
 	e1:SetCondition(s.spcon)
 	e1:SetCountLimit(1,id)
 	c:RegisterEffect(e1)
-	--splimit
-	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_SPSUMMON_COUNT_LIMIT)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e2:SetTargetRange(0,1)
-	e2:SetValue(1)
-	c:RegisterEffect(e2)
+	--spsummon count limit
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_FIELD)
+	e4:SetCode(EFFECT_SPSUMMON_COUNT_LIMIT)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e4:SetTargetRange(0,1)
+	e4:SetValue(1)
+	c:RegisterEffect(e4)
 end
 
 --special summon

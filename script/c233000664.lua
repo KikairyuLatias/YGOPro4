@@ -57,7 +57,7 @@ end
 --draw power
 function s.drcon(e,tp,eg,ep,ev,re,r,rp)
 	local tg=eg:GetFirst()
-	return eg:GetCount()==1 and tg~=e:GetHandler() and (tg:GetSummonType()==SUMMON_TYPE_SYNCHRO or tg:GetSummonType()==SUMMON_TYPE_FUSION or tg:GetSummonType()==SUMMON_TYPE_XYZ or tg:GetSummonType()==SUMMON_TYPE_LINK) and eg:GetFirst():IsControler(tp)
+	return eg:GetCount()==1 and tg~=e:GetHandler() and (tg:GetSummonType()==SUMMON_TYPE_SYNCHRO or tg:GetSummonType()==SUMMON_TYPE_FUSION or tg:GetSummonType()==SUMMON_TYPE_XYZ or tg:GetSummonType()==SUMMON_TYPE_LINK or (tg:GetSummonType()==SUMMON_TYPE_PENDULUM and tg:IsFaceup())) and eg:GetFirst():IsControler(tp)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) end

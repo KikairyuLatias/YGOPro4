@@ -3,11 +3,6 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
-	--Activate
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	c:RegisterEffect(e1)
 	--atk
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
@@ -69,7 +64,7 @@ function s.initial_effect(c)
 	e9:SetType(EFFECT_TYPE_SINGLE)
 	e9:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE+EFFECT_FLAG_SINGLE_RANGE)
 	e9:SetRange(LOCATION_MZONE)
-	e9:SetCode(90000701)
+	e9:SetCode(id)
 	c:RegisterEffect(e9)
 end
 --stat boost

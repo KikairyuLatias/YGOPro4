@@ -92,7 +92,7 @@ end
 function s.cfilter2(c,tp)
 	return c:IsFaceup() and e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsControler(tp)
 end
-function s.actcon(e)
+function s.actcon2(e)
 	local tp=e:GetHandlerPlayer()
 	local a=Duel.GetAttacker()
 	return (a and s.cfilter(a,tp))

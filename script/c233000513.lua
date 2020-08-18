@@ -41,28 +41,31 @@ function s.actcon(e)
 	return (a and s.cfilterkk(a,tp)) or (d and s.cfilterkk(d,tp))
 end
 
---replace
-function s.cfilter(c,tp)
-	return c:IsReason(REASON_BATTLE) and c:GetPreviousSetCard(0x4af)
-		and c:IsPreviousControler(tp) and c:IsPreviousLocation(LOCATION_ONFIELD) and c:IsPreviousPosition(POS_FACEUP)
-end
+--replacen
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	if eg:IsExists(s.cfilter,1,nil,tp) then
-		local tc=eg:GetFirst()
-		e:SetLabel(tc:GetOriginalCode())
-		return Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,e,tp,tc:GetOriginalCode())
+	local atk=0
+	local tc=eg:GetFirst()
+	for tc in aux.Next(eg) do
+		if tc:IsReason(REASON_DESTROY) and tc:IsSetCard(0x4af) and not tc:IsPreviousLocation(LOCATION_SZONE) then
+			local tatk=tc:GetAttack()
+			if tatk>atk then atk=tatk end
+		end
 	end
+	if atk>0 then e:SetLabel(atk) end
+	return atk>0
 end
-function s.spfilter(c,e,tp,code)
-	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsOriginalCode(code)
+function s.spfilter(c,e,tp,lv)
+	return c:IsLevelBelow(lv) and c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return e:GetHandler():IsRelateToEffect(e) and not e:GetHandler():IsStatus(STATUS_CHAINING)
+		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,e,tp,e:GetLabel()) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 or not e:GetHandler():IsRelateToEffect(e) then return end
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+	if not e:GetHandler():IsRelateToEffect(e) then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil,e,tp,e:GetLabel())
 	if #g>0 then

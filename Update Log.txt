@@ -117,3 +117,10 @@ Replacing some images for other stuff for updating/balancing
 
 You can also find a full list of cards and stuff on my new site:
 https://sites.google.com/view/sakuracarddesign/home
+
+8/18/2020
+
+- Minor code fixing (Pendulums)
+- Some images for Cherry Rabbit
+- Some images for other cards (Hieratics custom)
+- Moved Shira's stuff to the 800 range and made it generic Beast supports (with new cards)

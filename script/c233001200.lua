@@ -12,12 +12,18 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetRange(LOCATION_MZONE)
+	e2:SetRange(LOCATION_SZONE)
 	e2:SetOperation(s.limop)
 	c:RegisterEffect(e1)
 	local e3=e2:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e4:SetRange(LOCATION_SZONE)
+	e4:SetCode(EVENT_CHAIN_END)
+	e4:SetOperation(s.limop2)
+	c:RegisterEffect(e4)
 end
 --search
 function s.filter(c)
@@ -35,17 +41,14 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --can't trigger
-function s.limfilter(c,tp)
-	return c:GetSummonPlayer()==tp and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_BEAST)
-end
 function s.limcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():GetOverlayCount()>0 and eg:IsExists(s.limfilter,1,nil,tp)
+	return eg:IsExists(Card.IsSummonPlayer,1,nil,tp) and eg:IsAttribute(ATTRIBUTE_LIGHT) and eg:IsRace(RACE_BEAST)
 end
 function s.limop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetCurrentChain()==0 then
 		Duel.SetChainLimitTillChainEnd(s.chainlm)
-	else
-		e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END,0,1)
+	elseif Duel.GetCurrentChain()==1 then
+		e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1)
 	end
 end
 function s.limop2(e,tp,eg,ep,ev,re,r,rp)
@@ -53,4 +56,7 @@ function s.limop2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SetChainLimitTillChainEnd(s.chainlm)
 	end
 	e:GetHandler():ResetFlagEffect(id)
+end
+function s.chainlm(e,rp,tp)
+	return tp==rp
 end

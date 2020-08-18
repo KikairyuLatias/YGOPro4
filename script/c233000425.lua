@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
 	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_SZONE)
+	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
@@ -37,6 +37,10 @@ function s.initial_effect(c)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)
+end
+--mat filter
+function s.matfilter(c,scard,sumtype,tp)
+	return c:IsRace(RACE_BEAST,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_LIGHT,scard,sumtype,tp)
 end
 --shuffle/draw
 function s.filter(c)

@@ -22,15 +22,24 @@ function s.initial_effect(c)
 	e2:SetOperation(s.damop)
 	c:RegisterEffect(e2)
 	--damage (rank)
-	local e2a=Effect.CreateEffect(c)
-	e2a:SetDescription(aux.Stringid(id,0))
-	e2a:SetCategory(CATEGORY_DAMAGE)
-	e2a:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e2a:SetCode(EVENT_BATTLE_DESTROYING)
-	e2a:SetTarget(s.damtg2)
-	e2a:SetOperation(s.damop2)
-	c:RegisterEffect(e2a)
-	--flinch
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_DAMAGE)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e3:SetCode(EVENT_BATTLE_DESTROYING)
+	e3:SetTarget(s.damtg2)
+	e3:SetOperation(s.damop2)
+	c:RegisterEffect(e3)
+	--flinch time
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,1))
+	e4:SetType(EFFECT_TYPE_IGNITION)
+	e4:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetCountLimit(1,id)
+	e4:SetTarget(s.target)
+	e4:SetOperation(s.operation)
+	c:RegisterEffect(e4)
 end
 
 --level burn
@@ -64,5 +73,23 @@ function s.damop2(e,tp,eg,ep,ev,re,r,rp)
 	local p=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER)
 	if tc:IsRelateToEffect(e) then
 		Duel.Damage(p,tc:GetRank()*200,REASON_EFFECT)
+	end
+end
+
+--air slash flinching
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) end
+	if chk==0 then return Duel.IsExistingTarget(nil,tp,0,LOCATION_MZONE,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+	Duel.SelectTarget(tp,nil,tp,0,LOCATION_MZONE,1,1,nil)
+end
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e)  then
+		local e1=Effect.CreateEffect(e:GetHandler())
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_CANNOT_ATTACK)
+		e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,2)
+		tc:RegisterEffect(e1)
 	end
 end

@@ -8,6 +8,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e0)
 	--Avoid MR4
 	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e1:SetRange(LOCATION_SZONE)
 	e1:SetCode(EFFECT_SEND_REPLACE)
@@ -20,30 +21,28 @@ function s.initial_effect(c)
 	e3:SetCategory(CATEGORY_DRAW)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,id)
-	e3:SetCondition(s.drcon)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetRange(LOCATION_SZONE)
 	e3:SetTarget(s.drtg)
 	e3:SetOperation(s.drop)
 	c:RegisterEffect(e3)
 end
+
 --draw power
-function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4c9)
-end
-function s.drcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetTurnPlayer()~=tp and not eg:IsContains(e:GetHandler()) and eg:IsExists(s.filter,1,nil)
+function s.drfilter(c)
+	return c:IsSetCard(0x4c9) and c:IsType(TYPE_MONSTER)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsRelateToEffect(e) and e:GetHandler():IsFaceup() end
-	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(1)
+	if chk==0 then return eg:IsExists(s.drfilter,1,nil) 
+		and Duel.IsPlayerCanDraw(tp,1) end
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
-	if not e:GetHandler():IsRelateToEffect(e) or e:GetHandler():IsFacedown() then return end
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Draw(p,d,REASON_EFFECT)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	if Duel.Draw(tp,1,REASON_EFFECT)~=0 then
+		Duel.ShuffleHand(tp)
+	end
 end
 
 --return

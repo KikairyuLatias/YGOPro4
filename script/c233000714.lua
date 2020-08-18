@@ -89,7 +89,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 --blow stuff up
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,0,1,2)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)

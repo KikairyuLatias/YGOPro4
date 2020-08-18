@@ -3,11 +3,6 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
-	--Activate
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_ACTIVATE)
-	e0:SetCode(EVENT_FREE_CHAIN)
-	c:RegisterEffect(e0)
 	--draw 2, ditch 1
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
@@ -15,7 +10,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCode(EVENT_BATTLE_DESTROYING)
-	e2:SetCountLimit(1,EFFECT_COUNT_CODE_SINGLE)
+	e2:SetCountLimit(1)
 	e2:SetRange(LOCATION_PZONE)
 	e2:SetCondition(s.batcon)
 	e2:SetTarget(s.drtg)
@@ -49,30 +44,13 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)  
 end
 
---lp restoration
+--draw 2, ditch 1
 function s.batcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	local bc=tc:GetBattleTarget()
 	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x4c8)
 		and bc:IsReason(REASON_BATTLE)
 end
-function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	local rec=bc:GetAttack()
-	if bc:GetAttack() < bc:GetDefense() then rec=bc:GetDefense() end
-	if rec<0 then rec=0 end
-	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(rec)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,rec)
-end
-function s.recop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Recover(p,d,REASON_EFFECT)
-end
-
---draw 2, discard 1
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsPlayerCanDraw(tp,2) end
 	if chk==0 then return true end
