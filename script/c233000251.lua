@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e1:SetCode(EFFECT_ADD_RACE)
-	e1:SetRange(LOCATION_MZONE)
+	e1:SetRange(LOCATION_MZONE+LOCATION_EXTRA+LOCATION_REMOVED+LOCATION_GRAVE)
 	e1:SetValue(RACE_PSYCHIC)
 	c:RegisterEffect(e1)
 	--negate

@@ -44,7 +44,7 @@ end
 
 --cut off hands
 function s.cfilter(c,tp)
-	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK)
+	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK) or c:IsPreviousLocation(LOCATION_GRAVE)
 end
 function s.dfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c9)

@@ -17,7 +17,7 @@ function s.initial_effect(c)
 end
 --on summon
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x7d5) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x7d5) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id) and not c:IsHasEffect(EFFECT_NECRO_VALLEY) and c:IsLevelBelow(4)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
 	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e0:SetCode(EFFECT_ADD_RACE)
-	e0:SetRange(LOCATION_MZONE)
+	e0:SetRange(LOCATION_MZONE+LOCATION_EXTRA+LOCATION_REMOVED+LOCATION_GRAVE)
 	e0:SetValue(RACE_PSYCHIC)
 	c:RegisterEffect(e0)
 	--the power of ZPD banish authority, so lock on and shoot

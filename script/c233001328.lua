@@ -36,7 +36,7 @@ end
 
 -- spsummon
 function s.filter(c)
-	return c:IsSetCard(0x4c8) and c:IsType(TYPE_MONSTER) and c:GetCode()~=id
+	return c:IsSetCard(0x4c8) and c:IsType(TYPE_MONSTER)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

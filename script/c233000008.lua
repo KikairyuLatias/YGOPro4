@@ -65,7 +65,7 @@ function s.atkcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Release(g,REASON_COST)
 end
 function s.atkfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x101b) and not c~=e:GetHandler() and not c:IsHasEffect(EFFECT_DIRECT_ATTACK)
+	return c:IsFaceup() and c:IsSetCard(0x101b) and c~=e:GetHandler()
 end
 function s.atktg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.atkfilter(chkc) end

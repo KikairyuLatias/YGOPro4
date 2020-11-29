@@ -124,3 +124,12 @@ https://sites.google.com/view/sakuracarddesign/home
 - Some images for Cherry Rabbit
 - Some images for other cards (Hieratics custom)
 - Moved Shira's stuff to the 800 range and made it generic Beast supports (with new cards)
+- Other changes
+
+11/29/2020
+
+- Fixing scripts for several cards (e.g. Diver Deer Master Popohau's hand banish/burn)
+- Rush Duel cards are separated into their own category
+- Actual images for stuff instead of fillers
+- Addition of Skyfurry and Erpeta Metensar
+- New arts for some cards.

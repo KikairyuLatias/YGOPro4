@@ -26,19 +26,21 @@ function s.initial_effect(c)
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_SINGLE)
 	e5:SetCode(EFFECT_SYNCHRO_LEVEL)
-	e5:SetValue(s.slevel)
+	e5:SetValue(s.slv)
 	c:RegisterEffect(e5)
 end
 
 --level mod
-function s.slevel(e,c)
-	if rc:IsSetCard(0x439) then
-		return 5,4,e:GetHandler():GetLevel()
+function s.slv(e,c)
+	if c:IsSetCard(0x439) then
+		local lv=e:GetHandler():GetLevel()
+		return 4*65536+lv	
 	else
-		return e:GetHandler():GetLevel()
+		return 5*65536+lv 
 	end
 end
 
+--material
 function s.matlimit(e,c)
 	if not c then return false end
 	return not c:IsSetCard(0x439)
