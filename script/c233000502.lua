@@ -23,7 +23,7 @@ end
 
 --ss
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and not c:IsCode(id)
+	return c:IsFaceup() and c:IsSetCard(0x14af) and not c:IsCode(id)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -33,7 +33,7 @@ end
 
 --dual strike
 function s.filter2(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and not c:IsHasEffect(EFFECT_EXTRA_ATTACK)
+	return c:IsFaceup() and c:IsSetCard(0x14af) and not c:IsHasEffect(EFFECT_EXTRA_ATTACK)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter2(chkc) end

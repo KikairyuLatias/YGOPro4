@@ -28,7 +28,7 @@ function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>2 end
 end
 function s.thfilter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToHand()
+	return c:IsSetCard(0x14af) and c:IsAbleToHand()
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)<3 then return end

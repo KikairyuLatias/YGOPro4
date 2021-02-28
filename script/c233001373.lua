@@ -1,14 +1,14 @@
 --Skyfurry Arrest
 local s,id=GetID()
 function s.initial_effect(c)
-	--Activate
+	--Activate(summon)
 	local e1=Effect.CreateEffect(c)
-	e1:SetCategory(CATEGORY_DISABLE_SUMMON+CATEGORY_REMOVE)
+	e1:SetCategory(CATEGORY_DISABLE_SUMMON+CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_SUMMON)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.activate)
+	e1:SetCondition(s.condition1)
+	e1:SetTarget(s.target1)
+	e1:SetOperation(s.activate1)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON)
@@ -27,16 +27,16 @@ end
 function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x7e0)
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) and ep~=tp
-		and Duel.GetCurrentChain()==0
+
+function s.condition1(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) and Duel.GetCurrentChain()==0
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.target1(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_DISABLE_SUMMON,eg,eg:GetCount(),0,0)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,eg:GetCount(),0,0)
+	Duel.SetOperationInfo(0,CATEGORY_DISABLE_SUMMON,eg,#eg,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,eg,#eg,0,0)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
+function s.activate1(e,tp,eg,ep,ev,re,r,rp)
 	Duel.NegateSummon(eg)
 	Duel.Remove(eg,POS_FACEUP,REASON_EFFECT)
 end

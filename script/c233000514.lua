@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),2)
 	c:EnableReviveLimit()
 	--added ns
 	local e1=Effect.CreateEffect(c)
@@ -10,7 +10,7 @@ function s.initial_effect(c)
 	e1:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
 	e1:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4af))
+	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x14af))
 	c:RegisterEffect(e1)
 	--Dark Law
 	local e2=Effect.CreateEffect(c)

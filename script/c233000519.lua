@@ -43,10 +43,10 @@ end
 
 --boost
 function s.tg(e,c)
-	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x14af) and c:IsType(TYPE_MONSTER)
 end
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsSetCard(0x14af)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*200
@@ -57,7 +57,7 @@ end
 
 --ss condition
 function s.filter2(c)
-	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:GetLevel()<=4
+	return c:IsSetCard(0x14af) and c:IsType(TYPE_MONSTER) and c:GetLevel()<=4
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -82,12 +82,12 @@ function s.lkcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.RegisterFlagEffect(tp,id,RESET_PHASE+PHASE_END,0,1)
 end
 function s.lkfilter(c)
-	return c:IsSetCard(0x4af) and c:IsLinkMonster() and c:IsSpecialSummonable(SUMMON_TYPE_LINK)
+	return c:IsSetCard(0x14af) and c:IsLinkMonster() and c:IsSpecialSummonable(SUMMON_TYPE_LINK)
 end
 function s.lktg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
 		local el={}
-		local mg=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),tp,LOCATION_MZONE,0,nil)
+		local mg=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x14af),tp,LOCATION_MZONE,0,nil)
 		local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,LOCATION_MZONE,0,mg)
 		for tc in aux.Next(g) do
 			local e1=Effect.CreateEffect(e:GetHandler())

@@ -29,7 +29,7 @@ function s.initial_effect(c)
 end
 -- take the hit
 function s.repfilter(c,tp)
-	return c:IsFaceup() and c:IsControler(tp) and c:IsLocation(LOCATION_ONFIELD) and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsControler(tp) and c:IsLocation(LOCATION_ONFIELD) and c:IsSetCard(0x14af)
 		and not c:IsReason(REASON_REPLACE) and (c:IsReason(REASON_BATTLE) or (c:IsReason(REASON_EFFECT) and c:GetReasonPlayer()~=tp))
 end
 function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -44,6 +44,7 @@ end
 function s.repop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Destroy(e:GetHandler(),REASON_EFFECT+REASON_REPLACE)
 end
+
 --searcher
 function s.con(e)
 	return e:GetHandler():IsFaceup() and e:GetHandler():IsLocation(LOCATION_MZONE)
@@ -53,7 +54,7 @@ function s.indval(e,re,tp)
 end
 
 function s.filter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToHand()
+	return c:IsSetCard(0x14af) and c:IsAbleToHand()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end

@@ -36,7 +36,7 @@ end
 
 --special summon
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x4ae) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
+	return c:IsSetCard(0x24af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -57,7 +57,7 @@ function s.sccon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp and (Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2)
 end
 function s.scfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsSynchroSummonable(nil)
+	return c:IsSetCard(0x24af) and c:IsSynchroSummonable(nil)
 end
 function s.sctarg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()

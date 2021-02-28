@@ -24,10 +24,10 @@ function s.initial_effect(c)
 end
 --tag out feature
 function s.spfilter(c,code,lv,e,tp)
-	return c:IsSetCard(0x4af) and not c:IsCode(code) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
+	return c:IsSetCard(0x14af) and not c:IsCode(code) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
 end
 function s.filter(c,e,tp)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsAbleToDeck()
+	return c:IsFaceup() and c:IsSetCard(0x14af) and c:IsAbleToDeck()
 		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,c:GetCode(),c:GetOriginalLevel(),e,tp)
 		and Duel.GetLocationCountFromEx(tp,tp,c)>0
 end
@@ -59,7 +59,7 @@ function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Remove(e:GetHandler(),POS_FACEUP,REASON_COST)
 end
 function s.spfilter2(c,e,tp)
-	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(0x14af) and c:IsType(TYPE_MONSTER) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

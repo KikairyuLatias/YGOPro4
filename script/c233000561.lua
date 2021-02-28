@@ -31,10 +31,10 @@ function s.initial_effect(c)
 end
 --boost
 function s.tg(e,c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER)
 end
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4ae)
+	return c:IsFaceup() and c:IsSetCard(0x24af)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*200
@@ -45,7 +45,7 @@ end
 
 --ss condition
 function s.filter2(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

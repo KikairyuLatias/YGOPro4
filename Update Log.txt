@@ -133,3 +133,9 @@ https://sites.google.com/view/sakuracarddesign/home
 - Actual images for stuff instead of fillers
 - Addition of Skyfurry and Erpeta Metensar
 - New arts for some cards.
+
+02/27/2021
+
+- Correcting some scripts
+- Added legacy support for various archetypes
+- Addition of Radiant Dragon Reindeer in the 2330014xx range

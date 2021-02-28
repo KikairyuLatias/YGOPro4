@@ -21,13 +21,12 @@ function s.initial_effect(c)
 end
 
 --ss
-function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x5f1)
+function s.spcon(e,c)
+	if c==nil then return true end
+	if Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)<=0 then return false end
+	return Duel.GetMatchingGroup(Card.IsSetCard,c:GetControler(),LOCATION_MZONE,0,nil,0x5f1):GetClassCount(Card.GetCode)>=2
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=2
-end
+
 --halving
 function s.cfilter(c)
 	return c:IsRace(RACE_DRAGON) and c:IsAbleToRemoveAsCost()

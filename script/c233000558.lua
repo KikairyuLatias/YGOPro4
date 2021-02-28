@@ -52,16 +52,16 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 end
 --fusion materials
-s.material_setcode=0x4ae
+s.material_setcode=0x24af
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsSetCard(0x4ae,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
+	return c:IsSetCard(0x24af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
 end
 function s.fusfilter(c,code,fc,sumtype,tp)
 	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
 end
 --get out of the P-Zone
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
@@ -92,7 +92,7 @@ function s.penop(e,tp,eg,ep,ev,re,r,rp)
 end
 --recycle draw
 function s.tdfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsAbleToDeck()
+	return c:IsSetCard(0x24af) and c:IsAbleToDeck()
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.tdfilter(chkc) end
@@ -118,13 +118,13 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --negate
-s.listed_series={0x4ae}
+s.listed_series={0x24af}
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local c=e:GetHandler()
 	if chkc then return chkc:IsOnField() and chkc:IsFaceup() and chkc~=c end
-	if chk==0 then return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x4ae),tp,LOCATION_MZONE,0,1,nil)
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x24af),tp,LOCATION_MZONE,0,1,nil)
 		and Duel.IsExistingTarget(Card.IsFaceup,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,c) end
-	local g=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x4ae),tp,LOCATION_MZONE,0,nil)
+	local g=Duel.GetMatchingGroup(aux.FilterFaceupFunction(Card.IsSetCard,0x24af),tp,LOCATION_MZONE,0,nil)
 	local ct=g:GetClassCount(Card.GetCode)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local sg=Duel.SelectTarget(tp,Card.IsFaceup,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,ct,c)

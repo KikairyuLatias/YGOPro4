@@ -29,13 +29,12 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 end
 --ss
-function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x652)
+function s.spcon(e,c)
+	if c==nil then return true end
+	if Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)<=0 then return false end
+	return Duel.GetMatchingGroup(Card.IsSetCard,c:GetControler(),LOCATION_MZONE,0,nil,0x652):GetClassCount(Card.GetCode)>=2
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=2
-end
+
 --negation
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 	return re:IsActiveType(TYPE_MONSTER) or re:IsActiveType(TYPE_SPELL) or re:IsActiveType(TYPE_TRAP) and Duel.IsChainNegatable(ev)

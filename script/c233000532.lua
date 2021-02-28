@@ -74,11 +74,14 @@ end
 function s.relval(e,c)
 	return c==e:GetHandler()
 end
+function s.unaffectedval(e,te)
+	return te:GetOwnerPlayer()~=e:GetHandlerPlayer()
+end
 
 --deck mill
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4af)
+	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x14af)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(1-tp,2)

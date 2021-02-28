@@ -27,7 +27,7 @@ function s.initial_effect(c)
 end
 --special
 function s.cfilter(c)
-	return c:IsFacedown() or not c:IsSetCard(0x4ae)
+	return c:IsFacedown() or not c:IsSetCard(0x24af)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return not Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
@@ -45,7 +45,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --level change
 function s.filter(c)
-	return c:IsFaceup() and c:GetLevel()>0 and c:IsSetCard(0x4ae)
+	return c:IsFaceup() and c:GetLevel()>0 and c:IsSetCard(0x24af)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter(chkc) end

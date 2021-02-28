@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x4af),1,99)
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x14af),1,99)
 	c:EnableReviveLimit()
 	--protection
 		--cannot target
@@ -55,7 +55,7 @@ function s.mtop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.ConfirmDecktop(tp,5)
 	local g=Duel.GetDecktopGroup(tp,5)
-	local ct=g:FilterCount(Card.IsSetCard,nil,0x4af)
+	local ct=g:FilterCount(Card.IsSetCard,nil,0x14af)
 	Duel.ShuffleDeck(tp)
 	if ct>1 then
 		local e1=Effect.CreateEffect(c)

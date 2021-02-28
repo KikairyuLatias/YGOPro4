@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),2,2)
 	c:EnableReviveLimit()
 	--cannot be targeted
 	local e1=Effect.CreateEffect(c)
@@ -38,12 +38,12 @@ function s.initial_effect(c)
 	
 --protection
 function s.tgtg(e,c)
-	return e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsSetCard(0x4af)
+	return e:GetHandler():GetLinkedGroup():IsContains(c) and c:IsSetCard(0x14af)
 end
 
 --ss condition
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
+	return c:IsSetCard(0x14af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

@@ -58,8 +58,10 @@ end
 
 --recycle draw
 function s.drcon(e,c)
-	return Duel.IsExistingMatchingCard(Card.IsSetCard,tp,LOCATION_PZONE,0,1,e:GetHandler(),0x7c5)
+	local tp=e:GetHandlerPlayer()
+	return Duel.IsExistingMatchingCard(Card.IsSetCard,tp,LOCATION_PZONE,0,1,nil,0x7c5)
 end
+
 function s.tdfilter(c)
 	return c:IsSetCard(0x7c5) and c:IsAbleToDeck()
 end

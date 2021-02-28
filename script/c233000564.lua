@@ -30,7 +30,7 @@ end
 
 --summon condition
 function s.lcheck(g,lc,tp)
-	return g:IsExists(Card.IsSetCard,1,nil,0x4ae)
+	return g:IsExists(Card.IsSetCard,1,nil,0x24af)
 end
 
 --ss
@@ -38,7 +38,7 @@ function s.sumcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
 end
 function s.spfilter(c,e,tp,zone)
-	return c:IsSetCard(0x4ae) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
+	return c:IsSetCard(0x24af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP,tp,zone)
 end
 function s.sumtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local zone=e:GetHandler():GetLinkedZone(tp)&0x1f
@@ -64,7 +64,7 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.RegisterEffect(e1,tp)
 end
 function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
-	return not c:IsSetCard(0x4ae)
+	return not c:IsSetCard(0x24af)
 end
 
 --diver equine banishing
@@ -72,7 +72,7 @@ function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=eg:GetFirst()
 	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
-		and rc:IsFaceup() and rc:IsSetCard(0x4ae) and rc:IsControler(tp)
+		and rc:IsFaceup() and rc:IsSetCard(0x24af) and rc:IsControler(tp)
 end
 
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)

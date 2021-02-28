@@ -53,9 +53,10 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --QP handcon
-function s.handcon(e)
-	return Duel.IsExistingMatchingCard(s.cfilter2,tp,LOCATION_MZONE,0,1,nil)
-end
 function s.cfilter2(c)
 	return c:IsFaceup() and c:IsSetCard(0x4c8) and c:GetBaseAttack()>=2000
+end
+
+function s.handcon(e)
+	return Duel.IsExistingMatchingCard(s.cfilter2,e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end

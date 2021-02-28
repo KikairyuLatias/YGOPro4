@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--xyz summon
-	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),4,2)
+	Xyz.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),4,2)
 	c:EnableReviveLimit()
 	--act limit
 	local e1=Effect.CreateEffect(c)
@@ -60,7 +60,7 @@ end
 
 --protect
 function s.limfilter(c,tp)
-	return c:GetSummonPlayer()==tp and c:IsSetCard(0x4af)
+	return c:GetSummonPlayer()==tp and c:IsSetCard(0x14af)
 end
 function s.limcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.limfilter,1,nil,tp)
@@ -80,7 +80,7 @@ function s.limop2(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.chainop(e,tp,eg,ep,ev,re,r,rp)
 	local rc=re:GetHandler()
-	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x4af) then
+	if re:IsHasType(EFFECT_TYPE_ACTIVATE) and rc:IsSetCard(0x14af) then
 		Duel.SetChainLimit(s.chainlm)
 	end
 end
@@ -96,7 +96,7 @@ end
 
 --shuffle back banished shit
 function s.tdfilter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToDeck()
+	return c:IsSetCard(0x14af) and c:IsAbleToDeck()
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and s.tdfilter(chkc) end
@@ -118,7 +118,7 @@ end
 
 --special summon
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(0x14af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

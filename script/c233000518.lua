@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),3)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),3)
 	c:EnableReviveLimit()
 	--targeting immunity
 	local e1=Effect.CreateEffect(c)
@@ -62,7 +62,7 @@ end
 
 --extra attack
 function s.tgfilter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToRemove()
+	return c:IsSetCard(0x14af) and c:IsAbleToRemove()
 end
 function s.tgtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil) end

@@ -29,7 +29,7 @@ function s.initial_effect(c)
 end
 --ss condition
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsDiscardable()
+	return c:IsSetCard(0x24af) and c:IsDiscardable()
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,2,e:GetHandler()) end
@@ -47,7 +47,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --kirin effect
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4ae) and c:IsAbleToHand()
+	return c:IsFaceup() and c:IsSetCard(0x24af) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end

@@ -9,7 +9,7 @@ function s.initial_effect(c)
 	e2:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
 	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4ae))
+	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x24af))
 	c:RegisterEffect(e2)
 	--fusion summon
 	local e5=Effect.CreateEffect(c)
@@ -28,7 +28,7 @@ function s.filter1(c,e)
 	return c:IsCanBeFusionMaterial() and not c:IsImmuneToEffect(e)
 end
 function s.filter2(c,e,tp,m,f,gc)
-	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x4ae) and (not f or f(c))
+	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x24af) and (not f or f(c))
 		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_FUSION,tp,false,false) and c:CheckFusionMaterial(m,gc)
 end
 function s.fstg(e,tp,eg,ep,ev,re,r,rp,chk)

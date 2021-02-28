@@ -21,12 +21,14 @@ function s.initial_effect(c)
 end
 
 --ss
-function s.filter2(c)
+function s.spfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x5f1)
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=2
+function s.spcon(e,c)
+	if c==nil then return true end
+	local tp=c:GetControler()
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_MZONE,0,2,nil)
 end
 
 --level change

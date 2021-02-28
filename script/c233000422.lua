@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e2)
 	local e3=e1:Clone()
-	e3:SetCode(EVENT_SPECIAL_SUMMON_SUCCESS)
+	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e3)
 	--opponent can't trigger
 	local e4=Effect.CreateEffect(c)

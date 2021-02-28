@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),2)
 	c:EnableReviveLimit()
 	--atk up
 	local e1=Effect.CreateEffect(c)
@@ -39,7 +39,7 @@ function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local rc=eg:GetFirst()
 	return rc:IsRelateToBattle() and rc:IsStatus(STATUS_OPPO_BATTLE)
-		and rc:IsFaceup() and rc:IsSetCard(0x4af) and rc:IsControler(tp)
+		and rc:IsFaceup() and rc:IsSetCard(0x14af) and rc:IsControler(tp)
 end
 
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
@@ -59,7 +59,7 @@ end
 
 --weaken shit up
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsSetCard(0x14af)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),0,LOCATION_MZONE,nil)*-200

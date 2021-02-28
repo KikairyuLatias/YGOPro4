@@ -77,6 +77,10 @@ function s.actcon(e)
 	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end
 
+function s.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
+end
+
 --special summon myself
 function s.aclimit(e,re,tp)
 	return not re:GetHandler():IsImmuneToEffect(e)

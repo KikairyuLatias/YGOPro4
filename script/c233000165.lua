@@ -60,12 +60,10 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --ss
-function s.filterx(c)
-	return c:IsFaceup() and c:IsSetCard(0x4ad)
-end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filterx,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=2
+function s.spcon(e,c)
+	if c==nil then return true end
+	if Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)<=0 then return false end
+	return Duel.GetMatchingGroup(Card.IsSetCard,c:GetControler(),LOCATION_MZONE,0,nil,0x4ad):GetClassCount(Card.GetCode)>=2
 end
 
 --negate

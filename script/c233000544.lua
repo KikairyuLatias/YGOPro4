@@ -30,10 +30,10 @@ function s.initial_effect(c)
 end
 
 --fusion materials
-s.listed_series={0x4af}
-s.material_setcode=0x4af
+s.listed_series={0x14af}
+s.material_setcode=0x14af
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsSetCard(0x4af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
+	return c:IsSetCard(0x14af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
 end
 function s.contactfil(tp)
 	return Duel.GetMatchingGroup(Card.IsAbleToGraveAsCost,tp,LOCATION_ONFIELD,0,nil)
@@ -50,13 +50,13 @@ end
 
 --special summon
 function s.cfilter(c,tp)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsControler(tp)
+	return c:IsFaceup() and c:IsSetCard(0x14af) and c:IsControler(tp)
 end
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return not eg:IsContains(e:GetHandler()) and eg:IsExists(s.cfilter,1,nil,tp)
 end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsSetCard(0x14af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE+LOCATION_REMOVED) and chkc:IsControler(tp) and s.spfilter(chkc,e,tp) end
@@ -76,7 +76,7 @@ end
 --double
 function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsSetCard(0x4af) and tc:GetBattleTarget()~=nil
+	return ep~=tp and tc:IsSetCard(0x14af) and tc:GetBattleTarget()~=nil
 end
 function s.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

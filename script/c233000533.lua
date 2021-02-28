@@ -19,7 +19,7 @@ end
 --functions
 function s.dcon(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsSetCard(0x4af) and tc:GetBattleTarget()~=nil
+	return ep~=tp and tc:IsSetCard(0x14af) and tc:GetBattleTarget()~=nil
 end
 function s.dop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev*2)

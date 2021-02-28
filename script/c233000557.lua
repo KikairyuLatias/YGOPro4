@@ -5,7 +5,7 @@ function s.initial_effect(c)
 		Pendulum.AddProcedure(c)
 	--fusion material
 	c:EnableReviveLimit()
-	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4ae),2)
+	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x24af),2)
 	--special summon self from P-Zone by Tributing
 	local e0=Effect.CreateEffect(c)
 	e0:SetDescription(aux.Stringid(id,0))
@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
 	e2:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4ae))
+	e2:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x24af))
 	c:RegisterEffect(e2)
 	--burn damage for arch members
 	local e3=Effect.CreateEffect(c)
@@ -51,7 +51,7 @@ function s.initial_effect(c)
 end
 --get out of the P-Zone
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
@@ -74,7 +74,7 @@ end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	local bc=tc:GetBattleTarget()
-	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x4ae)
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x24af)
 		and bc:IsReason(REASON_BATTLE)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)

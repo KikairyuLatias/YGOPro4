@@ -41,7 +41,7 @@ function s.initial_effect(c)
 end
 --zero damage
 function s.efilter(e,c)
-	return c:IsSetCard(0x4af)
+	return c:IsSetCard(0x14af)
 end
 
 --bounce
@@ -69,7 +69,7 @@ end
 --bounce if used as link material
 function s.thcon2(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	return c:IsLocation(LOCATION_GRAVE) and r & REASON_LINK ~=0 and c:GetReasonCard():IsSetCard(0x4af)
+	return c:IsLocation(LOCATION_GRAVE) and r & REASON_LINK ~=0 and c:GetReasonCard():IsSetCard(0x14af)
 end
 function s.thtg2(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsAbleToHand() end

@@ -70,8 +70,9 @@ function s.initial_effect(c)
 end
 
 --scale change slightly (to summon the Synchro...)
-function s.sccon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(Card.IsSetCard,tp,LOCATION_PZONE,0,1,e:GetHandler(),0x7c5)
+function s.sccon(e)
+	local tp=e:GetHandlerPlayer()
+	return Duel.IsExistingMatchingCard(Card.IsSetCard,tp,LOCATION_PZONE,0,1,nil,0x7c5)
 end
 
 --equip self from P-Zone

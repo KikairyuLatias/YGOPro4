@@ -27,7 +27,7 @@ end
 
 --shuffle and replace
 function s.cfilter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToDeckAsCost()
+	return c:IsSetCard(0x14af) and c:IsAbleToDeckAsCost()
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,nil) end
@@ -49,5 +49,5 @@ end
 
 --attack target
 function s.tgtg(e,c)
-	return c:IsSetCard(0x4af) and c~=e:GetHandler()
+	return c:IsSetCard(0x14af) and c~=e:GetHandler()
 end

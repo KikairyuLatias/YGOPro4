@@ -31,12 +31,11 @@ function s.initial_effect(c)
 end
 
 --ss
-function s.filterx(c)
-	return c:IsFaceup() and c:IsSetCard(0x7db)
-end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filterx,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=2
+s.listed_series={0x7db}
+function s.spcon(e,c)
+	if c==nil then return true end
+	if Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)<=0 then return false end
+	return Duel.GetMatchingGroup(Card.IsSetCard,c:GetControler(),LOCATION_MZONE,0,nil,0x7db):GetClassCount(Card.GetCode)>=2
 end
 
 --destroy stuff

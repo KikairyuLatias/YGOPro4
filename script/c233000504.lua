@@ -30,7 +30,7 @@ function s.con(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp
 end
 function s.filter(c)
-	return c:IsSetCard(0x4af) and c:IsAbleToHand() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
+	return c:IsSetCard(0x14af) and c:IsAbleToHand() and (c:IsLocation(LOCATION_GRAVE) or c:IsFaceup())
 end
 function s.tg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(0x14) and chkc:IsControler(tp) and s.filter(chkc) end
@@ -48,5 +48,5 @@ end
 
 --attack target
 function s.tgtg(e,c)
-	return c:IsSetCard(0x4af) and c~=e:GetHandler()
+	return c:IsSetCard(0x14af) and c~=e:GetHandler()
 end

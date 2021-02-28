@@ -24,7 +24,7 @@ end
 
 -- spsummon
 function s.filter(c)
-	return c:IsSetCard(0x7e0) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x7e0) and c:IsType(TYPE_MONSTER) and not c:IsCode(id)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -47,13 +47,13 @@ end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsControler(1-tp) and s.thfilter(chkc) end
 	if chk==0 then return Duel.IsExistingTarget(s.thfilter,tp,0,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOGRAVE)
+	--Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RTOGRAVE)
 	local g=Duel.SelectTarget(tp,s.thfilter,tp,0,LOCATION_ONFIELD,1,1,nil)
 	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	if tc:IsRelateToEffect(e) then
-		Duel.SendtoGrave(tc,nil,REASON_EFFECT)
+		Duel.SendtoGrave(tc,REASON_EFFECT)
 	end
 end
