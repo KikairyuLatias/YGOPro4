@@ -12,7 +12,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(LOCATION_MZONE,0)
 	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x14af))
-	e1:SetValue(aux.tgval)
+	e1:SetValue(aux.tgoval)
 	local e2=e1:Clone()
 	e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	c:RegisterEffect(e2)
@@ -60,11 +60,8 @@ function s.contactop(g)
 end
 
 --insert The Rock`s war cry in Samoan here
-function s.acfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x14af) and c:IsType(TYPE_MONSTER)
-end
 function s.accon(e)
-	return Duel.IsExistingMatchingCard(s.acfilter,tp,LOCATION_MZONE,0,1,e:GetHandler())
+	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x14af),e:GetHandlerPlayer(),LOCATION_MZONE,0,1,e:GetHandler())
 end
 function s.aclimit(e,re,tp)
 	local loc=re:GetActivateLocation()

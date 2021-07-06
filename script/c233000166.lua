@@ -51,9 +51,10 @@ end
 function s.tg(e,c)
 	return c:IsSetCard(0x4ad)
 end
+
 --protect
 function s.indct(e,re,r,rp)
-	if bit.band(r,REASON_BATTLE+REASON_EFEECT)~=0 then
+	if (r&REASON_BATTLE+REASON_EFFECT)~=0 then
 		return 1
 	else
 		return 0

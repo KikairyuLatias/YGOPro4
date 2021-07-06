@@ -173,7 +173,7 @@ function s.statfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x7c5)
 end
 function s.statval(e,c)
-	return Duel.GetMatchingGroupCount(s.statfilter,c:GetControler(),0,LOCATION_MZONE,nil)*-100
+	return Duel.GetMatchingGroupCount(s.statfilter,c:GetControler(),0,LOCATION_ONFIELD,nil)*-100
 end
 
 --lock

@@ -63,7 +63,9 @@ end
 function s.actcon(e)
 	local c=Duel.GetAttackTarget()
 	if not c then return false end
-	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
+	local a=Duel.GetAttacker()
+	local d=Duel.GetAttackTarget()
+	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 	e:SetLabelObject(c)
 	return c and c:IsAttribute(ATTRIBUTE_WIND) and c:IsRace(RACE_MACHINE) and c:IsRelateToBattle()
 end

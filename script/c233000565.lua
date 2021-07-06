@@ -2,8 +2,15 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
-	 Pendulum.AddProcedure(c)
+	Pendulum.AddProcedure(c)
 	c:EnableReviveLimit()
+	--spsummon condition
+	local e00=Effect.CreateEffect(c)
+	e00:SetType(EFFECT_TYPE_SINGLE)
+	e00:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e00:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e00:SetValue(s.splimit)
+	c:RegisterEffect(e00)
 	--selfdes
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
@@ -12,19 +19,9 @@ function s.initial_effect(c)
 	e0:SetRange(LOCATION_PZONE)
 	e0:SetCondition(s.despcon)
 	c:RegisterEffect(e0)
-	--moving
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetRange(LOCATION_PZONE)
-	e1:SetCountLimit(1)
-	e1:SetTarget(s.seqtg)
-	e1:SetOperation(s.seqop)
-	c:RegisterEffect(e1)
 	--special summon self from P-Zone by Tributing
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_PZONE)
@@ -56,22 +53,23 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 	--negate
 	local e6=Effect.CreateEffect(c)
-	e6:SetDescription(aux.Stringid(id,2))
+	e6:SetDescription(aux.Stringid(id,1))
 	e6:SetCategory(CATEGORY_DISABLE)
 	e6:SetType(EFFECT_TYPE_IGNITION)
 	e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetHintTiming(0,0x1c0)
-	e6:SetCountLimit(1,id)
+	e6:SetCountLimit(1,id+100)
 	e6:SetTarget(s.target)
 	e6:SetOperation(s.operation)
 	c:RegisterEffect(e6)
 	--pendulum
 	local e7=Effect.CreateEffect(c)
-	e7:SetDescription(aux.Stringid(id,3))
+	e7:SetDescription(aux.Stringid(id,2))
 	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e7:SetCode(EVENT_DESTROYED)
 	e7:SetProperty(EFFECT_FLAG_DELAY)
+	e7:SetCountLimit(1,id+100)
 	e7:SetCondition(s.pencon)
 	e7:SetTarget(s.pentg)
 	e7:SetOperation(s.penop)
@@ -83,25 +81,9 @@ function s.despcon(e)
 	return not Duel.IsExistingMatchingCard(Card.IsSetCard,e:GetHandlerPlayer(),LOCATION_PZONE,0,1,e:GetHandler(),0x4af)
 end
 
---moving
-function s.seqfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x24af)
-end
-function s.seqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.seqfilter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(s.seqfilter,tp,LOCATION_MZONE,0,1,nil)
-		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
-	Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,1))
-	Duel.SelectTarget(tp,s.seqfilter,tp,LOCATION_MZONE,0,1,1,nil)
-end
-function s.seqop(e,tp,eg,ep,ev,re,r,rp)
-	local tc=Duel.GetFirstTarget()
-	if not tc:IsRelateToEffect(e) or tc:IsControler(1-tp) or not (Duel.GetLocationCount(tp,LOCATION_MZONE)>0)then return end
-	local seq=tc:GetSequence()
-	Duel.Hint(HINT_SELECTMSG,tp,571)
-	local s=Duel.SelectDisableField(tp,1,LOCATION_MZONE,0,0)
-	local nseq=math.log(s,2)
-	Duel.MoveSequence(tc,nseq)
+--make sure you cannot cheese this out without doing it properly
+function s.splimit(e,se,sp,st)
+	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_PENDULUM)==SUMMON_TYPE_PENDULUM
 end
 
 --get out of the P-Zone
@@ -128,7 +110,7 @@ end
 
 --immune to backrow
 function s.efilter(e,te)
-	return te:IsActiveType(TYPE_SPELL+TYPE_TRAP) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
+	return te:IsActiveType(TYPE_SPELL) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
 function s.immcon(e)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_RITUAL)

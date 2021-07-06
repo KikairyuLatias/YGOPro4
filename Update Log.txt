@@ -139,3 +139,9 @@ https://sites.google.com/view/sakuracarddesign/home
 - Correcting some scripts
 - Added legacy support for various archetypes
 - Addition of Radiant Dragon Reindeer in the 2330014xx range
+
+07/05/2021
+
+- Updated images
+- Addition of new cards (including "Resistance Avatar" archetype)
+- Modified some scripts

@@ -1,6 +1,14 @@
 --Hazmat Diver Deer Kuroyuri
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableReviveLimit()
+	--spsummon condition
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetValue(s.splimit)
+	c:RegisterEffect(e0)
 	--immune
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -35,9 +43,9 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 
---you can't cheese this out by using itself or another equivalent (you can go over though...)
-function s.mat_filter(c)
-	return c:GetAttack()~=2800
+--you can't summon this without Rituals
+function s.splimit(e,se,sp,st)
+	return not (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL
 end
 
 --immune to backrow

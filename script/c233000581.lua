@@ -1,4 +1,4 @@
---Hazmanimal Biodomain
+--Hazmat Animal Biodomain
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableCounterPermit(0x43a)
@@ -54,45 +54,36 @@ function s.initial_effect(c)
 	e6:SetTarget(s.hztg)
 	c:RegisterEffect(e6)
 	--def down
-	local e7=Effect.CreateEffect(c)
-	e7:SetType(EFFECT_TYPE_FIELD)
+	local e7=e6:Clone()
 	e7:SetCode(EFFECT_UPDATE_DEFENSE)
-	e7:SetRange(LOCATION_FZONE)
-	e7:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
-	e7:SetValue(s.val)
-	e7:SetTarget(s.hztg)
 	c:RegisterEffect(e7)
-	--damage
-	local e8=Effect.CreateEffect(c)
-	e8:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-	e8:SetCode(EVENT_LEAVE_FIELD_P)
-	e8:SetOperation(s.damp)
-	c:RegisterEffect(e8)
-	--both players get hit
-	local e9=Effect.CreateEffect(c)
-	e9:SetDescription(aux.Stringid(id,1))
-	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e9:SetCategory(CATEGORY_DAMAGE)
-	e9:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e9:SetCode(EVENT_LEAVE_FIELD_P)
-	e9:SetCondition(s.damcon)
-	e9:SetOperation(s.damop)
-	e9:SetLabelObject(e8)
-	c:RegisterEffect(e9)
-	--controller gets screwed
-	local e10=e9:Clone()
-	e10:SetDescription(aux.Stringid(id,2))
-	e10:SetCondition(s.damcon2)
-	e10:SetOperation(s.damop2)
-	c:RegisterEffect(e10)
 	--someone explain why my suit warranty ran out
-	local e11=Effect.CreateEffect(c)
-	e11:SetType(EFFECT_TYPE_FIELD)
-	e11:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
-	e11:SetRange(LOCATION_FZONE)
-	e11:SetTargetRange(LOCATION_MZONE,0)
-	e11:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x43a))
-	e11:SetValue(s.indct)
+	local e8=Effect.CreateEffect(c)
+	e8:SetType(EFFECT_TYPE_FIELD)
+	e8:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
+	e8:SetRange(LOCATION_FZONE)
+	e8:SetTargetRange(LOCATION_MZONE,0)
+	e8:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x43a))
+	e8:SetValue(s.indct)
+	c:RegisterEffect(e8)
+	--damage
+	local e9=Effect.CreateEffect(c)
+	e9:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e9:SetCode(EVENT_LEAVE_FIELD_P)
+	e9:SetOperation(s.damp)
+	c:RegisterEffect(e9)
+	--both players get hit
+	local e10=Effect.CreateEffect(c)
+	e10:SetDescription(aux.Stringid(id,1))
+	e10:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e10:SetCode(EVENT_LEAVE_FIELD)
+	e10:SetOperation(s.damop)
+	e10:SetLabelObject(e9)
+	c:RegisterEffect(e10)
+	--controller gets screwed
+	local e11=e10:Clone()
+	e11:SetDescription(aux.Stringid(id,2))
+	e11:SetOperation(s.damop2)
 	c:RegisterEffect(e11)
 end
 
@@ -123,37 +114,10 @@ end
 function s.val(e)
 	return e:GetHandler():GetCounter(0x43a)*-100
 end
+
 --boost
 function s.hztg(e,c)
 	return not c:IsSetCard(0x43a) and c:IsType(TYPE_MONSTER)
-end
-
---conditions
-function s.damcon(e)
-	return e:GetHandler():GetCounter(0x43a)<9
-end
-function s.damcon2(e)
-	return e:GetHandler():GetCounter(0x43a)>=9
-end
-
---damage
-function s.damp(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local ct=c:GetCounter(0x43a)
-	e:SetLabel(ct)
-end
-function s.damop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetLabelObject():GetLabel()
-	if ct>0 and ct<9 then
-		Duel.Damage(tp,ct*300,REASON_EFFECT)
-		Duel.Damage(1-tp,ct*300,REASON_EFFECT)
-	end
-end
-function s.damop2(e,tp,eg,ep,ev,re,r,rp)
-	local ct=e:GetLabelObject():GetLabel()
-	if ct>=9 then
-		Duel.SetLP(tp,Duel.GetLP(tp)-ct*600)
-	end
 end
 
 --renew suit warranty damn it
@@ -162,5 +126,27 @@ function s.indct(e,re,r,rp)
 		return 1
 	else
 		return 0
+	end
+end
+
+--damage
+function s.damp(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local ct=c:GetCounter(0x43a)
+	e:SetLabel(ct)
+end
+
+function s.damop(e,tp,eg,ep,ev,re,r,rp)
+	local ct=e:GetLabelObject():GetLabel()
+	if ct<=8 then
+		Duel.Damage(tp,ct*300,REASON_EFFECT)
+		Duel.Damage(1-tp,ct*300,REASON_EFFECT)
+	end
+end
+
+function s.damop2(e,tp,eg,ep,ev,re,r,rp)
+	local ct=e:GetLabelObject():GetLabel()
+	if ct>=9 then
+		Duel.SetLP(tp,Duel.GetLP(tp)-ct*600)
 	end
 end

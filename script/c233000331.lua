@@ -26,7 +26,7 @@ function s.filter(c,e,tp)
 		and Duel.GetLocationCountFromEx(tp,tp,c)>0
 end
 function s.chkfilter(c,att)
-	return c:IsFaceup() and (c:IsSetCard(0x17d5) and c:IsAttribute(att)) and not c:IsType(TYPE_FUSION)
+	return c:IsFaceup() and c:IsSetCard(0x27d5) and c:IsAttribute(att)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.chkfilter(chkc,e:GetLabel()) end
@@ -41,10 +41,11 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if not tc:IsRelateToEffect(e) then return end
 	local att=tc:GetAttribute()
 	if Duel.SendtoGrave(tc,REASON_EFFECT)==0 then return end
-	if Duel.GetLocationCountFromEx(tp)<=0 then return end
+	local g=Duel.GetMatchingGroup(s.tfilter,tp,LOCATION_EXTRA,0,nil,att,e,tp)
+	if #g==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local sg=Duel.SelectMatchingCard(tp,s.tfilter,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,1,1,nil,att,e,tp)
-	if sg:GetCount()>0 then
+	local sg=g:Select(tp,1,1,nil)
+	if #sg>0 then
 		Duel.BreakEffect()
 		Duel.SpecialSummon(sg,0,tp,tp,true,false,POS_FACEUP)
 		sg:GetFirst():CompleteProcedure()

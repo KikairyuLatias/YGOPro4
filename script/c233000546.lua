@@ -1,6 +1,14 @@
 --Hazmat Diver Deer Bogyazotu
 local s,id=GetID()
 function s.initial_effect(c)
+	c:EnableReviveLimit()
+	--spsummon condition
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetValue(s.splimit)
+	c:RegisterEffect(e0)
 	--immune
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -35,14 +43,14 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 
---you can't cheese this out by using itself or another equivalent (you can go over though...)
-function s.mat_filter(c)
-	return c:GetAttack()~=2400
+--you need to Ritual Summon me first
+function s.splimit(e,se,sp,st)
+	return not (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL
 end
 
 --immune to backrow
 function s.efilter(e,te)
-	return te:IsActiveType(TYPE_SPELL+TYPE_TRAP) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
+	return te:IsActiveType(TYPE_SPELL) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
 function s.immcon(e)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_RITUAL)
@@ -62,14 +70,7 @@ end
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToDeck,tp,0,LOCATION_HAND,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToDeck,tp,0,LOCATION_HAND,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
-	if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) then
-		Duel.SetChainLimit(s.chainlm)
-	end
-end
-
-function s.chainlm(e,rp,tp)
-	return tp==ep
+	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,1,0,0)
 end
 
 function s.operation2(e,tp,eg,ep,ev,re,r,rp)

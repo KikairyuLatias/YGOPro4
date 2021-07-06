@@ -13,15 +13,18 @@ function s.initial_effect(c)
 	c:RegisterEffect(e1)
 end
 s.listed_series={0x43a}
-s.counter_place_list={0x1b}
+s.counter_place_list={0x43a}
 s.listed_names={233000581}
 
 function s.check(tp)
 	local tc=Duel.GetFieldCard(tp,LOCATION_SZONE,5)
 	return tc and tc:IsFaceup() and tc:IsCode(233000581)
 end
+function s.cfilter(c)
+	return s.check(0) or s.check(1) and c:IsFaceup() and c:IsCode(233000581)
+end
 function s.addcon(e,tp,eg,ep,ev,re,r,rp)
-	return s.check(0) or s.check(1)
+	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_ONFIELD,0,1,nil)
 end
 function s.filter(c,e,tp)
 	return c:IsSetCard(0x43a) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

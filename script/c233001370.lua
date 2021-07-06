@@ -47,7 +47,7 @@ function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x7e0)
 end
 function s.val(e,c)
-	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,LOCATION_MZONE,nil)*200
+	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*200
 end
 --ss condition
 function s.filter2(c)

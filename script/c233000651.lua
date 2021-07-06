@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	e4:SetCountLimit(1,id)
 	e4:SetOperation(s.lvop)
 	c:RegisterEffect(e4)
-	--lvup
+	--lvdown
 	local e5=e4:Clone()
 	e5:SetDescription(aux.Stringid(id,1))
 	e5:SetOperation(s.lvop2)

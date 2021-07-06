@@ -70,7 +70,7 @@ end
 
 --stat drop
 function s.filter2(c)
-	return c:IsFaceup() and c:IsSetCard(0x96e)
+	return c:IsFaceup() and c:IsSetCard(0x96c)
 end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter2,c:GetControler(),0,LOCATION_MZONE,nil)*-200

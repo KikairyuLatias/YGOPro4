@@ -45,7 +45,7 @@ end
 
 --ss condition
 function s.filter2(c)
-	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and not c:IsType(TYPE_RITUAL)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

@@ -23,9 +23,20 @@ function s.initial_effect(c)
 	e1:SetValue(s.atkup)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
-	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	e2:SetValue(s.atkup2)
 	c:RegisterEffect(e2)
 	--destroy stuff
+	local e3=Effect.CreateEffect(c)
+	e3:SetCategory(CATEGORY_DESTROY)
+	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e3:SetCode(EVENT_BATTLE_DESTROYING)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e3:SetCountLimit(1)
+	e3:SetCondition(s.descon)
+	e3:SetTarget(s.destg)
+	e3:SetOperation(s.desop)
+	c:RegisterEffect(e3)
 	--come back (check on cost)
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,2))
@@ -52,7 +63,41 @@ function s.atktg(e,c)
 	return c==Duel.GetAttacker() and c:IsSetCard(0x7db)
 end
 function s.atkup(e,c) 
-	return c:GetLevel()*200 or c:GetRank()*200 
+	return c:GetLevel()*200 
+end
+function s.atkup2(e,c) 
+	return c:GetRank()*200 
+end
+
+--destruction for Cherry Rabbit
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	local bc=tc:GetBattleTarget()
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x7db)
+		and bc:IsReason(REASON_BATTLE)
+end
+
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	local g=Duel.GetMatchingGroup(s.filter,tp,0,LOCATION_ONFIELD,nil)
+	if g:GetCount()>0 then
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,g:GetCount(),0,0)
+	end
+end
+
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.GetMatchingGroup(Card.IsDestructable,tp,0,LOCATION_ONFIELD,nil)
+	if g:GetCount()>0 then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+		local sg=g:Select(tp,1,3,nil)
+		Duel.Destroy(sg,REASON_EFFECT)
+		local sg=Duel.GetOperatedGroup()
+		if sg:GetCount()>0 then
+		local lp=Duel.GetLP(1-tp)
+		Duel.SetLP(1-tp,lp-1200)
+		end
+	end
 end
 
 --revive

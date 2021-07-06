@@ -23,8 +23,10 @@ function s.initial_effect(c)
 	e1:SetOperation(s.spop2)
 	c:RegisterEffect(e1)
 end
+
 --forget about triggering
-s.listed_series={0x7d7}
+s.listed_series={0x640}
+
 function s.cfilter(c,tp)
 	return c:IsFaceup() and c:IsSetCard(0x640) and c:IsControler(tp)
 end

@@ -12,18 +12,13 @@ function s.initial_effect(c)
 	e0:SetRange(LOCATION_PZONE)
 	e0:SetCondition(s.despcon)
 	c:RegisterEffect(e0)
-	--mill deck
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_REMOVE)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCode(EVENT_BATTLE_DAMAGE)
-	e1:SetRange(LOCATION_PZONE)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1:SetCountLimit(1)
-	e1:SetCondition(s.descon)
-	e1:SetOperation(s.desop)
-	c:RegisterEffect(e1)
+	--spsummon condition
+	local e0a=Effect.CreateEffect(c)
+	e0a:SetType(EFFECT_TYPE_SINGLE)
+	e0a:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0a:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0a:SetValue(s.splimit)
+	c:RegisterEffect(e0a)
 	--special summon self from P-Zone by Tributing
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
@@ -58,7 +53,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 	--destroy
 	local e6=Effect.CreateEffect(c)
-	e6:SetCategory(CATEGORY_REMOVE)
+	e6:SetCategory(CATEGORY_DESTROY)
 	e6:SetType(EFFECT_TYPE_IGNITION)
 	e6:SetRange(LOCATION_MZONE)
 	e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
@@ -73,6 +68,7 @@ function s.initial_effect(c)
 	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e7:SetCode(EVENT_DESTROYED)
 	e7:SetProperty(EFFECT_FLAG_DELAY)
+	e7:SetCountLimit(1,id+100)
 	e7:SetCondition(s.pencon)
 	e7:SetTarget(s.pentg)
 	e7:SetOperation(s.penop)
@@ -84,22 +80,9 @@ function s.despcon(e)
 	return not Duel.IsExistingMatchingCard(Card.IsSetCard,e:GetHandlerPlayer(),LOCATION_PZONE,0,1,e:GetHandler(),0x4af)
 end
 
---you can't cheese this out by using itself or another equivalent (you can go over though...)
-function s.mat_filter(c)
-	return c:GetLevel()~=8
-end
-
---banish
-function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	local tc=eg:GetFirst()
-	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x4af) and tc:IsRace(RACE_BEASTWARRIOR)
-end
-function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetDecktopGroup(1-tp,2)
-		if g:GetCount()>0 then
-			Duel.DisableShuffleCheck()
-			Duel.Remove(g,POS_FACEDOWN,REASON_EFFECT)
-		end
+--make sure you cannot cheese this out without doing it properly
+function s.splimit(e,se,sp,st)
+	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_PENDULUM)==SUMMON_TYPE_PENDULUM
 end
 
 --get out of the P-Zone
@@ -107,9 +90,9 @@ function s.cfilter(c)
 	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,2,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_MZONE,0,1,1,nil)
+	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_MZONE,0,2,2,nil)
 	Duel.Release(g,POS_FACEUP,REASON_COST)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -141,39 +124,29 @@ end
 
 --destroy stuff
 function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,1500) end
-	Duel.PayLPCost(tp,1500)
+	if chk==0 then return Duel.CheckLPCost(tp,1000) end
+	Duel.PayLPCost(tp,1000)
 end
 
 function s.destfilter(c)
 	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEASTWARRIOR)
 end
 
-function s.lmfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x24af)
-end
-
 function s.desttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsDestructable() and chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsControler(1-tp) end
-	if chk==0 then return true end
-	local ct=Duel.GetMatchingGroupCount(s.destfilter,tp,LOCATION_MZONE,0,nil)
+	local c=e:GetHandler()
+	if chkc then return chkc:IsOnField() and chkc:IsFaceup() and chkc~=c end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.destfilter,tp,LOCATION_MZONE,0,1,nil)
+		and Duel.IsExistingTarget(Card.IsDestructable,tp,0,LOCATION_ONFIELD,1,c) end
+	local g=Duel.GetMatchingGroup(s.destfilter,tp,LOCATION_MZONE,0,nil)
+	local ct=g:GetClassCount(Card.GetCode)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,ct,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
-	if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) then
-		Duel.SetChainLimit(s.chainlm)
-	end
-end
-
-function s.chainlm(e,rp,tp)
-	return tp==ep
+	local sg=Duel.SelectTarget(tp,Card.IsDestructable,tp,0,LOCATION_ONFIELD,1,ct,c)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,sg,#sg,0,0)
 end
 
 function s.destop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetTargetCards(e)
-	if #g>0 then
-		Duel.Destroy(g,REASON_EFFECT)
-	end
+	if #g>0 then Duel.Destroy(g,REASON_EFFECT) end
 end
 
 --to pendulumZ

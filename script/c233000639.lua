@@ -3,6 +3,15 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
+	--splimit
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CANNOT_NEGATE)
+	e1:SetRange(LOCATION_PZONE)
+	e1:SetTargetRange(1,0)
+	e1:SetTarget(s.splimit)
+	c:RegisterEffect(e1)
 	--atk up
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
@@ -44,6 +53,12 @@ function s.initial_effect(c)
 	e6:SetTarget(s.target2)
 	c:RegisterEffect(e6)
 end
+
+--cannot summon non-Pony
+function s.splimit(e,c,tp,sumtp,sumpos)
+	return not c:IsSetCard(0x439)
+end
+
 --boost
 function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x439)
@@ -51,12 +66,13 @@ end
 function s.val(e,c)
 	return Duel.GetMatchingGroupCount(s.filter,c:GetControler(),LOCATION_MZONE,0,nil)*300
 end
+
 --burn damage
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
 	local bc=tc:GetBattleTarget()
 	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x439)
-		and bc:IsReason(REASON_BATTLE) and not bc:IsType(TYPE_XYZ+TYPE+LINK)
+		and bc:IsReason(REASON_BATTLE) and not bc:IsType(TYPE_XYZ) and not bc:IsType(TYPE_LINK)
 end
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 	local tc=eg:GetFirst()
@@ -66,23 +82,17 @@ function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	local dam=bc:GetLevel()*100
-	if dam<0 then dam=0 end
 	Duel.SetTargetPlayer(1-tp)
-	Duel.SetTargetParam(dam)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+	local lv=eg:GetFirst():GetBattleTarget():GetLevel()
+	if lv<0 then lv=0 end
+	Duel.SetTargetParam(lv*200)
 end
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	local dam=bc:GetRank()*100
-	if dam<0 then dam=0 end
 	Duel.SetTargetPlayer(1-tp)
-	Duel.SetTargetParam(dam)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,dam)
+	local rk=eg:GetFirst():GetBattleTarget():GetRank()
+	if rk<0 then rk=0 end
+	Duel.SetTargetParam(rk*200)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)

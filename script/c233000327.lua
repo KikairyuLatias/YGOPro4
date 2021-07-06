@@ -26,10 +26,10 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
 	e2:SetCondition(s.condition)
-	e2:SetValue(300)
+	e2:SetValue(500)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
-	e3:SetCode(EVENT_UPDATE_DEFENSE)
+	e3:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e3)
 	--float back original form
 	local e4=Effect.CreateEffect(c)
@@ -46,11 +46,23 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_ATTACK_ALL)
 	e5:SetValue(1)
 	c:RegisterEffect(e5)
+	--actlimit
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_FIELD)
+	e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e6:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetTargetRange(0,1)
+	e6:SetValue(1)
+	e6:SetCondition(s.actcon)
+	c:RegisterEffect(e6)
 end
+
 --you better summon this properly
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
+
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
@@ -58,6 +70,7 @@ function s.condition(e)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
 		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end
+
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -76,4 +89,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if tc then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
+end
+
+--condition
+function s.actcon(e)
+	return Duel.GetAttacker()==e:GetHandler()
 end

@@ -3,7 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
 	--xyz summon
-	Xyz.AddProcedure(c,nil,7,2,s.ovfilter,aux.Stringid(id,0),2,s.xyzop)
+	Xyz.AddProcedure(c,nil,6,2,s.ovfilter,aux.Stringid(id,0),2,s.xyzop)
 	c:EnableReviveLimit()
 	--cannot target for attacks or card effects while material exists
 	local e1=Effect.CreateEffect(c)

@@ -4,6 +4,13 @@ function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
 	c:EnableReviveLimit()
+	--spsummon condition
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e0:SetValue(s.splimit)
+	c:RegisterEffect(e0)
 	--selfdes
 	local e0a=Effect.CreateEffect(c)
 	e0a:SetType(EFFECT_TYPE_SINGLE)
@@ -12,20 +19,6 @@ function s.initial_effect(c)
 	e0a:SetRange(LOCATION_PZONE)
 	e0a:SetCondition(s.despcon)
 	c:RegisterEffect(e0a)
-	--negate for days
-	local e1a=Effect.CreateEffect(c)
-	e1a:SetType(EFFECT_TYPE_FIELD)
-	e1a:SetCode(EFFECT_DISABLE)
-	e1a:SetRange(LOCATION_PZONE)
-	e1a:SetTargetRange(0,LOCATION_ONFIELD)
-	c:RegisterEffect(e1a)
-	--disable effect
-	local e2a=Effect.CreateEffect(c)
-	e2a:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e2a:SetCode(EVENT_CHAIN_SOLVING)
-	e2a:SetRange(LOCATION_PZONE)
-	e2a:SetOperation(s.disop)
-	c:RegisterEffect(e2a)
 	--special summon self from P-Zone by Tributing
 	local e3a=Effect.CreateEffect(c)
 	e3a:SetDescription(aux.Stringid(id,0))
@@ -58,44 +51,30 @@ function s.initial_effect(c)
 	local e3=e2:Clone()
 	e3:SetCode(EFFECT_NO_EFFECT_DAMAGE)
 	c:RegisterEffect(e3)
-	--cannot release
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_SINGLE)
-	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCode(EFFECT_UNRELEASABLE_SUM)
-	e4:SetCondition(s.immcon)
-	e4:SetValue(1)
-	c:RegisterEffect(e4)
-	local e5=e4:Clone()
-	e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
-	c:RegisterEffect(e5)
 	--remove EVERYTHING
 	local e6=Effect.CreateEffect(c)
 	e6:SetDescription(aux.Stringid(id,1))
 	e6:SetCategory(CATEGORY_TOGRAVE+CATEGORY_DAMAGE)
 	e6:SetType(EFFECT_TYPE_IGNITION)
 	e6:SetRange(LOCATION_MZONE)
-	e6:SetCountLimit(1,id)
+	e6:SetCountLimit(1,id+100)
 	e6:SetCost(s.sgcost)
 	e6:SetTarget(s.sgtg)
 	e6:SetOperation(s.sgop)
-	c:RegisterEffect(e6)
+	c:RegisterEffect(e6)  
+	Duel.AddCustomActivityCounter(id,ACTIVITY_CHAIN,aux.FALSE)
 	--pendulum
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,2))
 	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e7:SetCode(EVENT_DESTROYED)
 	e7:SetProperty(EFFECT_FLAG_DELAY)
+	e7:SetCountLimit(1,id+100)
 	e7:SetCondition(s.pencon)
 	e7:SetTarget(s.pentg)
 	e7:SetOperation(s.penop)
 	c:RegisterEffect(e7)
-end
-
---you can't cheese this out by using itself or another equivalent (you can go over though...)
-function s.mat_filter(c)
-	return c:GetLevel()~=12
+	Duel.AddCustomActivityCounter(id,ACTIVITY_CHAIN,aux.FALSE)
 end
 
 --this is the workaround to not being able to restrict this from setting self in scale without ritual summoning
@@ -103,12 +82,9 @@ function s.despcon(e)
 	return not Duel.IsExistingMatchingCard(Card.IsSetCard,e:GetHandlerPlayer(),LOCATION_PZONE,0,1,e:GetHandler(),0x4af)
 end
 
---i like to negate you hard
-function s.disop(e,tp,eg,ep,ev,re,r,rp)
-	local tl=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)
-	if rp~=tp and (tl==LOCATION_MZONE or tl==LOCATION_SZONE) then
-		Duel.NegateEffect(ev)
-	end
+--make sure you cannot cheese this out without doing it properly
+function s.splimit(e,se,sp,st)
+	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_PENDULUM)==SUMMON_TYPE_PENDULUM
 end
 
 --get out of the P-Zone
@@ -149,37 +125,32 @@ function s.damval(e,re,val,r,rp,rc)
 end
 
 --chaos emperor dragon everything
-function s.destfilter(c)
-	return c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEASTWARRIOR)
+function s.costfilter2(c)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsLocation(LOCATION_GRAVE) and c:IsAbleToRemoveAsCost()
 end
-function s.lmfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x24af)
+function s.sgcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local g=Duel.GetMatchingGroup(s.costfilter2,tp,LOCATION_ONFIELD+LOCATION_GRAVE,0,nil)
+	if chk==0 then return aux.SelectUnselectGroup(g,e,tp,5,5,aux.dncheck,0) end
+	local rg=aux.SelectUnselectGroup(g,e,tp,5,5,aux.dncheck,1,tp,HINTMSG_REMOVE)
+	if rg then
+		Duel.Remove(rg,POS_FACEUP,REASON_COST)
+	end
 end
 
-function s.sgcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.CheckLPCost(tp,2000) end
-	Duel.PayLPCost(tp,2000)
-end
 function s.sgtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	local g=Duel.GetFieldGroup(tp,0,0xe)
 	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,g,#g,0,0)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,0,0,1-tp,#g*400)
-	if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) then
-			Duel.SetChainLimit(s.chainlm)
-		end
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,0,0,1-tp,#g*300)
 end
 
-function s.chainlm(e,rp,tp)
-	return tp==ep
-end
 function s.sgop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,0,0xe)
 	Duel.SendtoGrave(g,REASON_EFFECT)
 	local og=Duel.GetOperatedGroup()
 	local ct=og:FilterCount(Card.IsLocation,nil,LOCATION_GRAVE)
 	Duel.BreakEffect()
-	Duel.Damage(1-tp,ct*400,REASON_EFFECT)
+	Duel.Damage(1-tp,ct*300,REASON_EFFECT)
 end
 
 --to pendulumZ

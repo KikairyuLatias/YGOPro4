@@ -2,7 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--Ritual Summon
-	Ritual.AddProcGreater({handler=c,filter=s.ritualfil,lv=Card.GetAttack,matfilter=s.filter,location=LOCATION_HAND|LOCATION_GRAVE,requirementfunc=Card.GetAttack,desc=aux.Stringid(id,0)})
+	local e1=Ritual.AddProcGreater({handler=c,filter=s.ritualfil,extrafil=s.extrafil,location=LOCATION_HAND|LOCATION_GRAVE}):SetCountLimit(1,id)
+	if not GhostBelleTable then GhostBelleTable={} end
+	table.insert(GhostBelleTable,e1)
 	--Add itself to hand
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
@@ -19,10 +21,14 @@ end
 
 s.listed_series={0x4af}
 function s.ritualfil(c)
-	return c:GetAttack()>0 and c:IsRitualMonster()
+	return c:IsSetCard(0x4af) and c:IsRace(RACE_BEASTWARRIOR) and c:IsRitualMonster()
 end
-function s.filter(c)
-	return c:IsSetCard(0x4af) and c:IsRace(RACE_BEASTWARRIOR) and c:GetAttack()>0
+function s.mfilter(c)
+	return not Duel.IsPlayerAffectedByEffect(c:GetControler(),69832741) and c:HasLevel() and c:IsSetCard(0x4af) and c:IsRace(RACE_BEASTWARRIOR) 
+		and c:IsType(TYPE_MONSTER) and c:IsAbleToRemove()
+end
+function s.extrafil(e,tp,eg,ep,ev,re,r,rp,chk)
+	return Duel.GetMatchingGroup(s.mfilter,tp,LOCATION_GRAVE,0,nil)
 end
 
 --add back to hand

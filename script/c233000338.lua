@@ -12,14 +12,24 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target2)
 	e1:SetOperation(s.operation2)
 	c:RegisterEffect(e1)
-	--protection
+	--destroy rep
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_EQUIP)
-	e2:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
-	e2:SetValue(s.valcon)
-	e2:SetCountLimit(1)
+	e2:SetType(EFFECT_TYPE_CONTINUOUS+EFFECT_TYPE_EQUIP)
+	e2:SetCode(EFFECT_DESTROY_REPLACE)
+	e2:SetTarget(s.reptg)
+	e2:SetOperation(s.repop)
 	c:RegisterEffect(e2)
+	--protection
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_EQUIP)
+	e3:SetCode(EFFECT_UNRELEASABLE_SUM)
+	e3:SetValue(1)
+	c:RegisterEffect(e3)
+	local e4=e3:Clone()
+	e4:SetCode(EFFECT_UNRELEASABLE_NONSUM)
+	c:RegisterEffect(e4)
 end
+
 --retrieval from gy to hand
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
@@ -30,7 +40,14 @@ function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 	end
 end
---hi proc
-function s.valcon(e,re,r,rp)
-	return bit.band(r,REASON_BATTLE+REASON_EFFECT)~=0
+
+--hi, i am a decoy
+function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	local tc=c:GetEquipTarget()
+	if chk==0 then return not tc:IsReason(REASON_REPLACE) and c:IsDestructable(e) and not c:IsStatus(STATUS_DESTROY_CONFIRMED) end
+	return Duel.SelectEffectYesNo(tp,c,96)
+end
+function s.repop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Destroy(e:GetHandler(),REASON_EFFECT+REASON_REPLACE)
 end
