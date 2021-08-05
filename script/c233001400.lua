@@ -86,9 +86,9 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --forget about triggering
-s.listed_series={0x96e}
+s.listed_series={0x96c}
 function s.cfilter(c,tp)
-	return c:IsFaceup() and c:IsSetCard(0x96e) and c:IsControler(tp)
+	return c:IsFaceup() and c:IsSetCard(0x96c) and c:IsControler(tp)
 end
 function s.actcon(e)
 	local tp=e:GetHandlerPlayer()
@@ -104,8 +104,8 @@ function s.actop(e,tp,eg,ep,ev,re,r,rp)
 	local p=e:GetHandler():GetControler()
 	if d==nil then return end
 	local tc=nil
-	if a:GetControler()==p and a:IsSetCard(0x96e) then tc=d
-	elseif d:GetControler()==p and d:IsSetCard(0x96e) then tc=a end
+	if a:GetControler()==p and a:IsSetCard(0x96c) then tc=d
+	elseif d:GetControler()==p and d:IsSetCard(0x96c) then tc=a end
 	if not tc then return end
 	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetType(EFFECT_TYPE_SINGLE)

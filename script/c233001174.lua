@@ -35,12 +35,16 @@ end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return eg:IsExists(s.filter,1,nil,1-tp) end
 	local g=eg:Filter(s.filter,nil,1-tp)
+	Duel.SetTargetCard(g)
 	Duel.SetOperationInfo(0,CATEGORY_DISABLE_SUMMON,eg,eg:GetCount(),0,0)
-	Duel.SetOperationInfo(0,CATEGORY_TODECK,eg,eg:GetCount(),0,0)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,#g,0,0)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	Duel.NegateSummon(eg)
-	Duel.SendtoDeck(eg,nil,2,REASON_EFFECT)
+local g=Duel.GetTargetCards(e):Filter(Card.IsRelateToEffect,nil,e)
+	if #g>0 then
+		Duel.NegateSummon(eg)
+		Duel.SendtoDeck(g,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)
+	end
 end
 
 --handtrap cond

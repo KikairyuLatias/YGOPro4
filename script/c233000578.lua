@@ -10,10 +10,10 @@ function s.initial_effect(c)
 	e0:SetCode(EFFECT_SPSUMMON_PROC)
 	e0:SetProperty(EFFECT_FLAG_UNCOPYABLE)
 	e0:SetCountLimit(1,id+99999)
-	e0:SetRange(LOCATION_HAND+LOCATION_GRAVE)
+	e0:SetRange(LOCATION_HAND)
 	e0:SetCondition(s.spcon)
 	c:RegisterEffect(e0)
-	--special summon another Hazmanimal
+	--special summon another Hazmat Animal
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -30,7 +30,7 @@ function s.initial_effect(c)
 	local e1b=e1:Clone()
 	e1b:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e1b)
-	--send 1 Hazmanimal to the GY
+	--send 1 Hazmat Animal to the GY
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,2))
 	e2:SetCategory(CATEGORY_TOGRAVE)

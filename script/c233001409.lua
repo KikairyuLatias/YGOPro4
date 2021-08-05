@@ -89,7 +89,7 @@ function s.indval(e,re,rp)
 	return rp~=e:GetHandlerPlayer()
 end
 function s.chainop(e,tp,eg,ep,ev,re,r,rp)
-	if re:GetHandler():IsSetCard(0x96c) then
+	if re:GetHandler():IsSetCard(0x96c) and not re:GetHandler():IsCode(id) then
 		Duel.SetChainLimit(s.chainlm)
 	end
 end

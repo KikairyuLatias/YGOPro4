@@ -74,7 +74,6 @@ function s.initial_effect(c)
 	e7:SetTarget(s.pentg)
 	e7:SetOperation(s.penop)
 	c:RegisterEffect(e7)
-	Duel.AddCustomActivityCounter(id,ACTIVITY_CHAIN,aux.FALSE)
 end
 
 --this is the workaround to not being able to restrict this from setting self in scale without ritual summoning
@@ -92,9 +91,9 @@ function s.cfilter(c)
 	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,3,nil) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,5,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_MZONE,0,3,3,nil)
+	local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_MZONE,0,5,5,nil)
 	Duel.Release(g,POS_FACEUP,REASON_COST)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
