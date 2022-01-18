@@ -2,8 +2,9 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--Ritual Summon
-	local e1=Ritual.AddProcGreater({handler=c,filter=s.ritualfil,extrafil=s.extrafil,location=LOCATION_HAND|LOCATION_GRAVE}):SetCountLimit(1,id)
+	local e1=Ritual.AddProcGreater({handler=c,filter=s.ritualfil,extrafil=s.extrafil,location=LOCATION_HAND|LOCATION_GRAVE })
 	if not GhostBelleTable then GhostBelleTable={} end
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	table.insert(GhostBelleTable,e1)
 	--Add itself to hand
 	local e2=Effect.CreateEffect(c)
@@ -20,6 +21,8 @@ function s.initial_effect(c)
 end
 
 s.listed_series={0x4af}
+
+--
 function s.ritualfil(c)
 	return c:IsSetCard(0x4af) and c:IsRace(RACE_BEASTWARRIOR) and c:IsRitualMonster()
 end

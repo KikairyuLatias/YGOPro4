@@ -12,15 +12,16 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetRange(LOCATION_SZONE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCondition(s.limcon)
 	e2:SetOperation(s.limop)
-	c:RegisterEffect(e1)
+	c:RegisterEffect(e2)
 	local e3=e2:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	c:RegisterEffect(e2)
+	c:RegisterEffect(e3)
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e4:SetRange(LOCATION_SZONE)
+	e4:SetRange(LOCATION_MZONE)
 	e4:SetCode(EVENT_CHAIN_END)
 	e4:SetOperation(s.limop2)
 	c:RegisterEffect(e4)
@@ -41,8 +42,12 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --can't trigger
+function s.cfilter(c,tp)
+	return c:IsFaceup() and c:IsSummonPlayer(tp) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsRace(RACE_BEAST)
+end
+
 function s.limcon(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(Card.IsSummonPlayer,1,nil,tp) and eg:IsAttribute(ATTRIBUTE_LIGHT) and eg:IsRace(RACE_BEAST)
+	return e:IsExists(s.cfilter,1,nil,tp)
 end
 function s.limop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetCurrentChain()==0 then

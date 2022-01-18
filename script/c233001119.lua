@@ -60,13 +60,16 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)	
 end
 --attack condition
+function s.mtfilter(c)
+	return not c:IsSetCard(0x7d0)
+end
 function s.mtcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=3
 end
 function s.mtop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmDecktop(tp,2)
 	local g=Duel.GetDecktopGroup(tp,2)
-	local ct=g:FilterCount(Card.IsSetCard,nil,0x7D0,IsType,TYPE_MONSTER)
+	local ct=g:FilterCount(Card.IsType,s.mtfilter,TYPE_MONSTER)
 	Duel.ShuffleDeck(tp)
 	local e4=Effect.CreateEffect(e:GetHandler())
 	e4:SetType(EFFECT_TYPE_SINGLE)
@@ -75,6 +78,8 @@ function s.mtop(e,tp,eg,ep,ev,re,r,rp)
 	e4:SetValue(ct)
 	e:GetHandler():RegisterEffect(e4)
 end
+
+--negate
 function s.condition1(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentChain()==0
 end

@@ -17,7 +17,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1)
 	e1:SetCode(EVENT_DESTROYED)
 	e1:SetTarget(s.sptg2)
 	e1:SetOperation(s.spop2)
@@ -36,6 +36,7 @@ function s.actcon(e)
 	local d=Duel.GetAttackTarget()
 	return (a and s.cfilter(a,tp)) or (d and s.cfilter(d,tp))
 end
+
 --revival
 function s.spfilter(c,e,tp)
 	return c:IsSetCard(0x640) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id) 

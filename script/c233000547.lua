@@ -2,13 +2,6 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
-	--spsummon condition
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e0:SetValue(s.splimit)
-	c:RegisterEffect(e0)
 	--immune
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
@@ -63,21 +56,10 @@ function s.damval(e,re,val,r,rp,rc)
 end
 
 --destroy things
-function s.lmfilter(c)
-	return c:IsFaceup() and c:IsRace(RACE_BEASTWARRIOR) and c:IsAttribute(ATTRIBUTE_WATER)
-end
-
 function s.extdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_EXTRA)>0 end
 	Duel.Hint(HINT_OPSELECTED,1-tp,e:GetDescription())
-	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,0,1-tp,LOCATION_EXTRA)
-if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) then
-		Duel.SetChainLimit(s.chainlm)
-	end
-end
-
-function s.chainlm(e,rp,tp)
-	return tp==ep
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,0,1-tp,LOCATION_EXTRA)
 end
 
 function s.extdop(e,tp,eg,ep,ev,re,r,rp)
@@ -85,7 +67,7 @@ function s.extdop(e,tp,eg,ep,ev,re,r,rp)
 	if #g>0 then
 		Duel.ConfirmCards(tp,g)
 		local sg=g:FilterSelect(tp,Card.IsType,1,2,nil,TYPE_MONSTER)
-		Duel.SendtoGrave(sg,REASON_EFFECT)
+		Duel.Remove(sg,POS_FACEUP,REASON_EFFECT)
 		Duel.ShuffleExtra(1-tp)
 	end
 end

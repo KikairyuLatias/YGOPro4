@@ -1,10 +1,9 @@
 --Spirit Flyer - Raikiri Ruka
 local s,id=GetID()
 function s.initial_effect(c)
-	--allow you to revive this
-	c:EnableReviveLimit()
 	--pendulum summon
 	Pendulum.AddProcedure(c)
+	c:EnableReviveLimit()
 	--spsummon condition
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_SINGLE)
@@ -86,7 +85,7 @@ s.listed_series={0x4c9}
 
 --you gotta ritual summon this first
 function s.splimit(e,se,sp,st)
-	return not (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL
+	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_PENDULUM)==SUMMON_TYPE_PENDULUM
 end
 
 --don't even bother chaining to my summons or activations

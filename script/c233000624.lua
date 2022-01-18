@@ -5,7 +5,7 @@ function s.initial_effect(c)
 	Pendulum.AddProcedure(c)
 	--spsummon
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
@@ -36,12 +36,9 @@ function s.initial_effect(c)
 	e5:SetType(EFFECT_TYPE_FIELD)
 	e5:SetCode(EFFECT_CANNOT_SELECT_BATTLE_TARGET)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetTargetRange(0,LOCATION_MZONE)
+	e5:SetTargetRange(LOCATION_MZONE,0)
 	e5:SetValue(s.atktg)
 	c:RegisterEffect(e5)
-	local e6=e5:Clone()
-	e6:SetCode(EFFECT_INDESTRUCTIBLE_BATTLE)
-	c:RegisterEffect(e6)
 	--recycle ED shit
 end
 
@@ -65,10 +62,10 @@ end
 
 --protection
 function s.target(e,c)
-	return c:IsSetCard(0x439) and c:GetCode()~=id
+	return c:IsSetCard(0x1439) and c:GetCode()~=id
 end
 
 --attack target
 function s.atktg(e,c)
-	return c:IsFaceup() and c:GetCode()~=id and c:IsSetCard(0x439)
+	return c:IsFaceup() and c:GetCode()~=id and c:IsSetCard(0x1439)
 end

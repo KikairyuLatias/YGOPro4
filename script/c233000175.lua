@@ -9,18 +9,16 @@ function s.initial_effect(c)
 	e0:SetRange(LOCATION_EXTRA)
 	e0:SetValue(s.splimit)
 	c:RegisterEffect(e0)
-	--bounce stuff to deck
-	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_DESTROY+CATEGORY_DAMAGE)
-	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id)
-	e2:SetCost(s.descost)
-	e2:SetTarget(s.destg)
-	e2:SetOperation(s.desop)
-	c:RegisterEffect(e2)
+	--destroy
+	local e1=Effect.CreateEffect(c)
+	e1:SetCategory(CATEGORY_DESTROY)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetCountLimit(1,id)
+	e1:SetTarget(s.destg)
+	e1:SetOperation(s.desop)
+	c:RegisterEffect(e1)
 	--float back original form
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -37,29 +35,32 @@ function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsSetCard(0x4ad) and se:GetHandler():IsType(TYPE_MONSTER)
 end
 
---banish things
-function s.rmcfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4ad) and c:IsAbleToRemoveAsCost()
+--bounce things
+function s.cfilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x4ad)
 end
-function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.rmcfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local g=Duel.SelectMatchingCard(tp,s.rmcfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,1,nil)
-	Duel.Remove(g,POS_FACEUP,REASON_COST)
+function s.desfilter(c)
+	return c:IsAbleToDeck()
 end
-function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,2) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,2,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil)
+		and Duel.IsExistingMatchingCard(s.desfilter,tp,0,LOCATION_ONFIELD,1,nil) end
+	local g=Duel.GetMatchingGroup(s.desfilter,tp,0,LOCATION_ONFIELD,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,1,0,0)
 end
+
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
-	local g=tg:Filter(Card.IsRelateToEffect,nil,e)
+	local ct=Duel.GetMatchingGroupCount(s.cfilter,tp,LOCATION_MZONE,0,nil)
+	if ct==0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local g=Duel.SelectMatchingCard(tp,s.desfilter,tp,0,LOCATION_ONFIELD,1,ct,nil)
 	if g:GetCount()>0 then
-		Duel.Destroy(g,REASON_EFFECT)
+		local ct2=Duel.SendtoDeck(g,nil,2,REASON_EFFECT)
 		Duel.BreakEffect()
-		Duel.Damage(1-tp,800,REASON_EFFECT)
+		Duel.Recover(tp,ct2*500,REASON_EFFECT)
+		local lp=Duel.GetLP(1-tp)
+		Duel.SetLP(1-tp,lp-(ct2*500))
 	end
 end
 

@@ -145,3 +145,8 @@ https://sites.google.com/view/sakuracarddesign/home
 - Updated images
 - Addition of new cards (including "Resistance Avatar" archetype)
 - Modified some scripts
+
+01/17/2022
+
+- Addition of various cards
+- Updating of some scripts and pictures

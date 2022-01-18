@@ -27,20 +27,22 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_IGNITION+EFFECT_TYPE_QUICK_O)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetCountLimit(1)
-	e4:SetTarget(s.target2)
-	e4:SetOperation(s.operation2)
+	e4:SetTarget(s.rmtg)
+	e4:SetOperation(s.rmop)
 	c:RegisterEffect(e4)
 end
 
 -- lock and fire
-function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end 
-	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,nil)
-	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
-end
-function s.operation2(e,tp,eg,ep,ev,re,r,rp)
+function s.rmtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) and chkc:IsAbleToRemove() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-	local tc=Duel.SelectMatchingCard(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,1,nil)
-	e:GetHandler():RegisterFlagEffect(90000910,RESET_EVENT+0x1fe0000,0,1)
-	Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
+	local g=Duel.SelectTarget(tp,Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_GRAVE,1,1,nil)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,#g,0,0)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) then
+		Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
+	end
 end

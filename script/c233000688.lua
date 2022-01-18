@@ -1,51 +1,79 @@
---晴れやかな一角獣オメガッタイ
+--Pony Jumper Saphyr
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz summon
-	Xyz.AddProcedure(c,nil,5,2)
+	--pendulum summon
+	Pendulum.AddProcedure(c)
 	c:EnableReviveLimit()
-	--disable
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_DISABLE)
-	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	--Ritual Summon
+	local e1=Ritual.CreateProc(c,RITPROC_GREATER,aux.FilterBoolFunction(Card.IsSetCard,0x439),nil,aux.Stringid(id,0),nil,nil,nil,nil,LOCATION_DECK)
 	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetHintTiming(0,0x1c0)
-	e1:SetRange(LOCATION_MZONE)
+	e1:SetRange(LOCATION_PZONE)
+	e1:SetHintTiming(0,TIMING_MAIN_END)
 	e1:SetCountLimit(1,id)
-	e1:SetCost(s.cost)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.operation)
-	c:RegisterEffect(e1,false,1)
+	e1:SetCondition(s.ritcon)
+	c:RegisterEffect(e1)
+	--inherit stuff
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_REMOVE)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetCode(EVENT_BATTLE_DAMAGE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e2:SetCountLimit(1,id+99999)
+	e2:SetCondition(s.descon)
+	e2:SetOperation(s.desop)
+	c:RegisterEffect(e2)
+	--cannot target
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_SINGLE)
+	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e3:SetValue(aux.tgoval)
+	c:RegisterEffect(e3)
+	--pendulum
+	local e7=Effect.CreateEffect(c)
+	e7:SetDescription(aux.Stringid(id,2))
+	e7:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e7:SetCode(EVENT_DESTROYED)
+	e7:SetProperty(EFFECT_FLAG_DELAY)
+	e7:SetCondition(s.pencon)
+	e7:SetTarget(s.pentg)
+	e7:SetOperation(s.penop)
+	c:RegisterEffect(e7)
 end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
+
+--need another "pony" in pend zone to summon itself or counterpart
+function s.ritcon(e)
+	return Duel.IsMainPhase() and Duel.IsExistingMatchingCard(Card.IsSetCard,e:GetHandlerPlayer(),LOCATION_PZONE,0,1,e:GetHandler(),0x439)
 end
-function s.filter(c)
-	return c:IsFaceup() and not c:IsDisabled()
+
+--i'm gonna remove the obstacles in front of me called "your top 2 cards in Deck"
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	return ep~=tp and tc:IsControler(tp) and tc:IsSetCard(0x439)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_MZONE) and s.filter(chkc) end
-	if chk==0 then return Duel.IsExistingTarget(s.filter,tp,0,LOCATION_MZONE,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEUP)
-	local g=Duel.SelectTarget(tp,s.filter,tp,0,LOCATION_MZONE,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetDecktopGroup(1-tp,2)
+		if g:GetCount()>0 then
+			Duel.DisableShuffleCheck()
+			Duel.Remove(g,POS_FACEDOWN,REASON_EFFECT)
+		end
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp,chk)
+
+--to pendulumZ
+function s.pencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local tc=Duel.GetFirstTarget()
-	if tc:IsFaceup() and tc:IsRelateToEffect(e) then
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_DISABLE)
-		e1:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		tc:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(c)
-		e2:SetType(EFFECT_TYPE_SINGLE)
-		e2:SetCode(EFFECT_DISABLE_EFFECT)
-		e2:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
-		tc:RegisterEffect(e2)
+	return c:IsPreviousLocation(LOCATION_MZONE) and c:IsFaceup()
+end
+function s.pentg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckLocation(tp,LOCATION_PZONE,0) or Duel.CheckLocation(tp,LOCATION_PZONE,1) end
+end
+function s.penop(e,tp,eg,ep,ev,re,r,rp)
+	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return false end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.MoveToField(c,tp,tp,LOCATION_PZONE,POS_FACEUP,true)
 	end
 end

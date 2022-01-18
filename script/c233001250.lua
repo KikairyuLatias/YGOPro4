@@ -1,10 +1,9 @@
 --Advent of the Spirit Flyer
 local s,id=GetID()
 function s.initial_effect(c)
-	local e1=Ritual.AddProcGreater({handler=c,lvtype=RITPROC_GREATER,filter=s.ritualfil,extrafil=s.extrafil,extraop=s.extraop,matfilter=s.forcedgroup,location=LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE })
-	if not GhostBelleTable then GhostBelleTable={} end
-	table.insert(GhostBelleTable,e1)
-	e1:SetCountLimit(1,id)
+	local e1=Ritual.CreateProc({handler=c,lvtype=RITPROC_GREATER,filter=s.ritualfil,extrafil=s.extrafil,extraop=s.extraop,matfilter=s.forcedgroup,location=LOCATION_HAND+LOCATION_DECK+LOCATION_EXTRA })
+	e1:SetCountLimit(1,id+100,EFFECT_COUNT_CODE_OATH)
+	c:RegisterEffect(e1)
 	--special summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))

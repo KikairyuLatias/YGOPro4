@@ -57,7 +57,7 @@ function s.hdtg(e,tp,eg,ep,ev,re,r,rp,chk)
 		and Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_HAND,1,nil) 
 	end
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,nil,1,tp,LOCATION_HAND)
-	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,500)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,200)
 end
 function s.hdop(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_HAND,nil)

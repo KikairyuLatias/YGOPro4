@@ -48,6 +48,9 @@ function s.indval(e,re,tp)
 end
 
 --ssd
+function s.mtfilter(c)
+	return not c:IsSetCard(0x14af)
+end
 function s.mtcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsAbleToEnterBP() and Duel.GetFieldGroupCount(tp,LOCATION_DECK,0)>=5
 end
@@ -55,7 +58,7 @@ function s.mtop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	Duel.ConfirmDecktop(tp,5)
 	local g=Duel.GetDecktopGroup(tp,5)
-	local ct=g:FilterCount(Card.IsSetCard,nil,0x14af)
+	local ct=g:FilterCount(Card.IsType,s.mtfilter,TYPE_MONSTER)
 	Duel.ShuffleDeck(tp)
 	if ct>1 then
 		local e1=Effect.CreateEffect(c)

@@ -1,41 +1,63 @@
---Spirit Unicorn
+--Superstar Pony Cadet
 local s,id=GetID()
 function s.initial_effect(c)
-	--spsummon
+	--pendulum summon
+	 Pendulum.AddProcedure(c)
+	--activate things
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
-	e1:SetRange(LOCATION_HAND+LOCATION_GRAVE)
-	e1:SetProperty(EFFECT_FLAG_CHAIN_UNIQUE)
-	e1:SetCode(EVENT_TO_GRAVE)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.operation)
+	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e1:SetCode(EVENT_SUMMON_SUCCESS)
+	e1:SetCountLimit(1,id)
+	e1:SetCondition(s.accon)
+	e1:SetOperation(s.acop)
 	c:RegisterEffect(e1)
+	local e2=e1:Clone()
+	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
+	c:RegisterEffect(e2)
+	--recover
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_RECOVER)
+	e3:SetType(EFFECT_TYPE_IGNITION)
+	e3:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1,id+99999)
+	e3:SetTarget(s.rectg)
+	e3:SetOperation(s.recop)
+	c:RegisterEffect(e3)
 end
-function s.cfilter(c,tp)
-	return c:IsType(TYPE_MONSTER) and c:IsRace(RACE_BEAST) and c:GetPreviousControler()==tp and c:IsPreviousPosition(POS_FACEUP)
-		and c:IsPreviousLocation(LOCATION_MZONE) and bit.band(c:GetPreviousRaceOnField(),RACE_BEAST)~=0
+
+--get the field
+function s.accon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil,tp)
 end
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return not eg:IsContains(e:GetHandler()) and eg:IsExists(s.cfilter,1,nil,tp) and bit.band(r,REASON_DESTROY)~=0
+function s.filter(c,tp)
+	return c:IsCode(233000646) and c:GetActivateEffect() and c:GetActivateEffect():IsActivatable(tp,true,true)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+function s.acop(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
+	local tc=Duel.SelectMatchingCard(tp,aux.NecroValleyFilter(s.filter),tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil,tp):GetFirst()
+	aux.PlayFieldSpell(tc,e,tp,eg,ep,ev,re,r,rp)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
+
+--combat medic horse gives you more LP
+function s.filter2(c)
+	return c:IsFaceup() and c:IsSetCard(0x439) and c:GetAttack()>0
+end
+function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local c=e:GetHandler()
-	if not c:IsRelateToEffect(e) then return end
-	if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)>0 then
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_LEAVE_FIELD_REDIRECT)
-		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-		e1:SetReset(RESET_EVENT+RESETS_REDIRECT)
-		e1:SetValue(LOCATION_REMOVED)
-		c:RegisterEffect(e1,true)
+	if chkc then return chkc:IsLocation(LOCATION_MZONE) and c:IsControler(tp) and s.filter2(chkc) end
+	if chk==0 then return Duel.IsExistingTarget(s.filter2,tp,LOCATION_MZONE,0,1,c) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+	local g=Duel.SelectTarget(tp,s.filter2,tp,LOCATION_MZONE,0,1,1,c)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,g:GetFirst():GetAttack())
+end
+
+function s.recop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc:IsRelateToEffect(e) and tc:IsFaceup() and tc:GetAttack()>0 then
+		Duel.Recover(tp,tc:GetAttack()/2,REASON_EFFECT)
 	end
 end

@@ -26,6 +26,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.rdop)
 	c:RegisterEffect(e3)
 end
+
 --retrieval from gy to hand
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand() end
@@ -36,6 +37,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SendtoHand(e:GetHandler(),nil,REASON_EFFECT)
 	end
 end
+
 --attack directly for half damage
 function s.rdcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and Duel.GetAttacker()==e:GetHandler():GetEquipTarget() and Duel.GetAttackTarget()==nil

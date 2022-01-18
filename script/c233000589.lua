@@ -1,7 +1,7 @@
 --Hazmat Animal Fusion
 local s,id=GetID()
 function s.initial_effect(c)
-	local e1=Fusion.CreateSummonEff(c,s.ffilter,nil,s.fextra)
+	local e1=Fusion.CreateSummonEff(c,aux.FilterBoolFunction(Card.IsSetCard,0x43a),Fusion.OnFieldMat(Card.IsAbleToRemove),s.fextra,Fusion.BanishMaterial)
 	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
 	if not AshBlossomTable then AshBlossomTable={} end
@@ -13,7 +13,7 @@ function s.ffilter(c)
 end
 function s.fextra(e,tp,mg)
 	if Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsCode,233000588),tp,LOCATION_MZONE,0,1,nil) then
-		local sg=Duel.GetMatchingGroup(Card.IsAbleToGrave,tp,LOCATION_DECK+LOCATION_EXTRA,0,nil)
+		local sg=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,LOCATION_DECK+LOCATION_EXTRA+LOCATION_GRAVE,0,nil)
 		if #sg>0 then
 			return sg,s.fcheck
 		end
