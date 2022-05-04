@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2,2)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),2,2)
 	c:EnableReviveLimit()
 	--lighting the way
 	local e1=Effect.CreateEffect(c)
@@ -30,9 +30,9 @@ function s.initial_effect(c)
 end
 
 --forget about triggering
-s.listed_series={0x4af}
+s.listed_series={0x14af}
 function s.cfilterkk(c,tp)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsControler(tp)
+	return c:IsFaceup() and c:IsSetCard(0x14af) and c:IsControler(tp)
 end
 function s.actcon(e)
 	local tp=e:GetHandlerPlayer()
@@ -46,7 +46,7 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local atk=0
 	local tc=eg:GetFirst()
 	for tc in aux.Next(eg) do
-		if tc:IsReason(REASON_DESTROY) and tc:IsSetCard(0x4af) and not tc:IsPreviousLocation(LOCATION_SZONE) then
+		if tc:IsReason(REASON_DESTROY) and tc:IsSetCard(0x14af) and not tc:IsPreviousLocation(LOCATION_SZONE) then
 			local tatk=tc:GetAttack()
 			if tatk>atk then atk=tatk end
 		end
@@ -55,7 +55,7 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return atk>0
 end
 function s.spfilter(c,e,tp,lv)
-	return c:IsLevelBelow(lv) and c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsLevelBelow(lv) and c:IsSetCard(0x14af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) and not e:GetHandler():IsStatus(STATUS_CHAINING)

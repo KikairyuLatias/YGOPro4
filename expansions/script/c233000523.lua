@@ -1,25 +1,22 @@
 --Diver Deer Florentina
 local s,id=GetID()
 function s.initial_effect(c)
-	--synchro custom
+	--Material limitations
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetCode(EFFECT_TUNER_MATERIAL_LIMIT)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e1:SetTarget(s.synlimit)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetCode(EFFECT_FUSION_MAT_RESTRICTION)
+	e1:SetValue(s.matfilter)
 	c:RegisterEffect(e1)
-	--fusion custom
 	local e2=e1:Clone()
-	e2:SetCode(EFFECT_FUSION_MATERIAL_LIMIT)
+	e2:SetCode(EFFECT_SYNCHRO_MAT_RESTRICTION)
 	c:RegisterEffect(e2)
-	--xyz custom
 	local e3=e1:Clone()
-	e3:SetCode(EFFECT_XYZ_MATERIAL_LIMIT)
+	e3:SetCode(EFFECT_XYZ_MAT_RESTRICTION)
 	c:RegisterEffect(e3)
-	--link custom
-	local e4=e1:Clone()
-	e4:SetCode(EFFECT_LINK_MATERIAL_LIMIT)
-	c:RegisterEffect(e4)
+	--local e4=e1:Clone()
+	--e4:SetCode(EFFECT_LINK_MAT_RESTRICTION)
+	--c:RegisterEffect(e4)
 	--lv change
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_IGNITION)
@@ -43,14 +40,14 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 end
 
---synchro limit
-function s.synlimit(e,c)
-	return c:IsSetCard(0x4af)
+--material limit
+function s.matfilter(e,c)
+	return c:IsSetCard(0x14af)
 end
 
 --level change
 function s.filter(c)
-	return c:IsFaceup() and c:GetLevel()>0 and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:GetLevel()>0 and c:IsSetCard(0x14af)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(tp) and s.filter(chkc) end

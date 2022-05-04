@@ -13,14 +13,10 @@ function s.initial_effect(c)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetCode(EFFECT_SYNCHRO_LEVEL)
-	e2:SetValue(s.slevel)
+	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetValue(s.slv)
 	c:RegisterEffect(e2)
-	--synchro level
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetCode(EFFECT_SYNCHRO_LEVEL)
-	e3:SetValue(s.slevel2)
-	c:RegisterEffect(e3)
 end
 
 --ss
@@ -34,13 +30,12 @@ function s.spcon(e,c)
 		Duel.IsExistingMatchingCard(s.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end
 
---level coding
-function s.slevel(e,c)
-	local lv=e:GetHandler():GetLevel()
-	return 4*65536+lv
-end
-
-function s.slevel2(e,c)
-	local lv=e:GetHandler():GetLevel()
-	return 2*65536+lv
+--change level to 2 or 4
+function s.slv(e,c)
+	if c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) then
+		local lv=e:GetHandler():GetLevel()
+		return 2*65536+lv and 4*65536+lv
+	else
+		return e:GetHandler():GetLevel()
+	end
 end

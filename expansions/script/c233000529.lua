@@ -7,6 +7,7 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetHintTiming(0,TIMING_END_PHASE)
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e1:SetCost(s.cost)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
@@ -21,7 +22,7 @@ end
 
 --QP handcon
 function s.actfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:GetBaseAttack()>=2400
+	return c:IsFaceup() and c:IsSetCard(0x14af) and c:GetBaseAttack()>=2400
 end
 function s.handcon(e)
 	return Duel.IsExistingMatchingCard(s.actfilter,tp,LOCATION_MZONE,0,1,nil)
@@ -80,5 +81,5 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 function s.recon(e,c)
-	return not c:IsSetCard(0x4af)
+	return not c:IsSetCard(0x14af)
 end

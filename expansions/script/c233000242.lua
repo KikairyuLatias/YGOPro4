@@ -52,6 +52,11 @@ function s.initial_effect(c)
 	c:RegisterEffect(e6)
 end
 
+--protect
+function s.efilter(e,re)
+	return re:GetOwnerPlayer()~=e:GetHandlerPlayer()
+end
+
 --negation
 function s.discon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetCurrentChain()==0

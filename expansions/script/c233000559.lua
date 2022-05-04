@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x4ae),1,1)
+	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x24af),1,1,Synchro.NonTuner(nil),1,1)
 	c:EnableReviveLimit()
 	--pendulum summon
 	 Pendulum.AddProcedure(c)
@@ -47,7 +47,7 @@ function s.initial_effect(c)
 end
 --get out of the P-Zone
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
@@ -72,7 +72,7 @@ function s.cfilter(c,tp)
 end
 function s.drcon(e,tp,eg,ep,ev,re,r,rp)
 	local tg=eg:GetFirst()
-	return eg:GetCount()==1 and eg:IsExists(s.cfilter,1,nil,tp) and tg~=e:GetHandler() and tg:IsSetCard(0x4ae)
+	return eg:GetCount()==1 and eg:IsExists(s.cfilter,1,nil,tp) and tg~=e:GetHandler() and tg:IsSetCard(0x24af)
 end
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) end
@@ -87,7 +87,7 @@ function s.drop(e,tp,eg,ep,ev,re,r,rp)
 end
 --Special
 function s.filter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

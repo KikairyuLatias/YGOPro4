@@ -29,6 +29,7 @@ function s.initial_effect(c)
 	e4:SetCondition(s.actcon)
 	c:RegisterEffect(e4)
 end
+
 --searcher
 function s.filter(c)
 	return c:IsSetCard(0x9d0) and c:IsType(TYPE_MONSTER) and c:IsAbleToHand()

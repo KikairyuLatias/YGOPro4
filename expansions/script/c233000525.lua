@@ -29,7 +29,7 @@ end
 
 --ss condition
 function s.spfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsAbleToDeckOrExtraAsCost()
+	return c:IsFaceup() and c:IsSetCard(0x14af) and c:IsAbleToDeckOrExtraAsCost()
 end
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -63,7 +63,7 @@ function s.procost(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.DiscardHand(tp,Card.IsDiscardable,1,1,REASON_COST+REASON_DISCARD)
 end
 function s.filter(c)
-	return c:IsSetCard(0x4af)
+	return c:IsSetCard(0x14af)
 end
 function s.protg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsFaceup() end

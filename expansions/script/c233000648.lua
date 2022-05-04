@@ -10,11 +10,19 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,id)
+	e2:SetCondition(s.descon1)
 	e2:SetTarget(s.target1)
 	e2:SetOperation(s.operation1)
 	c:RegisterEffect(e2)
 end
+
 -- get rid of S/T cards
+function s.confilter(c)
+	return c:IsFaceup() and c:IsSetCard(0x439)
+end
+function s.descon1(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.confilter,tp,LOCATION_MZONE,0,1,e:GetHandler())
+end
 function s.filter1(c)
 	return c:IsDestructable() and c:IsType(TYPE_SPELL+TYPE_TRAP)
 end

@@ -4,28 +4,28 @@ function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
 	--draw
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetCountLimit(1)
+	e1:SetTarget(s.drtg)
+	e1:SetOperation(s.drop)
+	c:RegisterEffect(e1)
+	--burn
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,0))
-	e2:SetCategory(CATEGORY_TODECK+CATEGORY_DRAW)
-	e2:SetType(EFFECT_TYPE_IGNITION)
-	e2:SetRange(LOCATION_MZONE)
+	e2:SetDescription(aux.Stringid(id,1))
+	e2:SetCategory(CATEGORY_RECOVER)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e2:SetCountLimit(1)
-	e2:SetTarget(s.drtg)
-	e2:SetOperation(s.drop)
+	e2:SetCode(EVENT_BATTLE_DESTROYING)
+	e2:SetRange(LOCATION_PZONE)
+	e2:SetCondition(s.reccon)
+	e2:SetTarget(s.rectg)
+	e2:SetOperation(s.recop)
 	c:RegisterEffect(e2)
-	--hp gain
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,1))
-	e4:SetRange(LOCATION_PZONE)
-	e4:SetCategory(CATEGORY_RECOVER)
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-	e4:SetCode(EVENT_BATTLE_DESTROYING)
-	e4:SetCondition(s.reccon)
-	e4:SetTarget(s.rectg)
-	e4:SetOperation(s.recop)
-	c:RegisterEffect(e4)
 end
 
 --shuffle
@@ -61,16 +61,12 @@ function s.reccon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	local c=e:GetHandler()
-	local bc=c:GetBattleTarget()
-	local rec=bc:GetAttack()
-	if bc:GetAttack() < bc:GetDefence() then rec=bc:GetDefence() end
-	if rec<0 then rec=0 end
 	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(rec)
-	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,rec)
+	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
+	if atk<0 then atk=0 end
+	Duel.SetTargetParam(atk)
+	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,tp,atk)
 end
-
 function s.recop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Recover(p,d,REASON_EFFECT)

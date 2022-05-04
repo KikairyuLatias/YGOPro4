@@ -52,9 +52,13 @@ end
 function s.lcheck(g,lc,tp)
 	return g:GetClassCount(Card.GetCode)==#g
 end
+
 --protection
 function s.tgcon(e)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)
+end
+function s.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
 end
 
 --shuffle to deck

@@ -55,7 +55,7 @@ end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST)
 end
 function s.filter2(c,e,tp)
-	return c:IsSetCard(0x24ad) and c:IsAttribute(ATTRIBUTE_LIGHT) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+	return c:IsCode(233000168) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

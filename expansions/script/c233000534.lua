@@ -7,7 +7,7 @@ function s.initial_effect(c)
 	e1:SetTargetRange(LOCATION_HAND+LOCATION_MZONE,0)
 	e1:SetCode(EFFECT_EXTRA_SUMMON_COUNT)
 	e1:SetRange(LOCATION_MZONE)
-	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4af))
+	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x14af))
 	c:RegisterEffect(e1)
 	--lp gain
 	local e2=Effect.CreateEffect(c)
@@ -23,7 +23,7 @@ function s.initial_effect(c)
 end
 --gain LP
 function s.recfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsSetCard(0x14af)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

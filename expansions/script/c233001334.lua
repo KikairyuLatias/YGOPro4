@@ -46,6 +46,7 @@ function s.initial_effect(c)
 	e6:SetOperation(s.dmop)
 	c:RegisterEffect(e6)
 end
+
 --summon flash blossom from Deck
 function s.filter(c,e,tp)
 	return c:IsSetCard(0x4c8) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

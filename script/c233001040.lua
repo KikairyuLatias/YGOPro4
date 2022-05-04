@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
-	Link.AddProcedure(c,s.matfilter,2,nil,s.lcheck)
+	Link.AddProcedure(c,s.matfilter,3,3,s.lcheck)
 	c:EnableReviveLimit()
 	--nine tails goes on rampage (add later)
 	local e1=Effect.CreateEffect(c)

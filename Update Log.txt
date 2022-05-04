@@ -150,3 +150,9 @@ https://sites.google.com/view/sakuracarddesign/home
 
 - Addition of various cards
 - Updating of some scripts and pictures
+
+05/03/2022
+
+- Updated images
+- Addition of cards
+- Modification of scripts (still WIP in a way)

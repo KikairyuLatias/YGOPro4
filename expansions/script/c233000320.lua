@@ -47,11 +47,22 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_ATTACK_ALL)
 	e5:SetValue(1)
 	c:RegisterEffect(e5)
+	--actlimit
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_FIELD)
+	e6:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e6:SetCode(EFFECT_CANNOT_ACTIVATE)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetTargetRange(0,1)
+	e6:SetValue(1)
+	e6:SetCondition(s.actcon)
+	c:RegisterEffect(e6)
 end
 --you better summon this properly
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
+
 --stat drop
 function s.adcon(e)
 	if Duel.GetCurrentPhase()~=PHASE_DAMAGE_CAL then return false end
@@ -64,6 +75,7 @@ end
 function s.adtg(e,c)
 	return c==Duel.GetAttacker() or c==Duel.GetAttackTarget()
 end
+
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -82,4 +94,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if tc then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
+end
+
+--condition
+function s.actcon(e)
+	return Duel.GetAttacker()==e:GetHandler()
 end

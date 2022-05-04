@@ -23,7 +23,7 @@ end
 
 --ss
 function s.cfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsSetCard(0x14af)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -33,5 +33,5 @@ end
 
 --protection
 function s.indcon(e)
-	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x4af),0,LOCATION_MZONE,LOCATION_MZONE,1,e:GetHandler())
+	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x14af),0,LOCATION_MZONE,LOCATION_MZONE,1,e:GetHandler())
 end

@@ -27,13 +27,15 @@ function s.initial_effect(c)
 end
 
 --draw cards
+s.mfilter=aux.FilterFaceupFunction(Card.IsSetCard,0x5f9)
+
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetTargetPlayer(tp)
-	Duel.SetTargetParam(1)
+	if chk==0 then return e:GetHandler():GetLinkedGroup():IsExists(s.mfilter,1,nil) and Duel.IsPlayerCanDraw(tp,1) end
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
+
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
-	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-	Duel.Draw(p,d,REASON_EFFECT)
+	if Duel.Draw(tp,1,REASON_EFFECT)==1 then
+		Duel.ShuffleHand(tp)
+	end
 end

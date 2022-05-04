@@ -35,13 +35,15 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 
---alt summon condition (not like you can summon this normally anyway...)
+--alt summon condition
 function s.mfilter(c)
-	return c:IsRace(RACE_BEAST_WARRIOR) and c:IsAttribute(ATTRIBUTE_WIND)
+	return c:IsRace(RACE_BEASTWARRIOR) and c:IsAttribute(ATTRIBUTE_WIND)
 end
+
 function s.ovfilter(c)
 	return c:IsFaceup() and c:IsCode(233000101)
 end
+
 function s.xyzop(e,tp,chk)
 	if chk==0 then return Duel.GetFlagEffect(tp,id)==0 end
 	Duel.RegisterFlagEffect(tp,id,RESET_PHASE+PHASE_END,0,1)
@@ -75,6 +77,7 @@ end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD,nil)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)

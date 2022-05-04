@@ -38,13 +38,6 @@ function s.initial_effect(c)
 	e5:SetCode(EVENT_CHAIN_END)
 	e5:SetOperation(s.limop2)
 	c:RegisterEffect(e5)
-	--don't even try chaining to my officers
-	local e6=Effect.CreateEffect(c)
-	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e6:SetCode(EVENT_CHAINING)
-	e6:SetRange(LOCATION_MZONE)
-	e6:SetOperation(s.chainop)
-	c:RegisterEffect(e6)
 	--tohand
 	local e7=Effect.CreateEffect(c)
 	e7:SetDescription(aux.Stringid(id,0))
@@ -66,6 +59,7 @@ end
 function s.mzfilter(c)
 	return c:IsSetCard(0xd0)
 end
+
 --protect
 function s.con(e)
 	return e:GetHandler():IsFaceup() and e:GetHandler():IsLocation(LOCATION_MZONE)
@@ -73,6 +67,7 @@ end
 function s.indval(e,re,tp)
 	return e:GetHandler():GetControler()~=tp
 end
+
 --do not even try
 function s.limfilter(c,tp)
 	return c:GetSummonPlayer()==tp and c:IsSetCard(0xd0)
@@ -96,18 +91,7 @@ end
 function s.chainlm(e,rp,tp)
 	return tp==rp
 end
---stop chaining
-function s.indval(e,re,rp)
-	return rp~=e:GetHandlerPlayer()
-end
-function s.chainop(e,tp,eg,ep,ev,re,r,rp)
-	if re:GetHandler():IsSetCard(0xd0) then
-		Duel.SetChainLimit(s.chainlm)
-	end
-end
-function s.chainlm(e,rp,tp)
-	return tp==rp
-end
+
 --retrieve majespecter stuff
 function s.filter1(c)
 	return c:IsSetCard(0xd0) and c:IsAbleToHand()

@@ -66,7 +66,7 @@ end
 
 --draw stuff
 function s.trigfil(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af)
+	return c:IsFaceup()
 end
 function s.trigcon(e)
 	return e:GetHandler():GetLinkedGroup():IsExists(s.trigfil,1,nil)

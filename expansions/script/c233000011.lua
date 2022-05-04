@@ -1,20 +1,17 @@
---Majespecter Fox
+--Majespecter Reindeer - Mikazuchi
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
-	--tohand
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
-	e2:SetType(EFFECT_TYPE_TRIGGER_O+EFFECT_TYPE_SINGLE)
-	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetCountLimit(1,id)
-	e2:SetTarget(s.target)
-	e2:SetOperation(s.operation)
-	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	--special summon self from hand
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_SPSUMMON_PROC)
+	e3:SetProperty(EFFECT_FLAG_UNCOPYABLE)
+	e3:SetRange(LOCATION_HAND)
+	e3:SetCondition(s.spcon2)
+	e3:SetCountLimit(1,id)
 	c:RegisterEffect(e3)
 	--cannot target
 	local e4=Effect.CreateEffect(c)
@@ -32,6 +29,24 @@ function s.initial_effect(c)
 	e5:SetRange(LOCATION_MZONE)
 	e5:SetValue(s.indval)
 	c:RegisterEffect(e5)
+	--banish stuff for kirin's glory
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,3))
+	e6:SetCategory(CATEGORY_REMOVE)
+	e6:SetType(EFFECT_TYPE_IGNITION)
+	e6:SetRange(LOCATION_MZONE)
+	e6:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e6:SetCountLimit(1,id+100)
+	e6:SetTarget(s.desttg)
+	e6:SetOperation(s.destop)
+	c:RegisterEffect(e6)
+end
+
+--special summon
+function s.spcon2(e,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0 and
+		Duel.IsExistingMatchingCard(s.filter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end
 
 --because I can get into places you can't
@@ -39,19 +54,21 @@ function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()
 end
 
---search
-function s.filter(c)
-	return c:IsSetCard(0xd0) and c:IsType(TYPE_TRAP) and c:IsAbleToHand()
+--rampage through the opponent
+function s.destfilter(c)
+	return c:IsSetCard(0xd0) and c:IsType(TYPE_MONSTER)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK)
+
+function s.desttg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_ONFIELD) end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.destfilter,tp,LOCATION_MZONE,0,1,nil) and Duel.IsExistingTarget(aux.TRUE,tp,0,LOCATION_ONFIELD,1,nil) end
+	local ct=Duel.GetMatchingGroup(s.destfilter,tp,LOCATION_MZONE,0,nil):GetClassCount(Card.GetCode)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	local tg=Duel.SelectTarget(tp,aux.TRUE,tp,0,LOCATION_ONFIELD,1,ct,nil)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,#tg,1,0,0)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_DECK,0,1,1,nil)
-	if g:GetCount()>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
-	end
+
+function s.destop(e,tp,eg,ep,ev,re,r,rp)
+	local g=Duel.GetTargetCards(e)
+	if #g>0 then Duel.Remove(g,POS_FACEUP,REASON_EFFECT) end
 end

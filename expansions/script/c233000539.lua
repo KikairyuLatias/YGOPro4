@@ -35,7 +35,7 @@ function s.initial_effect(c)
 end
 --alt summon condition (not like you can summon this normally anyway...)
 function s.ovfilter(c)
-	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x4af)
+	return c:IsFaceup() and c:IsType(TYPE_LINK) and c:IsSetCard(0x14af)
 end
 
 function s.xyzop(e,tp,chk)
@@ -64,7 +64,7 @@ end
 
 --attach
 function s.mtfilter(c,e)
-	return (c:IsLocation(LOCATION_HAND) or c:IsLocation(LOCATION_DECK)) and not c:IsType(TYPE_TOKEN) and c:IsSetCard(0x4af) and not c:IsImmuneToEffect(e)
+	return (c:IsLocation(LOCATION_HAND) or c:IsLocation(LOCATION_DECK)) and not c:IsType(TYPE_TOKEN) and c:IsSetCard(0x14af) and not c:IsImmuneToEffect(e)
 end
 function s.mttg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.mtfilter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil,e) end

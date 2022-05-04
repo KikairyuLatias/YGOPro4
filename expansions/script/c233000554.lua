@@ -28,7 +28,7 @@ end
 
 --ss from hand/GY
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsAbleToGraveAsCost()
+	return c:IsSetCard(0x24af) and c:IsAbleToGraveAsCost()
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,1,e:GetHandler()) end
@@ -55,5 +55,5 @@ function s.rdop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ChangeBattleDamage(ep,ev/2)
 end
 function s.datg(e,c)
-	return c:IsSetCard(0x4ae)
+	return c:IsSetCard(0x24af)
 end

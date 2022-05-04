@@ -39,7 +39,7 @@ end
 
 --ss condition
 function s.spcfilter(c)
-	return c:IsSetCard(0x4af) and not c:IsPublic()
+	return c:IsSetCard(0x14af) and not c:IsPublic()
 end
 function s.spcon(e,c)
 	if c==nil then return true end
@@ -63,7 +63,7 @@ end
 
 --on summon
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x4af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsAttackBelow(2400) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
+	return c:IsSetCard(0x14af) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and c:IsAttackBelow(2400) and not c:IsHasEffect(EFFECT_NECRO_VALLEY)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -80,5 +80,5 @@ function s.spop2(e,tp,eg,ep,ev,re,r,rp)
 end
 --piercer
 function s.target(e,c)
-	return c:IsSetCard(0x4af)
+	return c:IsSetCard(0x14af)
 end

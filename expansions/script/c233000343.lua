@@ -36,6 +36,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.desop)
 	c:RegisterEffect(e3)
 end
+
 --material req
 function s.lcheck(g,lc,tp)
 	return g:IsExists(Card.IsSetCard,1,nil,0x7d5,lc,SUMMON_TYPE_LINK,tp)
@@ -63,6 +64,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP,zone)
 	end
 end
+
 --moving
 function s.seqfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x7d5)

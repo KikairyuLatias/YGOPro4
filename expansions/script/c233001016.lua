@@ -23,11 +23,13 @@ function s.initial_effect(c)
 	e3:SetCondition(s.spcon)
 	c:RegisterEffect(e3)
 end
+
 --ss
-function s.filter2(c)
+function s.cfilter(c)
 	return c:IsFaceup() and c:IsCode(233001001)
 end
-function s.spcon(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(s.filter2,tp,LOCATION_MZONE,0,nil)
-	return g:GetClassCount(Card.GetCode)>=1
+function s.spcon(e,c)
+	if c==nil then return true end
+	return Duel.GetLocationCount(c:GetControler(),LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.cfilter,c:GetControler(),LOCATION_MZONE,0,1,nil)
 end

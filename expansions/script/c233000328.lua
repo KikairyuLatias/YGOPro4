@@ -26,10 +26,10 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
 	e2:SetCondition(s.condition)
-	e2:SetValue(300)
+	e2:SetValue(500)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
-	e3:SetCode(EVENT_UPDATE_DEFENSE)
+	e3:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e3)
 	--float back original form
 	local e4=Effect.CreateEffect(c)
@@ -46,18 +46,22 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_ATTACK_ALL)
 	e5:SetValue(1)
 	c:RegisterEffect(e5)
-	--don`t bother trying touching me
+	--cannot target
 	local e6=Effect.CreateEffect(c)
-	e6:SetDescription(aux.Stringid(id,0))
-	e6:SetCategory(CATEGORY_DISABLE)
-	e6:SetType(EFFECT_TYPE_QUICK_O)
-	e6:SetCode(EVENT_CHAINING)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e6:SetRange(LOCATION_MZONE)
-	e6:SetCondition(s.discon)
-	e6:SetCountLimit(1)
-	e6:SetTarget(s.distg)
-	e6:SetOperation(s.disop)
+	e6:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e6:SetValue(aux.tgoval)
 	c:RegisterEffect(e6)
+	--indes
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_SINGLE)
+	e7:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e7:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetValue(s.indval)
+	c:RegisterEffect(e7)
 end
 --you better summon this properly
 function s.splimit(e,se,sp,st)
@@ -89,19 +93,8 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
---negate
-function s.discon(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	if c:IsStatus(STATUS_BATTLE_DESTROYED) then return false end
-	if not re:IsHasProperty(EFFECT_FLAG_CARD_TARGET) then return end
-	local loc,tg=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION,CHAININFO_TARGET_CARDS)
-	if not tg or not tg:IsContains(c) then return false end
-	return Duel.IsChainDisablable(ev) and loc~=LOCATION_DECK
-end
-function s.distg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_DISABLE,eg,1,0,0)
-end
-function s.disop(e,tp,eg,ep,ev,re,r,rp,chk)
-	Duel.NegateEffect(ev)
+
+--can't touch this
+function s.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
 end

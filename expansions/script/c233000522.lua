@@ -3,7 +3,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--fusion material
 	c:EnableReviveLimit()
-	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4af),2)
+	Fusion.AddProcMixN(c,true,true,aux.FilterBoolFunctionEx(Card.IsSetCard,0x14af),2)
 	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)
 	--cannot target
 		local e3=Effect.CreateEffect(c)
@@ -37,7 +37,7 @@ end
 
 --special summoning
 function s.filter2(c)
-	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x4af)
+	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x14af)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0

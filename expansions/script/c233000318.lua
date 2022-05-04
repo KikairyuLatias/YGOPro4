@@ -41,14 +41,13 @@ function s.initial_effect(c)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	--no kill me once per turn
+	--indes
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_SINGLE)
 	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
-	e5:SetCountLimit(1)
-	e5:SetValue(s.valcon)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e5:SetValue(1)
 	c:RegisterEffect(e5)
 	--direct attack
 	local e6=Effect.CreateEffect(c)
@@ -56,10 +55,12 @@ function s.initial_effect(c)
 	e6:SetCode(EFFECT_DIRECT_ATTACK)
 	c:RegisterEffect(e6)
 end
+
 --you better summon this properly
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
+
 --stat drop
 function s.adcon(e)
 	if Duel.GetCurrentPhase()~=PHASE_DAMAGE_CAL then return false end
@@ -72,6 +73,7 @@ end
 function s.adtg(e,c)
 	return c==Duel.GetAttacker() or c==Duel.GetAttackTarget()
 end
+
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -90,8 +92,4 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if tc then
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
-end
---protection from getting sniped by sneak shots
-function s.valcon(e,re,r,rp)
-	return bit.band(r,REASON_EFFECT)~=0
 end

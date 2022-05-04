@@ -50,7 +50,7 @@ end
 
 --search
 function s.filter1(c)
-	return c:IsRace(RACE_BEASTWARRIOR) or c:IsSetCard(0x4af) and c:IsAbleToHand()
+	return c:IsRace(RACE_BEASTWARRIOR) or c:IsSetCard(0x14af) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter1,tp,LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED,0,1,1) end

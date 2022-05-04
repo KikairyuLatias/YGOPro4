@@ -26,10 +26,10 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
 	e2:SetCondition(s.condition)
-	e2:SetValue(300)
+	e2:SetValue(500)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
-	e3:SetCode(EVENT_UPDATE_DEFENSE)
+	e3:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e3)
 	--float back original form
 	local e4=Effect.CreateEffect(c)
@@ -40,18 +40,13 @@ function s.initial_effect(c)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4)
-	--negation
+	--cannot be destroyed by effects
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(id,1))
-	e5:SetCategory(CATEGORY_NEGATE+CATEGORY_DESTROY)
-	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_QUICK_O)
-	e5:SetCode(EVENT_CHAINING)
-	e5:SetCountLimit(1)
-	e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e5:SetType(EFFECT_TYPE_SINGLE)
+	e5:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetCondition(s.condition)
-	e5:SetTarget(s.target)
-	e5:SetOperation(s.operation)
+	e5:SetValue(1)
 	c:RegisterEffect(e5)
 	--destroy
 	local e6=Effect.CreateEffect(c)
@@ -64,10 +59,12 @@ function s.initial_effect(c)
 	e6:SetOperation(s.desop)
 	c:RegisterEffect(e6)
 end
+
 --you better summon this properly
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or se:GetHandler():IsCode(233000331)
 end
+
 --stat buff
 function s.condition(e)
 	local ph=Duel.GetCurrentPhase()
@@ -75,6 +72,7 @@ function s.condition(e)
 		and Duel.GetAttacker()==e:GetHandler() and Duel.GetAttackTarget()~=nil
 		 or Duel.GetAttackTarget()==e:GetHandler() and Duel.GetAttacker()~=nil
 end
+
 --revive original form
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
@@ -94,29 +92,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
 	end
 end
---negate
-function s.filterx(c)
-	return c:IsOnField() and c:IsControler(tp) and c:IsType(TYPE_MONSTER) and c:GetHandler()
-end
 
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	if e==re or e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) or not Duel.IsChainNegatable(ev) then return false end
-	local ex,tg,tc=Duel.GetOperationInfo(ev,CATEGORY_DESTROY)
-	return ex and tg~=nil and tc+tg:FilterCount(s.filterx,nil)-tg:GetCount()>0
-end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
-	if re:GetHandler():IsDestructable() and re:GetHandler():IsRelateToEffect(re) then
-		Duel.SetOperationInfo(0,CATEGORY_DESTROY,eg,1,0,0)
-	end
-end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	Duel.NegateActivation(ev)
-	if re:GetHandler():IsRelateToEffect(re) then
-		Duel.Destroy(eg,REASON_EFFECT)
-	end
-end
 --destroy stuff
 function s.descon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

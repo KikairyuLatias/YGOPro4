@@ -1,77 +1,66 @@
---Number 137: Champion Rider - Pony Kizuna
+--Gem-Knight Trainer Kailani
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz summon
-	Xyz.AddProcedure(c,nil,4,2)
+	--synchro summon
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x1047),1,99,s.matfilter)
 	c:EnableReviveLimit()
-	--stat boost
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_FIELD)
-	e1:SetCode(EFFECT_UPDATE_ATTACK)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetTargetRange(LOCATION_MZONE,0)
-	e1:SetValue(s.val)
-	c:RegisterEffect(e1)
-	local e2=e1:Clone()
-	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	--enable fusion summoning
+	local params = {aux.FilterBoolFunction(Card.IsSetCard,0x1047),Fusion.OnFieldMat(Card.IsAbleToRemove),s.fextra,Fusion.BanishMaterial}
+	local e2=Effect.CreateEffect(c)
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
+	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetCode(EVENT_FREE_CHAIN)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
+	e2:SetTarget(Fusion.SummonEffTG(table.unpack(params)))
+	e2:SetOperation(Fusion.SummonEffOP(table.unpack(params)))
 	c:RegisterEffect(e2)
-	--attaching
+	if not GhostBelleTable then GhostBelleTable={} end
+	table.insert(GhostBelleTable,e2)
+	--burn
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,2))
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_DAMAGE)
+	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e3:SetCode(EVENT_BATTLE_DESTROYING)
-	e3:SetCondition(aux.bdocon)
-	e3:SetTarget(s.atchtg)
-	e3:SetOperation(s.atchop)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1)
+	e3:SetCondition(s.condition)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.activate)
 	c:RegisterEffect(e3)
-	--protect
-	local e4=Effect.CreateEffect(c)
-	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e4:SetCode(EFFECT_DESTROY_REPLACE)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetTarget(s.reptg)
-	e4:SetValue(s.repval)
-	c:RegisterEffect(e4)
 end
-s.xyz_number=137
 
---boost
-function s.val(e,c)
-	return c:GetOverlayCount()*100
+--Can treat a "Gem-Knight" monster as a Tuner
+function s.matfilter(c,scard,sumtype,tp)
+	return c:IsSetCard(0x1047,scard,sumtype,tp)
 end
---attach
-function s.atchtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	local bc=e:GetHandler():GetBattleTarget()
-	if chk==0 then return e:GetHandler():IsType(TYPE_XYZ) and not bc:IsType(TYPE_TOKEN) end
-	Duel.SetTargetCard(bc)
-	Duel.SetOperationInfo(0,CATEGORY_LEAVE_GRAVE,bc,1,0,0)
-end
-function s.atchop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local tc=Duel.GetFirstTarget()
-	if c:IsRelateToEffect(e) and c:IsFaceup() and tc and tc:IsRelateToEffect(e) and not tc:IsLocation(LOCATION_DECK) then
-		local og=tc:GetOverlayGroup()
-		if #og>0 then
-			Duel.SendtoGrave(og,REASON_RULE)
-		end
-		Duel.Overlay(c,Group.FromCards(tc))
+
+--fusion summon for gem-knights
+function s.fextra(e,tp,mg)
+	if not Duel.IsPlayerAffectedByEffect(tp,69832741) then
+		return Duel.GetMatchingGroup(Fusion.IsMonsterFilter(Card.IsAbleToRemove),tp,LOCATION_GRAVE,0,nil)
 	end
+	return nil
 end
 
---replace
-function s.repfilter(c,tp)
-	return c:IsControler(tp) and c:IsLocation(LOCATION_ONFIELD)
-		and c:IsReason(REASON_BATTLE+REASON_EFFECT) and not c:IsReason(REASON_REPLACE)
+--burn
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	local tc=eg:GetFirst()
+	local bc=tc:GetBattleTarget()
+	return eg:GetCount()==1 and tc:IsControler(tp) and tc:IsSetCard(0x1047)
+		and bc:IsReason(REASON_BATTLE)
 end
-function s.reptg(e,tp,eg,ep,ev,re,r,rp,chk)
-	local c=e:GetHandler()
-	local g=c:GetLinkedGroup()
-	if chk==0 then return eg:IsExists(s.repfilter,1,nil,tp) and c:CheckRemoveOverlayCard(tp,1,REASON_EFFECT) end
-	if Duel.SelectEffectYesNo(tp,c,96) then
-		c:RemoveOverlayCard(tp,1,1,REASON_EFFECT)
-		return true
-	else return false end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetTargetPlayer(1-tp)
+	local atk=eg:GetFirst():GetBattleTarget():GetAttack()
+	if atk<0 then atk=0 end
+	Duel.SetTargetParam(atk)
+	Duel.SetOperationInfo(0,CATEGORY_DAMAGE,nil,0,1-tp,atk)
 end
-function s.repval(e,c)
-	return s.repfilter(c,e:GetHandlerPlayer())
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Damage(p,d,REASON_EFFECT)
 end

@@ -30,7 +30,7 @@ function s.atkcon(e,tp,eg,ep,ev,re,r,rp)
 	if not c then return false end
 	if c:IsControler(1-tp) then c=Duel.GetAttacker() end
 	e:SetLabelObject(c)
-	return c and c:IsSetCard(0x4af) and c:IsRelateToBattle()
+	return c and c:IsSetCard(0x14af) and c:IsRelateToBattle()
 end
 function s.atkop(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetLabelObject()

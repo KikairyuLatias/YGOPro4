@@ -4,13 +4,14 @@ function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
 	c:EnableReviveLimit()
-	--spsummon condition
-	local e0=Effect.CreateEffect(c)
-	e0:SetType(EFFECT_TYPE_SINGLE)
-	e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
-	e0:SetCode(EFFECT_SPSUMMON_CONDITION)
-	e0:SetValue(s.splimit)
-	c:RegisterEffect(e0)
+	--cannot special summon
+	local e00=Effect.CreateEffect(c)
+	e00:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e00:SetType(EFFECT_TYPE_SINGLE)
+	e00:SetRange(LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED+LOCATION_EXTRA)
+	e00:SetCode(EFFECT_SPSUMMON_CONDITION)
+	e00:SetValue(s.splimit)
+	c:RegisterEffect(e00)
 	--selfdes
 	local e0a=Effect.CreateEffect(c)
 	e0a:SetType(EFFECT_TYPE_SINGLE)
@@ -83,7 +84,7 @@ end
 
 --make sure you cannot cheese this out without doing it properly
 function s.splimit(e,se,sp,st)
-	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_PENDULUM)==SUMMON_TYPE_PENDULUM
+	return (st&SUMMON_TYPE_RITUAL)==SUMMON_TYPE_RITUAL or (st&SUMMON_TYPE_SPECIAL)==SUMMON_TYPE_SPECIAL
 end
 
 --get out of the P-Zone

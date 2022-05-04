@@ -35,7 +35,7 @@ end
 
 --floating time
 function s.filter(c)
-	return c:IsSetCard(0x4ae) and c:IsAbleToHand()
+	return c:IsSetCard(0x24af) and c:IsAbleToHand()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK,0,1,nil) end
@@ -56,7 +56,7 @@ function s.sccon(e,tp,eg,ep,ev,re,r,rp)
 	return ph==PHASE_MAIN1 or (ph>=PHASE_BATTLE_START and ph<=PHASE_BATTLE) or ph==PHASE_MAIN2
 end
 function s.scfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsSynchroSummonable(nil)
+	return c:IsSetCard(0x24af) and c:IsSynchroSummonable(nil)
 end
 function s.sctg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.scfilter,tp,LOCATION_EXTRA,0,1,nil) end

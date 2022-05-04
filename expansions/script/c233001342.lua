@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetRange(LOCATION_PZONE)
 	e1:SetTargetRange(LOCATION_MZONE,0)
 	e1:SetTarget(s.target)
-	e1:SetValue(1)
+	e1:SetValue(aux.tgoval)
 	c:RegisterEffect(e1)
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_PZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
 	e2:SetTarget(s.target)
-	e2:SetValue(1)
+	e2:SetValue(aux.tgoval)
 	c:RegisterEffect(e2)
 	--indes
 	local e3=Effect.CreateEffect(c)
@@ -86,6 +86,7 @@ function s.initial_effect(c)
 	e8:SetOperation(s.penop)
 	c:RegisterEffect(e8)
 end
+
 --protection
 function s.target(e,c)
 	return c:IsSetCard(0x4c8)
@@ -115,8 +116,7 @@ end
 
 --negation
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
-	return not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED)
-		and ep~=tp and Duel.IsChainNegatable(ev)
+	return rp~=tp and not e:GetHandler():IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

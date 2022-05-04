@@ -22,15 +22,15 @@ function s.initial_effect(c)
 	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)
 	--float back original form
-	local e2=Effect.CreateEffect(c)
-	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-	e2:SetCode(EVENT_DESTROYED)
-	e2:SetCountLimit(1,id+102)
-	e2:SetCondition(s.spcon)
-	e2:SetTarget(s.sptg)
-	e2:SetOperation(s.spop)
-	c:RegisterEffect(e2)
+	local e3=Effect.CreateEffect(c)
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e3:SetCode(EVENT_DESTROYED)
+	e3:SetCountLimit(1,id+100)
+	e3:SetCondition(s.spcon)
+	e3:SetTarget(s.sptg)
+	e3:SetOperation(s.spop)
+	c:RegisterEffect(e3)
 end
 --you better summon this properly
 function s.splimit(e,se,sp,st)
@@ -58,6 +58,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local g=tg:Filter(Card.IsRelateToEffect,nil,e)
 	if g:GetCount()>0 then
 		Duel.Destroy(g,REASON_EFFECT)
+		Duel.BreakEffect()
 		Duel.Damage(1-tp,800,REASON_EFFECT)
 	end
 end

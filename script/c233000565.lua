@@ -4,10 +4,11 @@ function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
 	c:EnableReviveLimit()
-	--spsummon condition
+	--cannot special summon
 	local e00=Effect.CreateEffect(c)
-	e00:SetType(EFFECT_TYPE_SINGLE)
 	e00:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
+	e00:SetType(EFFECT_TYPE_SINGLE)
+	e00:SetRange(LOCATION_HAND+LOCATION_DECK+LOCATION_GRAVE+LOCATION_REMOVED+LOCATION_EXTRA)
 	e00:SetCode(EFFECT_SPSUMMON_CONDITION)
 	e00:SetValue(s.splimit)
 	c:RegisterEffect(e00)

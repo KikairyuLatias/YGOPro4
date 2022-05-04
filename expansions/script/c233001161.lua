@@ -15,7 +15,7 @@ function s.initial_effect(c)
 	e1:SetValue(s.atkup)
 	c:RegisterEffect(e1)
 	local e2=e1:Clone()
-	e2:SetCode(EFFECT_UPDATE_DEFENSE)
+	e2:SetValue(s.atkup2)
 	c:RegisterEffect(e2)
 	--burn the opponent
 	local e3=Effect.CreateEffect(c)
@@ -51,7 +51,10 @@ function s.atktg(e,c)
 	return c==Duel.GetAttacker() and c:IsSetCard(0x7db)
 end
 function s.atkup(e,c) 
-	return c:GetLevel()*100 or c:GetRank()*100 
+	return c:GetLevel()*100
+end
+function s.atkup2(e,c) 
+	return c:GetRank()*100
 end
 
 --Feel the power of the flames!

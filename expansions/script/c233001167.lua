@@ -31,6 +31,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_BATTLE_START)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetCountLimit(1,id*20)
+	e3:SetCondition(s.descon)
 	e3:SetTarget(s.destg)
 	e3:SetOperation(s.desop)
 	c:RegisterEffect(e3)
@@ -64,23 +65,24 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --destroy stuff
-function s.check(c,tp)
-	return c and c:IsControler(tp) and c:IsSetCard(0x7db)
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local a,at=Duel.GetAttacker(),Duel.GetAttackTarget()
+	if a:IsControler(1-tp) then a,at=at,a end
+	return a and at and a:IsSetCard(0x7db) and a:IsFaceup() and at:IsControler(1-tp)
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetAttackTarget()~=nil
-		and (s.check(Duel.GetAttacker(),tp) or s.check(Duel.GetAttackTarget(),tp)) end
-	if s.check(Duel.GetAttacker(),tp) then
-		Duel.SetTargetCard(Duel.GetAttacker())
-	else
-		Duel.SetTargetCard(Duel.GetAttackTarget())
-	end
+	if chk==0 then return true end
+	local a,at=Duel.GetAttacker(),Duel.GetAttackTarget()
+	if a:IsControler(1-tp) then a,at=at,a end
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,at,1,1-tp,LOCATION_MZONE)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local tc=Duel.GetAttackTarget()
-	if tc==c then tc=Duel.GetAttacker() end
-		if Duel.Destroy(tc,REASON_EFFECT)~=0 then
-			Duel.Damage(1-tp,400,REASON_EFFECT)
-		end
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local a,at=Duel.GetAttacker(),Duel.GetAttackTarget()
+	if a:IsControler(1-tp) then a,at=at,a end
+	if at and at:IsRelateToBattle() and at:IsControler(1-tp) then
+		Duel.Destroy(at,REASON_EFFECT)
+		Duel.BreakEffect()
+		Duel.Damage(1-tp,400,REASON_EFFECT)
+	end
 end

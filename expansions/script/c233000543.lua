@@ -11,8 +11,8 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetTargetRange(LOCATION_MZONE,0)
-	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x4af))
-	e1:SetValue(aux.tgval)
+	e1:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,0x14af))
+	e1:SetValue(aux.tgoval)
 	local e2=e1:Clone()
 	e2:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	c:RegisterEffect(e2)
@@ -39,9 +39,9 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 end
 --fusion materials
-s.material_setcode=0x4af
+s.material_setcode=0x14af
 function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
-	return c:IsSetCard(0x4af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
+	return c:IsSetCard(0x14af,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
 end
 function s.fusfilter(c,code,fc,sumtype,tp)
 	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
@@ -60,11 +60,8 @@ function s.contactop(g)
 end
 
 --insert The Rock`s war cry in Samoan here
-function s.acfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4af) and c:IsType(TYPE_MONSTER)
-end
 function s.accon(e)
-	return Duel.IsExistingMatchingCard(s.acfilter,tp,LOCATION_MZONE,0,1,e:GetHandler())
+	return Duel.IsExistingMatchingCard(aux.FilterFaceupFunction(Card.IsSetCard,0x14af),e:GetHandlerPlayer(),LOCATION_MZONE,0,1,e:GetHandler())
 end
 function s.aclimit(e,re,tp)
 	local loc=re:GetActivateLocation()

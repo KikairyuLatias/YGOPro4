@@ -68,16 +68,19 @@ end
 
 -- lock and fire
 function s.lmfilter(c)
-	return c:IsFaceup() and c:IsSetCard(0x9d0) and not c:IsCode(id)
+	return c:IsFaceup() and c:IsSetCard(0x9d0)
 end
 
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,1,nil) end 
 	local g=Duel.GetMatchingGroup(Card.IsAbleToRemove,tp,0,LOCATION_ONFIELD+LOCATION_HAND,nil)
 	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
-	if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) and e:IsHasType(EFFECT_TYPE_ACTIVATE) then
-			Duel.SetChainLimit(s.chainlm)
-		end
+	if Duel.IsExistingMatchingCard(s.lmfilter,tp,LOCATION_MZONE,0,1,nil) then
+	   Duel.SetChainLimit(s.chainlm)
+	end
+end
+function s.chainlm(e,rp,tp)
+	return tp==ep
 end
 
 function s.operation2(e,tp,eg,ep,ev,re,r,rp)
@@ -87,9 +90,6 @@ function s.operation2(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Remove(tc,POS_FACEDOWN,REASON_EFFECT)
 end
 
-function s.chainlm(e,rp,tp)
-	return tp==rp
-end
 --protection value
 function s.indval(e,re,tp)
 	return tp~=e:GetHandlerPlayer()

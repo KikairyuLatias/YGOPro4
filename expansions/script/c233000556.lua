@@ -2,7 +2,7 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	--synchro summon
-	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x4ae),1,1)
+	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTunerEx(Card.IsSetCard,0x24af),1,1)
 	c:EnableReviveLimit()
 	--pendulum summon
 	 Pendulum.AddProcedure(c)
@@ -19,7 +19,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e0)
 	--search stuff
 	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetDescription(aux.Stringid(id,3))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetRange(LOCATION_MZONE)
@@ -54,7 +54,7 @@ function s.initial_effect(c)
 end
 --get out of the P-Zone
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
+	return c:IsSetCard(0x24af) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_MZONE,0,1,nil) end
@@ -75,11 +75,11 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --protect
 function s.indtg(e,c)
-	return c:IsSetCard(0x4ae) and c~=e:GetHandler()
+	return c:IsSetCard(0x24af) and c~=e:GetHandler()
 end
 --send
 function s.cfilter(c)
-	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x4ae)
+	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x24af)
 end
 function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckReleaseGroup(tp,s.cfilter,1,nil) end
@@ -117,7 +117,7 @@ end
 
 --search
 function s.filter(c)
-	return c:IsSetCard(0x4ae) and c:IsAbleToHand()
+	return c:IsSetCard(0x24af) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end

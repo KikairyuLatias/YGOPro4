@@ -17,9 +17,8 @@ function s.initial_effect(c)
 	--tohand
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_TOHAND)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
+	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER+TIMING_END_PHASE)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetCountLimit(1,id+99999)
@@ -29,7 +28,7 @@ function s.initial_effect(c)
 end
 --ss condition
 function s.cfilter(c)
-	return c:IsSetCard(0x4ae) and c:IsDiscardable()
+	return c:IsSetCard(0x24af) and c:IsDiscardable()
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_HAND,0,2,e:GetHandler()) end
@@ -47,7 +46,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 --kirin effect
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x4ae) and c:IsAbleToHand()
+	return c:IsFaceup() and c:IsSetCard(0x24af) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return false end

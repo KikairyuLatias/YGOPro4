@@ -15,6 +15,12 @@ function s.initial_effect(c)
 	e2:SetCode(EFFECT_SYNCHRO_LEVEL)
 	e2:SetValue(s.slevel)
 	c:RegisterEffect(e2)
+	--synchro level
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_SINGLE)
+	e3:SetCode(EFFECT_SYNCHRO_LEVEL)
+	e3:SetValue(s.slevel2)
+	c:RegisterEffect(e3)
 end
 
 --ss
@@ -30,9 +36,11 @@ end
 
 --level coding
 function s.slevel(e,c)
-	if c:IsSetCard(0x5f7) or c:IsSetCard(0x5f8) then
-		return 4,2,e:GetHandler():GetLevel()
-	else
-		return e:GetHandler():GetLevel()
-	end
+	local lv=e:GetHandler():GetLevel()
+	return 4*65536+lv
+end
+
+function s.slevel2(e,c)
+	local lv=e:GetHandler():GetLevel()
+	return 2*65536+lv
 end

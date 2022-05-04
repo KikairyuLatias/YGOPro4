@@ -26,10 +26,12 @@ function s.initial_effect(c)
 	e3:SetTarget(s.proctg2)
 	c:RegisterEffect(e3)
 end
+
 --mat filter
 function s.matfilter(c,scard,sumtype,tp)
 	return c:IsRace(RACE_MACHINE,scard,sumtype,tp) and c:IsAttribute(ATTRIBUTE_WIND,scard,sumtype,tp)
 end
+
 --ss
 function s.sumcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_LINK)

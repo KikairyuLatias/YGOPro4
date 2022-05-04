@@ -42,14 +42,21 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 	end
 	Duel.ShuffleDeck(tp)
 end
---burn when killing
+
+--dual strike
 function s.lkcon(e,tp,eg,ep,ev,re,r,rp)
-	return r==REASON_LINK and e:GetHandler():GetReasonCard():IsSetCard(0x43a)
+	local rc=e:GetHandler():GetReasonCard()
+	return rc:IsSetCard(0x43a) and r==REASON_LINK
 end
 function s.lkop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local rc=c:GetReasonCard()
 	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,2))
 	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CLIENT_HINT)
 	e1:SetCode(EFFECT_EXTRA_ATTACK)
 	e1:SetValue(1)
+	e1:SetReset(RESET_EVENT+RESETS_STANDARD)
 	rc:RegisterEffect(e1)
 end

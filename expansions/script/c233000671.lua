@@ -50,10 +50,8 @@ end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
 	local zone=Duel.GetZoneWithLinkedCount(1,tp)&0x1f
-	if tc:IsRelateToEffect(e) and zone~=0  then
+	if tc:IsRelateToEffect(e) and zone~=0 then
 			Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP,zone)
-		local tc=g:GetFirst()
-		if tc then
 			local e1=Effect.CreateEffect(e:GetHandler())
 			e1:SetType(EFFECT_TYPE_SINGLE)
 			e1:SetCode(EFFECT_CANNOT_BE_LINK_MATERIAL)
@@ -91,5 +89,4 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 			e6:SetReset(RESET_EVENT+0x1fe0000+RESET_PHASE+PHASE_END)
 			tc:RegisterEffect(e6)
 		end
-	end
 end

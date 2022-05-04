@@ -23,7 +23,7 @@ end
 
 --special summon
 function s.filter(c)
-	return c:IsFaceup() and c:IsSetCard(0x640) and c:GetLevel(5) and c:GetCode()~=id
+	return c:IsFaceup() and c:IsSetCard(0x640) and c:GetLevel()==5 and c:GetCode()~=id
 end
 function s.spcon(e,c)
 	if c==nil then return true end

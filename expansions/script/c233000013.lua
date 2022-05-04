@@ -1,74 +1,93 @@
 --Majespecter Dragon - Soryu
 local s,id=GetID()
 function s.initial_effect(c)
-	--xyz summon
-	Xyz.AddProcedure(c,s.mfilter,4,2,s.ovfilter,2,s.xyzop)
-	c:EnableReviveLimit()
+	--fusion summon
+	Fusion.AddProcMixN(c,true,true,s.ffilter,2)
+	Fusion.AddContactProc(c,s.contactfil,s.contactop,s.splimit)c:EnableReviveLimit()
 	--pendulum summon
 	Pendulum.AddProcedure(c)
-	--tohand
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,1))
-	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
-	e1:SetType(EFFECT_TYPE_IGNITION)
-	e1:SetRange(LOCATION_PZONE)
-	e1:SetCountLimit(1)
-	e1:SetTarget(s.thtg)
-	e1:SetOperation(s.thop)
-	c:RegisterEffect(e1)
-	--immune
-	local e3=Effect.CreateEffect(c)
-	e3:SetType(EFFECT_TYPE_SINGLE)
-	e3:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e3:SetRange(LOCATION_MZONE)
-	e3:SetCode(EFFECT_IMMUNE_EFFECT)
-	e3:SetValue(s.unaffectedval)
-	c:RegisterEffect(e3)
-	--become a scale
-	local e4=Effect.CreateEffect(c)
-	e4:SetCategory(CATEGORY_DESTROY)
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e4:SetCode(EVENT_DESTROYED)
-	e4:SetProperty(EFFECT_FLAG_DELAY)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCondition(s.pencon)
-	e4:SetTarget(s.pentg)
-	e4:SetOperation(s.penop)
-	c:RegisterEffect(e4)
-	--spsummon
-	local e5=Effect.CreateEffect(c)
-	e5:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e5:SetDescription(aux.Stringid(id,2))
-	e5:SetType(EFFECT_TYPE_IGNITION)
-	e5:SetCountLimit(1)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetCost(s.cost)
-	e5:SetTarget(s.sptg)
-	e5:SetOperation(s.spop)
-	c:RegisterEffect(e5)
 	--Negate summon
-	local e6=Effect.CreateEffect(c)
-	e6:SetCategory(CATEGORY_DISABLE_SUMMON+CATEGORY_DESTROY)
-	e6:SetType(EFFECT_TYPE_QUICK_O)
-	e6:SetRange(LOCATION_PZONE)
-	e6:SetCode(EVENT_SUMMON)
-	e6:SetCountLimit(1)
-	e6:SetCost(s.discost)
-	e6:SetCondition(s.discon)
-	e6:SetTarget(s.distg)
-	e6:SetOperation(s.disop)
-	c:RegisterEffect(e6)
-	local e7=e6:Clone()
-	e7:SetCode(EVENT_FLIP_SUMMON)
-	c:RegisterEffect(e7)
-	local e8=e6:Clone()
-	e8:SetCode(EVENT_SPSUMMON)
-	c:RegisterEffect(e8)
+	local e1p=Effect.CreateEffect(c)
+	e1p:SetDescription(aux.Stringid(id,0))
+	e1p:SetCategory(CATEGORY_DISABLE_SUMMON+CATEGORY_DESTROY)
+	e1p:SetType(EFFECT_TYPE_QUICK_O)
+	e1p:SetRange(LOCATION_PZONE)
+	e1p:SetCode(EVENT_SUMMON)
+	e1p:SetCountLimit(1)
+	e1p:SetCost(s.discost)
+	e1p:SetCondition(s.discon)
+	e1p:SetTarget(s.distg)
+	e1p:SetOperation(s.disop)
+	c:RegisterEffect(e1p)
+	local e2p=e1p:Clone()
+	e2p:SetCode(EVENT_FLIP_SUMMON)
+	c:RegisterEffect(e2p)
+	local e3p=e2p:Clone()
+	e3p:SetCode(EVENT_SPSUMMON)
+	c:RegisterEffect(e3p)
+	--special summon self from P-Zone by Tributing
+	local e4p=Effect.CreateEffect(c)
+	e4p:SetDescription(aux.Stringid(id,1))
+	e4p:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e4p:SetType(EFFECT_TYPE_IGNITION)
+	e4p:SetRange(LOCATION_PZONE)
+	e4p:SetCountLimit(1,id)
+	e4p:SetCost(s.spcost2)
+	e4p:SetTarget(s.sptg2)
+	e4p:SetOperation(s.spop2)
+	c:RegisterEffect(e4p)
+	--cannot target
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e0:SetRange(LOCATION_MZONE)
+	e0:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e0:SetValue(aux.tgoval)
+	c:RegisterEffect(e0)
+	--indes
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e1:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetValue(s.indval)
+	c:RegisterEffect(e1)
+	--spsummon
+	local e2=Effect.CreateEffect(c)
+	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e2:SetDescription(aux.Stringid(id,2))
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetCountLimit(1,id)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetTarget(s.sptg)
+	e2:SetOperation(s.spop)
+	c:RegisterEffect(e2)
+	--become a scale
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,3))
+	e3:SetCategory(CATEGORY_DESTROY)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetCode(EVENT_DESTROYED)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCondition(s.pencon)
+	e3:SetTarget(s.pentg)
+	e3:SetOperation(s.penop)
+	c:RegisterEffect(e3)
 end
 
--- Xyz mat constraints
-function s.mfilter(c)
-	return c:IsRace(RACE_SPELLCASTER) and c:IsAttribute(ATTRIBUTE_WIND)
+-- constraints
+function s.ffilter(c,fc,sumtype,tp,sub,mg,sg)
+	return c:IsSetCard(0xd0,fc,sumtype,tp) and (not sg or not sg:IsExists(s.fusfilter,1,c,c:GetCode(fc,sumtype,tp),fc,sumtype,tp))
+end
+function s.fusfilter(c,code,fc,sumtype,tp)
+	return c:IsSummonCode(fc,sumtype,tp,code) and not c:IsHasEffect(511002961)
+end
+function s.contactfil(tp)
+	return Duel.GetReleaseGroup(tp)
+end
+function s.contactop(g)
+	Duel.Release(g,REASON_COST+REASON_MATERIAL)
 end
 
 --search for ZPD stuff
@@ -90,14 +109,8 @@ function s.thop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --don't even bother, opponent
-function s.unaffectedval(e,te)
-	return te:GetOwnerPlayer()~=e:GetHandlerPlayer()
-end
-
---allow me to P-summon Xyz
-s.pendulum_level=4
-function s.pcfilter(c)
-	return c:IsType(TYPE_PENDULUM) and not c:IsForbidden()
+function s.indval(e,re,tp)
+	return tp~=e:GetHandlerPlayer()
 end
 
 --go to P-zone
@@ -117,12 +130,8 @@ function s.penop(e,tp,eg,ep,ev,re,r,rp)
 end
 
 --ss more
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
-	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
-end
 function s.spfilter(c,e,tp)
-	return c:IsSetCard(0xd0) and c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsType(TYPE_XYZ) and not c:IsType(TYPE_LINK)
+	return c:IsSetCard(0xd0) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsType(TYPE_XYZ) and not c:IsType(TYPE_LINK)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
@@ -161,4 +170,26 @@ function s.disop(e,tp,eg,ep,ev,re,r,rp)
 	if c:IsFacedown() or not c:IsRelateToEffect(e) then return end
 	Duel.NegateSummon(eg)
 	Duel.Destroy(eg,POS_FACEUP,REASON_EFFECT)
+end
+
+--get out of the P-Zone
+function s.cfilter2(c)
+	return c:IsSetCard(0xd0) and c:IsType(TYPE_MONSTER) and c:IsReleasable() and aux.SpElimFilter(c,true)
+end
+function s.spcost2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter2,tp,LOCATION_MZONE,0,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,s.cfilter2,tp,LOCATION_MZONE,0,1,1,nil)
+	Duel.Release(g,POS_FACEUP,REASON_COST)
+end
+function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) then
+		Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)
+	end
 end
